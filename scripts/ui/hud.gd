@@ -13,6 +13,7 @@ const SHORT := {"rescue": "RESCUE", "repair": "REPAIR", "scan": "SCAN", "defrag"
 	"race": "RACE", "duel": "DUEL", "boss": "DEMON", "blackhole": "BLACK HOLE"}
 
 var world: SimWorld
+var radar: Control                ## RadarWindow, so the chip bar can avoid it
 var _message := ""
 var _message_time := 0.0
 var _pause: PauseButton
@@ -120,8 +121,14 @@ func _draw_chip_bar(vs: Vector2, fs: int) -> void:
 		total += cw + 3
 	total += h  # pause button
 	var left := _status_rect.end.x + 6
-	var x := clampf(vs.x / 2 - total / 2, left, maxf(left, vs.x - total - 6))
+	var right := vs.x - 6
+	if radar and radar.visible and radar.position.y < _status_rect.end.y:
+		right = minf(right, radar.position.x - 6)
+	var x := clampf(vs.x / 2 - total / 2, left, maxf(left, right - total))
 	var y := 6.0
+	if left + total > right:   # not enough room between the windows: tuck under the status window
+		x = 6
+		y = _status_rect.end.y + 6
 	for i in chips.size():
 		var c: Array = chips[i]
 		var r := Rect2(x, y, widths[i], h)

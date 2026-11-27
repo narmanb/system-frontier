@@ -58,6 +58,7 @@ func _ready() -> void:
 	radar.world = world
 	radar.open_map.connect(_toggle_map)
 	root.add_child(radar)
+	hud.radar = radar
 	map_view = TacticalMap.new()
 	map_view.world = world
 	map_view.visible = false

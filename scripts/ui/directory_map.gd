@@ -92,8 +92,13 @@ func _focus_first() -> void:
 	for b in _list.get_children():
 		if not b.disabled:
 			b.grab_focus()
-			return
-	_enter.grab_focus()
+			break
+	if _list.get_children().filter(func(b): return not b.disabled).is_empty():
+		_enter.grab_focus()
+	await get_tree().process_frame
+	var sc := find_children("*", "ScrollContainer", true, false)
+	if not sc.is_empty():
+		(sc[0] as ScrollContainer).scroll_vertical = 0
 
 
 func _select(id: int) -> void:

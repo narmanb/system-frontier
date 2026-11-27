@@ -31,6 +31,7 @@ func _draw() -> void:
 	var avail := vs - Vector2(margin * 2 + 16, top + margin * 2 + 60)
 	var k := minf(avail.x / SimWorld.W, avail.y / SimWorld.H)
 	var map_size := Vector2(SimWorld.W, SimWorld.H) * k
+	top = maxf(top, (vs.y - map_size.y - 44) / 2)   # centre vertically on tall screens
 	var win := Rect2(Vector2((vs.x - map_size.x) / 2 - 8, top), map_size + Vector2(16, 44))
 	Win95.bevel(self, win, "window", Win95.FACE)
 	Win95.caption(self, Rect2(win.position + Vector2(3, 3), Vector2(win.size.x - 6, 24)), "Tactical Map — tap to close", 13)

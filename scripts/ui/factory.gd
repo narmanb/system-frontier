@@ -25,6 +25,8 @@ var _draft_timer: Timer
 var _campaign = null
 var test_options := {"infinite": true, "moving": true}
 var _precision := false
+var tool_row: HFlowContainer
+var rcol: VBoxContainer
 
 
 func _ready() -> void:
@@ -78,7 +80,7 @@ func _ready() -> void:
 	for s in ["left", "right", "top", "bottom"]:
 		rmargin.add_theme_constant_override("margin_" + s, 6)
 	right_scroll.add_child(rmargin)
-	var rcol := VBoxContainer.new()
+	rcol = VBoxContainer.new()
 	rcol.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	rmargin.add_child(rcol)
 	var tabs := HFlowContainer.new()
@@ -132,13 +134,19 @@ func _layout() -> void:
 	var vs := get_viewport_rect().size
 	var landscape := vs.x > vs.y * 1.1
 	body.vertical = not landscape
+	# Landscape: the canvas gets the full height and the tool buttons move into the
+	# right-hand column above the tabs, so nothing is pushed off-screen.
+	var want_parent: Node = rcol if landscape else left
+	if tool_row.get_parent() != want_parent:
+		tool_row.reparent(want_parent)
+		want_parent.move_child(tool_row, 0 if landscape else want_parent.get_child_count() - 1)
 	if landscape:
-		var side := minf(vs.y - 230, vs.x * 0.45)
+		var side := minf(vs.y - 70, vs.x * 0.5)
 		canvas.custom_minimum_size = Vector2(side, side)
 		left.custom_minimum_size.x = side
 		right_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	else:
-		var side := minf(vs.x - 20, vs.y * 0.5)
+		var side := minf(vs.x - 20, vs.y * 0.46)
 		canvas.custom_minimum_size = Vector2(side, side)
 		left.custom_minimum_size.x = 0
 	bar.title = "SHIP FACTORY — %d×%d" % [editor.grid_size, editor.grid_size]
@@ -148,6 +156,7 @@ func _layout() -> void:
 
 func _build_tool_rows(host: VBoxContainer) -> void:
 	var row := HFlowContainer.new()
+	tool_row = row
 	row.add_theme_constant_override("h_separation", 4)
 	row.add_theme_constant_override("v_separation", 4)
 	host.add_child(row)
