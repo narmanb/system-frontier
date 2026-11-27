@@ -141,6 +141,33 @@ static func make_theme() -> Theme:
 	t.set_constant("separation", "VBoxContainer", 8)
 	t.set_constant("separation", "HBoxContainer", 8)
 	t.set_stylebox("panel", "ScrollContainer", StyleBoxEmpty.new())
+	# text fields
+	for k in ["normal", "focus", "read_only"]:
+		t.set_stylebox(k, "LineEdit", BevelBox.new("sunken", FIELD, 8, 6))
+	t.set_color("font_color", "LineEdit", TEXT)
+	t.set_color("caret_color", "LineEdit", TEXT)
+	t.set_color("selection_color", "LineEdit", NAVY)
+	t.set_color("font_selected_color", "LineEdit", HILITE)
+	t.set_color("font_placeholder_color", "LineEdit", SHADOW)
+	for k in ["normal", "focus"]:
+		t.set_stylebox(k, "TextEdit", BevelBox.new("sunken", FIELD, 8, 6))
+	t.set_color("font_color", "TextEdit", TEXT)
+	t.set_color("caret_color", "TextEdit", TEXT)
+	# drop-downs (OptionButton) and their popup menus
+	for k in ["normal", "hover", "pressed", "focus", "disabled"]:
+		t.set_stylebox(k, "OptionButton", BevelBox.new("sunken", FIELD, 10, 6))
+	for k in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		t.set_color(k, "OptionButton", TEXT)
+	t.set_stylebox("panel", "PopupMenu", BevelBox.new("window", FIELD, 4, 4))
+	var hov := StyleBoxFlat.new()
+	hov.bg_color = NAVY
+	t.set_stylebox("hover", "PopupMenu", hov)
+	t.set_color("font_color", "PopupMenu", TEXT)
+	t.set_color("font_hover_color", "PopupMenu", HILITE)
+	t.set_font_size("font_size", "PopupMenu", 18)
+	t.set_constant("v_separation", "PopupMenu", 12)
+	# check boxes / progress
+	t.set_color("font_color", "CheckBox", TEXT)
 	return t
 
 
@@ -207,3 +234,109 @@ class BevelBox:
 
 	func _draw(to_canvas_item: RID, rect: Rect2) -> void:
 		Win95.bevel_rid(to_canvas_item, rect, kind, fill)
+
+
+# ------------------------------------------------------------------ screens & popups
+
+## Builds a full Win95 "desktop" screen on `owner`: teal background, caption bar with
+## optional buttons ([glyph, callable]), and a scrollable centred window. Returns the
+## window's content VBox.
+static func desktop(owner: Control, title: String, caption_buttons: Array = [], max_width := 760.0) -> VBoxContainer:
+	owner.theme = make_theme()
+	owner.set_anchors_preset(Control.PRESET_FULL_RECT)
+	var bg := ColorRect.new()
+	bg.color = DESKTOP
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	owner.add_child(bg)
+	var outer := VBoxContainer.new()
+	outer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	outer.add_theme_constant_override("separation", 0)
+	owner.add_child(outer)
+	var bar := TitleBar.new()
+	bar.title = title
+	for cb in caption_buttons:
+		bar.add_button(cb[0], cb[1])
+	outer.add_child(bar)
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	outer.add_child(scroll)
+	var margin := MarginContainer.new()
+	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	for side in ["left", "right", "top", "bottom"]:
+		margin.add_theme_constant_override("margin_" + side, 12)
+	scroll.add_child(margin)
+	var row := HBoxContainer.new()
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	margin.add_child(row)
+	var win := PanelContainer.new()
+	win.add_theme_stylebox_override("panel", BevelBox.new("window", FACE, 14, 14))
+	row.add_child(win)
+	var fit := func():
+		var w := owner.get_viewport_rect().size.x
+		win.custom_minimum_size.x = minf(max_width, w - 24)
+		win.size_flags_horizontal = Control.SIZE_SHRINK_CENTER if w > max_width + 40 else Control.SIZE_EXPAND_FILL
+	owner.resized.connect(fit)
+	fit.call()
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 12)
+	win.add_child(col)
+	return col
+
+
+## Section heading in a navy band (legacy "New Operation Setup" style).
+static func heading(text: String) -> Control:
+	var p := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = NAVY
+	sb.content_margin_left = 10
+	sb.content_margin_top = 6
+	sb.content_margin_bottom = 6
+	p.add_theme_stylebox_override("panel", sb)
+	p.add_child(label(text, 18, HILITE, true))
+	return p
+
+
+## Modal Win95 dialog over `parent`. buttons: [[label, callable]]; a callable returning
+## `false` keeps the dialog open. Returns the overlay node (free it to close manually).
+static func popup(parent: Node, title: String, body: String, buttons: Array, extra: Control = null) -> Control:
+	var overlay := Control.new()
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay.process_mode = Node.PROCESS_MODE_ALWAYS
+	var dim := ColorRect.new()
+	dim.color = Color(0, 0, 0, 0.35)
+	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.add_child(dim)
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.add_child(center)
+	var parts := window(title)
+	var win: PanelContainer = parts[0]
+	var vw: float = parent.get_viewport().get_visible_rect().size.x if parent.is_inside_tree() else 540.0
+	win.custom_minimum_size = Vector2(minf(440, vw - 24), 0)
+	center.add_child(win)
+	var box: VBoxContainer = parts[1]
+	if body != "":
+		var l := label(body, 16)
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD
+		l.custom_minimum_size = Vector2(minf(400, vw - 60), 0)
+		box.add_child(l)
+	if extra:
+		box.add_child(extra)
+	var first: Button = null
+	for b in buttons:
+		var btn := button(b[0], 48)
+		var cb: Callable = b[1]
+		btn.pressed.connect(func():
+			var r = cb.call()
+			if not (r is bool and r == false):
+				overlay.queue_free())
+		box.add_child(btn)
+		if first == null:
+			first = btn
+	parent.add_child(overlay)
+	if first:
+		first.grab_focus.call_deferred()
+	return overlay

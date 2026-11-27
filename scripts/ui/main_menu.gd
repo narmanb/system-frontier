@@ -1,187 +1,133 @@
 extends Control
-## Title screen in the legacy Win95 style: teal desktop, captioned window, bevelled
-## buttons. Choose a starter hull and launch the flight sandbox or the test range.
-## Campaign ("New Operation") and Ship Factory arrive in later milestones.
+## Title screen (legacy layout): New Operation, Continue Saved Game, Ship Factory, Free
+## Flight, Manual / Controls, Options / Reset.
 
-var _cards := {}
-var _detail: Label
-var _threat := 3
-var _threat_btn: Button
+const MANUAL := """[b]Goal[/b]
+Fly through the machine's directories, recover clean icons and complete each directory's objective, then leave through the exit gate. Clear directories to earn credits and fabrication salvage. Recover four Noble Programs from dragon black holes to unlock the Inner Demon stronghold.
+
+[b]Flight[/b]
+←/→ turn, ↑ thrust, Space fire, X missile, A ambulance, M tactical map, Esc pause, +/- zoom. There is no brake: turn around and counter-thrust. Inertia Stabilization controls how quickly you lose speed while coasting. Gamepad: stick/d-pad turn, A thrust, X/RB fire, Y/LB missile, Start pause, Back map.
+On touch screens turning is on the left, thrust/fire/missile on the right. Tap the radar for the tactical map; drag the radar by its title bar or minimise it.
+
+[b]Directories[/b]
+ICON RECOVERY — collect loose icons, avoid infected (crossed) ones.
+PROGRAM RESCUE — fly close to stranded programs to release them.
+SYSTEM REPAIR — hold position near damaged nodes until repaired.
+DIRECTORY RACE — clear every checkpoint in order.
+COURIER ESCORT — link with the courier and lead it to the terminal.
+DRAGON BLACK HOLE — recover the icons, then enter the black hole for a Noble Program.
+INFECTION SCAN — hold near each hidden signature until resolved.
+LOCKED DUEL — destroy every hostile duelist.
+DEFRAGMENTATION — touch the numbered fragments in order.
+INNER DEMON — the final stronghold (needs four Noble Programs).
+
+[b]Factions and the law[/b]
+Pirates and Predators attack everyone. Shooting neutral ships makes them retaliate and lowers relations. Destroying a clean icon is a crime: build up a warrant and Enforcers arrive. The ambulance can clear warrants for credits.
+
+[b]Strategy mode[/b]
+Your ship flies itself. Choose a priority: Collect, Attack, Evade or Exit."""
 
 
 func _ready() -> void:
-	theme = Win95.make_theme()
-	set_anchors_preset(Control.PRESET_FULL_RECT)
-	var bg := ColorRect.new()
-	bg.color = Win95.DESKTOP
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(bg)
-
-	var outer := VBoxContainer.new()
-	outer.set_anchors_preset(Control.PRESET_FULL_RECT)
-	outer.add_theme_constant_override("separation", 0)
-	add_child(outer)
-	var bar := TitleBar.new()
-	bar.title = "SYSTEM FRONTIER"
-	bar.add_button("sound", func(): AppState.set_setting("sound", not AppState.settings["sound"]); bar.queue_redraw(); _redraw_bar(bar))
+	var buttons := [["sound", _toggle_sound]]
 	if not OS.has_feature("mobile") and not OS.has_feature("web"):
-		bar.add_button("fullscreen", AppState.toggle_fullscreen)
+		buttons.append(["fullscreen", AppState.toggle_fullscreen])
 	if not OS.has_feature("web"):
-		bar.add_button("close", func(): get_tree().quit())
-	outer.add_child(bar)
-
-	var scroll := ScrollContainer.new()
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	outer.add_child(scroll)
-	var margin := MarginContainer.new()
-	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	for side in ["left", "right", "top", "bottom"]:
-		margin.add_theme_constant_override("margin_" + side, 14)
-	scroll.add_child(margin)
-	var center := HBoxContainer.new()
-	center.alignment = BoxContainer.ALIGNMENT_CENTER
-	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	margin.add_child(center)
-
-	var win := PanelContainer.new()
-	win.add_theme_stylebox_override("panel", Win95.BevelBox.new("window", Win95.FACE, 14, 14))
-	win.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	win.custom_minimum_size.x = 0
-	center.add_child(win)
-	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", 12)
-	win.add_child(col)
-	# Cap the window width on wide screens so it reads as a dialog, not a page.
-	resized.connect(func(): win.custom_minimum_size.x = minf(760.0, size.x - 28); win.size_flags_horizontal = Control.SIZE_SHRINK_CENTER if size.x > 800 else Control.SIZE_EXPAND_FILL)
-	win.custom_minimum_size.x = minf(760.0, get_viewport_rect().size.x - 28)
-
+		buttons.append(["close", func(): get_tree().quit()])
+	var col := Win95.desktop(self, "SYSTEM FRONTIER", buttons, 640)
 	col.add_child(Banner.new())
-
-	col.add_child(Win95.label("Select hull", 16, Win95.TEXT, true))
-	var flow := HFlowContainer.new()
-	flow.add_theme_constant_override("h_separation", 8)
-	flow.add_theme_constant_override("v_separation", 8)
-	flow.alignment = FlowContainer.ALIGNMENT_CENTER
-	col.add_child(flow)
-	var hulls := DataStore.starter_hulls()
-	for id in hulls["order"]:
-		flow.add_child(_hull_card(id, hulls["hulls"][id]))
-
-	var detail := Win95.field("", 14)
-	_detail = detail.get_child(0)
-	col.add_child(detail)
-
 	var grid := GridContainer.new()
 	grid.columns = 2
-	grid.add_theme_constant_override("h_separation", 10)
-	grid.add_theme_constant_override("v_separation", 10)
+	grid.add_theme_constant_override("h_separation", 12)
+	grid.add_theme_constant_override("v_separation", 12)
 	col.add_child(grid)
-	var launch := _grid_button(grid, "Flight Sandbox", _launch.bind("sandbox"))
-	_grid_button(grid, "Test Range", _launch.bind("test"))
-	_threat_btn = _grid_button(grid, "", func(): _threat = _threat % 5 + 1; _update_threat())
-	var op := _grid_button(grid, "New Operation\n(coming soon)", func(): pass)
-	op.disabled = true
-	var factory := _grid_button(grid, "Ship Factory\n(coming soon)", func(): pass)
+	var first := _btn(grid, "New Operation", func(): _go("res://scenes/setup/setup.tscn"))
+	var cont := _btn(grid, "Continue Saved Game", _continue)
+	cont.disabled = not SaveService.has_campaign()
+	var factory := _btn(grid, "Ship Factory\n(coming soon)", func(): pass)
 	factory.disabled = true
-	var touch_btn := _grid_button(grid, "", func(): pass)
-	var upd_touch := func(): touch_btn.text = "Touch pads: %s" % AppState.settings["show_touch"]
-	upd_touch.call()
-	touch_btn.pressed.connect(func():
-		var order := ["auto", "on", "off"]
-		AppState.set_setting("show_touch", order[(order.find(str(AppState.settings["show_touch"])) + 1) % 3])
-		upd_touch.call())
-
-	col.add_child(Win95.field("Keys: ←/→ turn · ↑ thrust · Space fire · X missile · M map · Esc pause · +/- zoom. "
-		+ "No brake: turn around and counter-thrust. Gamepad: stick/d-pad turn, A thrust, X/RB fire, Y/LB missile, Start pause.\n"
-		+ "Build %s — flight & combat sandbox." % ProjectSettings.get_setting("application/config/version"), 13))
-
-	_update_threat()
-	_select(str(AppState.settings["hull"]))
-	launch.grab_focus()
+	_btn(grid, "Free Flight", func(): _go("res://scenes/free_flight/free_flight.tscn"))
+	_btn(grid, "Manual / Controls", _manual)
+	_btn(grid, "Options / Reset", _options)
+	col.add_child(Win95.field("A from-scratch tribute to the directory-crawling action/strategy games of the Windows 3.x/95 era. Build %s." % ProjectSettings.get_setting("application/config/version"), 14))
+	(cont if not cont.disabled else first).grab_focus()
 
 
-func _redraw_bar(bar: TitleBar) -> void:
-	for b in bar.find_children("*", "Button", true, false):
-		b.queue_redraw()
-
-
-func _grid_button(grid: GridContainer, text: String, cb: Callable) -> Button:
-	var b := Win95.button(text, 64)
+func _btn(grid: GridContainer, text: String, cb: Callable) -> Button:
+	var b := Win95.button(text, 70)
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	b.add_theme_font_size_override("font_size", 18)
+	b.add_theme_font_size_override("font_size", 19)
 	b.pressed.connect(cb)
 	grid.add_child(b)
 	return b
 
 
-func _update_threat() -> void:
-	_threat_btn.text = "Threat level: %d" % _threat
+func _go(scene: String) -> void:
+	get_tree().change_scene_to_file(scene)
 
 
-func _hull_card(id: String, h: Dictionary) -> Button:
-	var b := Button.new()
-	b.toggle_mode = true
-	b.custom_minimum_size = Vector2(124, 150)
-	b.pressed.connect(_select.bind(id))
-	var box := VBoxContainer.new()
-	box.set_anchors_preset(Control.PRESET_FULL_RECT)
-	box.offset_left = 8; box.offset_right = -8; box.offset_top = 8; box.offset_bottom = -6
-	box.add_theme_constant_override("separation", 4)
-	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	b.add_child(box)
-	var well := PanelContainer.new()
-	well.add_theme_stylebox_override("panel", Win95.BevelBox.new("sunken", Win95.WELL, 4, 4))
-	well.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	well.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	box.add_child(well)
-	var tex := TextureRect.new()
-	tex.texture = _cropped(load(h["art"]))
-	tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	tex.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	well.add_child(tex)
-	var n := Win95.label(h["name"], 14, Win95.TEXT, true)
-	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	box.add_child(n)
-	var role := Win95.label(h["role"], 12, Win95.SHADOW)
-	role.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	box.add_child(role)
-	_cards[id] = b
-	return b
+func _toggle_sound() -> void:
+	AppState.set_setting("sound", not AppState.settings["sound"])
+	for b in find_children("*", "Button", true, false):
+		b.queue_redraw()
 
 
-## Preview-only crop to the visible alpha bounds (legacy v7.0 preview fix); the 48×48
-## editable art and mount coordinates are untouched.
-func _cropped(t: Texture2D) -> Texture2D:
-	var img := t.get_image()
-	var used := img.get_used_rect()
-	var at := AtlasTexture.new()
-	at.atlas = t
-	at.region = Rect2(used.grow(1)).intersection(Rect2(0, 0, img.get_width(), img.get_height()))
-	return at
+func _continue() -> void:
+	if SaveService.has_campaign():
+		_go("res://scenes/directory_map/directory_map.tscn")
+	else:
+		Win95.popup(self, "Continue", "No valid saved operation was found.", [["OK", func(): pass]])
 
 
-func _select(id: String) -> void:
-	if not _cards.has(id):
-		id = "redFalcon"
-	for k in _cards:
-		_cards[k].button_pressed = k == id
-	AppState.set_setting("hull", id)
-	var h := DataStore.starter_hull(id)
-	var p := ShipPerformance.compute(h)
-	var mods: Dictionary = DataStore.modules()
-	_detail.text = "%s — %s\nTop speed %d · accel %.0f/s² · 180° turn %.2fs · coast loss %.1f%%/s\nHull %d · shield %d · fuel %d (%ds thrust) · damage %.1f · %.1f shots/s\nReactor %d/%d%s · %s · %s · %s" % [
-		h["name"], h["description"], roundi(p.maxSpeed), p.acceleration, PI / p.turnRate, p.passiveLoss * 100,
-		roundi(p.maxHull), roundi(p.shield), roundi(p.maxFuel), roundi(p.fuelSeconds), p.damage, 1.0 / p.fireInterval,
-		roundi(p.capacity), roundi(p.demand), "  OVERLOAD" if p.demand > p.capacity else "",
-		mods["primary"][p.mods.primary]["name"], mods["defense"][p.mods.defense]["name"], mods["utility"][p.mods.utility]["name"]]
+func _manual() -> void:
+	var scroll := ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2(0, minf(460, get_viewport_rect().size.y - 220))
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	var field := PanelContainer.new()
+	field.add_theme_stylebox_override("panel", Win95.BevelBox.new("sunken", Win95.FIELD, 10, 8))
+	field.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(field)
+	var rt := RichTextLabel.new()
+	rt.bbcode_enabled = true
+	rt.fit_content = true
+	rt.text = MANUAL
+	rt.add_theme_color_override("default_color", Win95.TEXT)
+	rt.add_theme_font_override("bold_font", Win95.bold_font())
+	rt.add_theme_font_size_override("normal_font_size", 15)
+	rt.add_theme_font_size_override("bold_font_size", 15)
+	rt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	field.add_child(rt)
+	Win95.popup(self, "Manual / Controls", "", [["Close", func(): pass]], scroll)
 
 
-func _launch(mode: String) -> void:
-	AppState.launch = {"mode": mode, "threat": _threat}
-	get_tree().change_scene_to_file("res://scenes/mission/mission.tscn")
+func _options() -> void:
+	Win95.popup(self, "Options / Reset", "Use these tools if you want a clean start, or to bring in a save exported from the old browser version (copy its JSON to the clipboard first).", [
+		["Delete Campaign Progress", func(): _confirm("campaign")],
+		["Delete Ship Factory Progress", func(): _confirm("factory")],
+		["Delete ALL Progress", func(): _confirm("all")],
+		["Import Legacy Save from Clipboard", _import],
+		["Close", func(): pass],
+	])
+
+
+func _confirm(kind: String) -> void:
+	var labels := {"campaign": "Delete campaign progress", "factory": "Delete Ship Factory progress", "all": "Delete ALL progress"}
+	var details := {"campaign": "This deletes your saved campaign and disables Continue Saved Game.",
+		"factory": "This deletes saved custom ships, the Ship Factory draft, and recent paint colors.",
+		"all": "This deletes campaign progress plus Ship Factory saves, draft data, and recent paint colors."}
+	Win95.popup(self, "Confirm Reset", "%s?\n\n%s" % [labels[kind], details[kind]], [
+		[labels[kind], func():
+			SaveService.reset(kind)
+			get_tree().reload_current_scene()],
+		["Cancel", _options],
+	])
+
+
+func _import() -> void:
+	var kind := SaveService.import_legacy(DisplayServer.clipboard_get())
+	var text: String = {"campaign": "Legacy campaign imported. Use Continue Saved Game.", "ships": "Legacy custom ships imported into the Ship Factory library."}.get(kind,
+		"The clipboard does not contain a legacy campaign or ship-library JSON.")
+	Win95.popup(self, "Import", text, [["OK", func(): get_tree().reload_current_scene() if kind != "" else null]])
 
 
 func _notification(what: int) -> void:
@@ -194,7 +140,7 @@ class Banner:
 	extends Control
 
 	func _init() -> void:
-		custom_minimum_size = Vector2(0, 130)
+		custom_minimum_size = Vector2(0, 140)
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	func _draw() -> void:
@@ -209,10 +155,8 @@ class Banner:
 		for i in range(4, 0, -1):
 			Win95.text(self, p + Vector2(i, i), title, fs, Color("#5a3fd0").lerp(Color("#2a1a70"), i / 4.0), true)
 		Win95.text(self, p, title, fs, Color("#9ff3ff"), true)
-		var sub := "Disinfect the machine. Capture the icons. Build your own ship."
-		var ss := int(clampf(size.x / 34.0, 12, 18))
-		var sw := Win95.text_width(sub, ss)
-		if sw > size.x - 20:
-			sub = "Disinfect the machine. Capture the icons."
-			sw = Win95.text_width(sub, ss)
-		Win95.text(self, Vector2((size.x - sw) / 2, size.y * 0.78), sub, ss, Color.WHITE)
+		var subs := ["Disinfect the machine. Capture the icons.", "Build your own ship."]
+		var ss := int(clampf(size.x / 30.0, 13, 19))
+		for i in subs.size():
+			var sw := Win95.text_width(subs[i], ss)
+			Win95.text(self, Vector2((size.x - sw) / 2, size.y * 0.7 + i * (ss + 5)), subs[i], ss, Color.WHITE)

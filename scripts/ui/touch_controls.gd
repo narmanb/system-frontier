@@ -9,6 +9,10 @@ extends Control
 
 var buttons: Array = []          ## {id, rect, action, label, round}
 var bottom_inset := 0.0          ## space reserved below the pads (HUD status bar)
+var show_ambulance := false      ## campaign: ✚ mini button under the missile button
+var flight_pads := true          ## false in strategy mode (autopilot): only extras remain
+
+signal ambulance_pressed
 var _finger_button := {}         ## touch index -> button id
 var _held := {}                  ## action -> count of fingers holding it
 
@@ -53,13 +57,17 @@ func layout() -> void:
 	var thrust_y := bottom - main.y
 	var fire_y := thrust_y - main.y - gap
 	var mini_x := right_x - gap - mini.x
-	buttons = [
-		{"id": "left", "rect": Rect2(pad, ly, turn.x, turn.y), "action": "turn_left", "label": "<"},
-		{"id": "right", "rect": Rect2(pad + turn.x + gap, ly, turn.x, turn.y), "action": "turn_right", "label": ">"},
-		{"id": "fire", "rect": Rect2(right_x, fire_y, main.x, main.y), "action": "fire", "label": "*"},
-		{"id": "thrust", "rect": Rect2(right_x, thrust_y, main.x, main.y), "action": "thrust", "label": "^"},
-		{"id": "missile", "rect": Rect2(mini_x, fire_y + (main.y - mini.y) / 2, mini.x, mini.y), "action": "missile", "label": "M"},
-	]
+	buttons = []
+	if flight_pads:
+		buttons = [
+			{"id": "left", "rect": Rect2(pad, ly, turn.x, turn.y), "action": "turn_left", "label": "<"},
+			{"id": "right", "rect": Rect2(pad + turn.x + gap, ly, turn.x, turn.y), "action": "turn_right", "label": ">"},
+			{"id": "fire", "rect": Rect2(right_x, fire_y, main.x, main.y), "action": "fire", "label": "*"},
+			{"id": "thrust", "rect": Rect2(right_x, thrust_y, main.x, main.y), "action": "thrust", "label": "^"},
+			{"id": "missile", "rect": Rect2(mini_x, fire_y + (main.y - mini.y) / 2, mini.x, mini.y), "action": "missile", "label": "M"},
+		]
+	if show_ambulance:
+		buttons.append({"id": "ambulance", "rect": Rect2(mini_x if flight_pads else w - pad - mini.x, thrust_y + (main.y - mini.y) / 2, mini.x, mini.y), "action": "", "label": "+"})
 	queue_redraw()
 
 
@@ -92,6 +100,8 @@ func _set_finger(index: int, id: String) -> void:
 		var nb := _button(id)
 		if nb.get("action", "") != "":
 			_press(nb["action"])
+		elif id == "ambulance" and old == "":
+			ambulance_pressed.emit()
 	queue_redraw()
 
 
@@ -131,6 +141,8 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventScreenDrag and _finger_button.has(event.index):
 		var id := _hit(event.position)
 		# Sliding onto another button switches to it; sliding off all buttons releases (legacy behaviour).
+		if _finger_button.get(event.index, "") == "ambulance" or id == "ambulance":
+			return
 		_set_finger(event.index, id)
 		get_viewport().set_input_as_handled()
 
@@ -159,6 +171,9 @@ func _draw() -> void:
 			"left": draw_colored_polygon(PackedVector2Array([c + Vector2(-k, 0), c + Vector2(k * 0.8, -k), c + Vector2(k * 0.8, k)]), ink)
 			"right": draw_colored_polygon(PackedVector2Array([c + Vector2(k, 0), c + Vector2(-k * 0.8, -k), c + Vector2(-k * 0.8, k)]), ink)
 			"thrust": draw_colored_polygon(PackedVector2Array([c + Vector2(0, -k), c + Vector2(k, k * 0.8), c + Vector2(-k, k * 0.8)]), ink)
+			"ambulance":
+				draw_rect(Rect2(c - Vector2(k * 0.3, k), Vector2(k * 0.6, k * 2)), Color("#c00000"))
+				draw_rect(Rect2(c - Vector2(k, k * 0.3), Vector2(k * 2, k * 0.6)), Color("#c00000"))
 			"fire":
 				for i in 4:
 					var ang := i * PI / 4

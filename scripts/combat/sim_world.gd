@@ -164,8 +164,11 @@ func setup_directory(c: Dictionary, d: Dictionary, seed_value := -1) -> void:
 
 func _spawn_directory(d: Dictionary, with_hazards: bool) -> void:
 	dir_type = str(d.get("type", "normal"))
-	for i in int(d.get("icons", 0)):
-		spawn_icon()
+	# Legacy spawned icons (and their defenders) for race/boss directories and then cleared
+	# them, which instantly turned the defenders into escorts. Port: skip them (D-021).
+	if not dir_type in ["race", "boss"]:
+		for i in int(d.get("icons", 0)):
+			spawn_icon()
 	for i in 3 + threat:
 		spawn_fuel()
 	var base := (2 + threat) if dir_type == "duel" else maxi(1, ceili(threat * 0.72))
@@ -975,6 +978,39 @@ func _update_hazards(dt: float) -> void:
 					damage_player(8 + threat * 2)
 					var ang := (p.pos - h.pos).angle()
 					p.vel += Vector2(cos(ang), sin(ang)) * 80
+
+
+## Breaks RefCounted reference cycles (world <-> mission, ship <-> ship/icon) so a finished
+## mission is actually freed. Call when the mission scene exits.
+func dispose() -> void:
+	if mission:
+		mission.w = null
+		mission.programs.clear()
+		mission.nodes.clear()
+		mission.discoveries.clear()
+		mission.courier = null
+		mission = null
+	var all: Array[SimShip] = ships.duplicate()
+	if player:
+		all.append(player)
+	for sh in all:
+		sh.retaliation_target = null
+		sh.beam_target = null
+		sh.cargo_icon = null
+		sh.guard_icon = null
+	for o in icons:
+		o.carrier = null
+	for b in bullets:
+		b.owner = null
+		b.target = null
+	for bm in beams:
+		bm.owner = null
+	ships.clear()
+	icons.clear()
+	bullets.clear()
+	beams.clear()
+	hazards.clear()
+	player = null
 
 
 func end_mission(won: bool, reason: String) -> void:

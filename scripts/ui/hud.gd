@@ -9,6 +9,9 @@ extends Control
 
 signal pause_pressed
 
+const SHORT := {"rescue": "RESCUE", "repair": "REPAIR", "scan": "SCAN", "defrag": "DEFRAG", "courier": "COURIER",
+	"race": "RACE", "duel": "DUEL", "boss": "DEMON", "blackhole": "BLACK HOLE"}
+
 var world: SimWorld
 var _message := ""
 var _message_time := 0.0
@@ -96,11 +99,14 @@ func _draw_status_window(pos: Vector2, fs: int) -> Rect2:
 func _draw_chip_bar(vs: Vector2, fs: int) -> void:
 	var h := 24.0 if not AppState.is_touch_ui() else 30.0
 	var chips: Array = []   # [kind, text]
+	var m := world.mission
 	if world.mode == "test":
 		var t := world.telemetry
 		chips.append(["text", "Peak %d · 90%% %s" % [roundi(t.maxSpeed), ("%.2fs" % t.timeTo90) if t.timeTo90 >= 0 else "—"]])
 	elif world.gate_open:
 		chips.append(["gate", "EXIT"])
+	elif m and m.objective_text() != "":
+		chips.append(["text", "%s %s" % [SHORT.get(m.type, m.type.to_upper()), m.objective_text()]])
 	else:
 		chips.append(["icon", "%d/%d" % [world.icons_collected, world.icons_collected + world.icons.size()]])
 	chips.append(["missile", "INF" if world.mode == "test" else str(world.campaign["missiles"])])

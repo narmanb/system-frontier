@@ -11,6 +11,7 @@ var _constellations: Array = []
 var _laser_white: Texture2D
 var _font: Font
 var _vis_rng := RandomNumberGenerator.new()
+var _black_hole: Texture2D
 
 const CAT_POINTS := [Vector2(-52, 2), Vector2(-36, -32), Vector2(-18, -52), Vector2(0, -24), Vector2(18, -52), Vector2(36, -32), Vector2(52, 2), Vector2(-26, 18), Vector2(0, 28), Vector2(26, 18), Vector2(-44, 14), Vector2(-60, 22), Vector2(44, 14), Vector2(60, 22)]
 const CAT_LINES := [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [0, 7], [7, 8], [8, 9], [9, 6], [10, 7], [12, 9], [10, 11], [12, 13]]
@@ -28,6 +29,7 @@ func _ready() -> void:
 			var c := img.get_pixel(x, y)
 			img.set_pixel(x, y, Color(1, 1, 1, c.a))
 	_laser_white = ImageTexture.create_from_image(img)
+	_black_hole = load("res://assets/effects/black_hole_sheet.png")
 	for i in 640:
 		_stars.append({
 			"p": Vector2(_vis_rng.randf() * SimWorld.W, _vis_rng.randf() * SimWorld.H),
@@ -66,6 +68,33 @@ func _draw() -> void:
 	var half := _half_view()
 	var now := Time.get_ticks_msec() / 1000.0
 	_draw_background(half, now)
+	for h in world.hazards:
+		var p := rel(h.pos)
+		if _visible(p, half):
+			_draw_hazard(p, h)
+	var m := world.mission
+	if m:
+		for i in m.race_checkpoints.size():
+			if m.race_active:
+				var p := rel(m.race_checkpoints[i])
+				draw_arc(p, 45, 0, TAU, 40, Color("#ffff4a") if i == m.race_next else Color("#497890"), 5)
+				_text(p + Vector2(0, 7), str(i + 1), 18, Color.WHITE)
+		if m.black_hole != null:
+			_draw_black_hole(rel(m.black_hole), now)
+		for n in m.nodes:
+			var p := rel(n.pos)
+			if _visible(p, half):
+				_draw_node(p, n, now)
+		if m.type == "courier":
+			_draw_terminal(rel(m.destination))
+		for o in m.discoveries:
+			var p := rel(o.pos)
+			if _visible(p, half):
+				_draw_discovery(p, o)
+		for pr in m.programs:
+			var p := rel(pr.pos)
+			if _visible(p, half):
+				_draw_program(p, pr)
 	for f in world.fuel_cells:
 		var p := rel(f.pos)
 		if _visible(p, half):
@@ -134,14 +163,16 @@ func _ship_texture(s: SimShip, now: float) -> Texture2D:
 
 
 func _draw_ship(p: Vector2, s: SimShip, now: float) -> void:
-	var size := SimWorld.SHIP_DRAW_SIZE
+	var size := s.draw_size
 	var rot := s.a + PI / 2 + int(s.hull_def.get("rotation", 0)) * PI / 2
 	var alpha := 0.25 if s.cloak else 1.0
 	draw_set_transform(p, rot, Vector2.ONE)
-	if s.thrusting:
+	if s.thrusting and not s.boss:
 		_draw_thrusters(s, size)
 	var tex := _ship_texture(s, now)
-	if tex:
+	if s.boss:
+		_draw_fuzz(size, s.color)
+	elif tex:
 		draw_texture_rect(tex, Rect2(-size / 2, -size / 2, size, size), false, Color(1, 1, 1, alpha))
 	else:
 		draw_colored_polygon(PackedVector2Array([Vector2(0, -size * 0.5), Vector2(size * 0.38, size * 0.4), Vector2(0, size * 0.24), Vector2(-size * 0.38, size * 0.4)]), s.color)
@@ -164,7 +195,7 @@ func _draw_ship(p: Vector2, s: SimShip, now: float) -> void:
 		draw_rect(Rect2(p + Vector2(-22, -size * 0.62), Vector2(44, 4)), Color("#350711"))
 		draw_rect(Rect2(p + Vector2(-22, -size * 0.62), Vector2(44 * clampf(s.hull / s.max_hull, 0, 1), 4)), Color("#52ff79"))
 	if s.team != world.player.team:
-		var label := s.name if s.team in ["Target", "Enforcers"] else "%s · %s" % [s.name, s.team]
+		var label := "%s · %s" % [s.name, s.team] if DataStore.factions().has(s.team) and s.team != "Enforcers" else s.name
 		_text(p + Vector2(0, size * 0.70), label, 10, Color("#e8f7ff"))
 		draw_rect(Rect2(p + Vector2(-14, size * 0.72 + 3), Vector2(28, 2)), s.color)
 	if s.cargo_icon:
@@ -308,3 +339,112 @@ func _draw_icon(p: Vector2, o: SimWorld.Icon, now: float) -> void:
 func _text(center: Vector2, text: String, size: int, color: Color) -> void:
 	var w := _font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
 	draw_string(_font, center - Vector2(w / 2, 0), text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
+
+
+## Inner Demon: legacy drawVectorShip "fuzz" (12-point star) in the boss colour.
+func _draw_fuzz(size: float, color: Color) -> void:
+	var pts := PackedVector2Array()
+	for i in 12:
+		var a := float(i) / 12 * TAU
+		var r := size * (0.31 if i % 2 == 1 else 0.42)
+		pts.append(Vector2(cos(a), sin(a)) * r)
+	draw_colored_polygon(pts, color)
+	pts.append(pts[0])
+	draw_polyline(pts, Color.WHITE, maxf(1, size * 0.04))
+
+
+func _draw_hazard(p: Vector2, h: SimWorld.Hazard) -> void:
+	match h.type:
+		"turret":
+			draw_set_transform(p, h.a * 0.35, Vector2.ONE)
+			for i in 6:
+				var a := TAU / 6 * (i + 1)
+				draw_set_transform(p, h.a * 0.35 + a, Vector2.ONE)
+				draw_rect(Rect2(13, -5, 15, 10), Color("#35404e"))
+			draw_set_transform(p, 0, Vector2.ONE)
+			draw_circle(Vector2.ZERO, h.r * 0.58, Color("#35404e"))
+			draw_arc(Vector2.ZERO, h.r * 0.58, 0, TAU, 24, Color("#b9d0df"), 2)
+			draw_set_transform(p, h.a, Vector2.ONE)
+			draw_line(Vector2.ZERO, Vector2(34, 0), Color("#ff5b5b"), 6)
+			draw_circle(Vector2.ZERO, 5, Color("#ffcf6b"))
+			draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+		"asteroid":
+			draw_set_transform(p, h.rot, Vector2.ONE)
+			var pts := PackedVector2Array()
+			for i in h.shape.size():
+				var a := float(i) / h.shape.size() * TAU
+				pts.append(Vector2(cos(a), sin(a)) * h.r * float(h.shape[i]))
+			draw_colored_polygon(pts, Color("#657287"))
+			pts.append(pts[0])
+			draw_polyline(pts, Color("#c8d3df"), 2)
+			draw_circle(Vector2(-h.r * 0.22, h.r * 0.08), h.r * 0.18, Color(0.08, 0.1, 0.14, 0.45))
+			draw_circle(Vector2(h.r * 0.20, -h.r * 0.18), h.r * 0.12, Color(0.08, 0.1, 0.14, 0.45))
+			draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+		_:
+			var pulse := h.r + sin(h.a * 5) * 5
+			for i in 4:
+				draw_circle(p, pulse * (1.0 - i * 0.22), Color(0.56, 0.18, 0.86, 0.10 + i * 0.07))
+			for i in 3:
+				var base := h.a + TAU / 3 * i
+				draw_arc(p, h.r * (0.45 + i * 0.17), base - 0.7, base + 0.7, 10, Color("#d65cff"), 2)
+			_text(p + Vector2(0, 4), "V", 12, Color.WHITE)
+
+
+func _draw_black_hole(p: Vector2, now: float) -> void:
+	var frame := int(now / 0.15) % 8
+	draw_texture_rect_region(_black_hole, Rect2(p - Vector2(80, 80), Vector2(160, 160)), Rect2(frame * 256, 0, 256, 256))
+
+
+func _draw_node(p: Vector2, n: MissionController.MissionNode, now: float) -> void:
+	var pulse := 0.65 + 0.35 * sin(now * 4.0 + (n.phase if n.phase != 0 else n.index))
+	var stroke := Color("#65f49d") if n.complete else Color("#ffe56b")
+	var fill := Color(0.29, 1, 0.57, 0.24) if n.complete else Color(1, 0.86, 0.29, 0.13)
+	match n.kind:
+		"scan":
+			var a := 0.35 if n.complete else pulse
+			draw_arc(p, 38 + 12 * pulse, 0, TAU, 32, Color(stroke, a), 3)
+			draw_circle(p, 10, fill)
+			draw_arc(p, 10, 0, TAU, 16, stroke, 3)
+		"defrag":
+			var pts := PackedVector2Array([p + Vector2(0, -28), p + Vector2(28, 0), p + Vector2(0, 28), p + Vector2(-28, 0)])
+			draw_colored_polygon(pts, fill)
+			pts.append(pts[0])
+			draw_polyline(pts, stroke, 3)
+			_text(p + Vector2(0, 6), str(n.index + 1), 18, Color.WHITE)
+		_:
+			draw_rect(Rect2(p - Vector2(24, 20), Vector2(48, 40)), fill)
+			draw_rect(Rect2(p - Vector2(24, 20), Vector2(48, 40)), stroke, false, 3)
+			draw_rect(Rect2(p + Vector2(-19, -14), Vector2(38, 7)), Win95.NAVY)
+			draw_rect(Rect2(p + Vector2(-14, 0), Vector2(28, 5)), Color.WHITE)
+	if not n.complete and n.progress > 0:
+		var frac := clampf(n.progress / (1.4 if n.kind == "scan" else 2.0), 0, 1)
+		draw_arc(p, 31, -PI / 2, -PI / 2 + TAU * frac, 32, Color("#55ffff"), 4)
+
+
+func _draw_terminal(p: Vector2) -> void:
+	draw_rect(Rect2(p - Vector2(36, 26), Vector2(72, 52)), Color(0.27, 1, 0.75, 0.12))
+	draw_rect(Rect2(p - Vector2(42, 32), Vector2(84, 64)), Color("#73ffca"), false, 4)
+	_text(p + Vector2(0, -2), "COURIER", 11, Color.WHITE)
+	_text(p + Vector2(0, 12), "TERMINAL", 11, Color.WHITE)
+
+
+func _draw_discovery(p: Vector2, o: MissionController.Discovery) -> void:
+	draw_set_transform(p, sin(o.spin) * 0.08, Vector2.ONE)
+	var col := Color("#ff83df") if o.kind == "vendor" else (Color("#a77cff") if o.kind == "quarantine" else Color("#e4b84a"))
+	draw_rect(Rect2(-17, -14, 34, 28), col)
+	draw_rect(Rect2(-17, -14, 34, 28), Color.WHITE, false, 2)
+	draw_rect(Rect2(-12, -9, 24, 6), Color("#111111"))
+	_text(Vector2(0, 10), "$" if o.kind == "vendor" else ("!" if o.kind == "quarantine" else "?"), 11, Color.WHITE)
+	draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+
+
+func _draw_program(p: Vector2, pr: MissionController.Program) -> void:
+	var q := p + Vector2(0, sin(pr.phase * 2) * 3)
+	var col := (Color("#62ffbd") if pr.rescued or pr.status == "linked" else Color("#ffe56b")) if pr.objective else Color("#73cfff")
+	draw_rect(Rect2(q - Vector2(12, 11), Vector2(24, 22)), col)
+	draw_rect(Rect2(q - Vector2(12, 11), Vector2(24, 22)), Color.WHITE, false, 2)
+	draw_rect(Rect2(q + Vector2(-10, -9), Vector2(20, 5)), Win95.NAVY)
+	draw_rect(Rect2(q + Vector2(-6, 0), Vector2(4, 4)), Color.WHITE)
+	draw_rect(Rect2(q + Vector2(3, 0), Vector2(4, 4)), Color.WHITE)
+	draw_rect(Rect2(q + Vector2(-5, 8), Vector2(10, 2)), Color("#111111"))
+	_text(q + Vector2(0, 32), pr.name, 10, Color.WHITE)

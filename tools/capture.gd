@@ -24,27 +24,38 @@ func _ready() -> void:
 	get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")
 	await _frames(20)
 	_shot("menu")
-	AppState.launch = {"mode": "sandbox", "threat": 3}
-	get_tree().change_scene_to_file("res://scenes/mission/mission.tscn")
-	await _frames(10)
-	Input.action_press("thrust")
-	Input.action_press("fire")
-	await _frames(70)
-	Input.action_press("turn_right")
-	await _frames(25)
-	Input.action_release("turn_right")
-	await _frames(40)
-	_shot("sandbox")
-	var mission := get_tree().current_scene
-	var w: SimWorld = mission.world
-	var i := 0
-	for s in w.ships:
-		s.pos = w.player.pos + Vector2(260 + i * 90, -140 + i * 70)
-		i += 1
-	await _frames(45)
-	_shot("combat")
-	Input.action_release("thrust")
-	Input.action_release("fire")
+	get_tree().change_scene_to_file("res://scenes/setup/setup.tscn")
+	await _frames(20)
+	_shot("setup")
+	var c := Campaign.create({"pilot": "Ace", "team": "Avengers"})
+	c["credits"] = 640
+	c["noble"] = 4
+	SaveService.save_campaign(c)
+	get_tree().change_scene_to_file("res://scenes/directory_map/directory_map.tscn")
+	await _frames(20)
+	_shot("map")
+	for spec in [[1, "rescue"], [5, "blackhole"], [11, "boss"], [8, "defrag"]]:
+		AppState.launch = {"mode": "campaign", "dir_id": spec[0]}
+		get_tree().change_scene_to_file("res://scenes/mission/mission.tscn")
+		await _frames(10)
+		var w: SimWorld = get_tree().current_scene.world
+		w.player.invuln = 999
+		if spec[1] == "blackhole":
+			w.icons.clear()
+			await _frames(3)
+			w.player.pos = w.mission.black_hole + Vector2(-260, 120)
+		elif spec[1] == "boss":
+			for s in w.ships:
+				if s.boss:
+					w.player.pos = s.pos + Vector2(-330, 60)
+		elif w.mission.nodes.size() > 0:
+			w.player.pos = w.mission.nodes[0].pos + Vector2(-150, 60)
+		elif w.mission.programs.size() > 0:
+			w.player.pos = w.mission.programs[-1].pos + Vector2(-150, 60)
+		Input.action_press("fire")
+		await _frames(50)
+		Input.action_release("fire")
+		_shot("mission_" + spec[1])
 	AppState.launch = {"mode": "test", "threat": 1}
 	get_tree().change_scene_to_file("res://scenes/mission/mission.tscn")
 	await _frames(10)
@@ -52,6 +63,7 @@ func _ready() -> void:
 	await _frames(90)
 	_shot("test")
 	Input.action_release("thrust")
+	SaveService.reset("campaign")
 	get_tree().quit()
 
 

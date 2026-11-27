@@ -17,16 +17,18 @@ acceptance checks are verified on device. Passing CI alone isn't enough.
 - [ ] **Owner check on a phone and the RPi5**: feel, touch button size, frame rate, no stuck inputs
 - [ ] Measure Android performance on a real device (not claimed yet)
 
-## Next bounded milestone — Milestone 2a (proposed)
-1. Persistence: `SaveService` (versioned JSON in `user://`, atomic writes, backups), separate
-   campaign and factory saves, optional import of legacy `innerCore95Save` / `innerCore95Ships`
-   JSON exports.
-2. Campaign shell: new campaign (pilot, team, ship, difficulty, mode), virtual drives and the
-   directory map (`buildDirectories`, `renderMap`), mission start and finish, credits and relations.
-3. Remaining "normal directory" content: icon defenders → escorts, hazards (turret, virus,
-   asteroid), ambulance service, crime and warrant clearing.
-4. Then the mission families one at a time, each with its own legacy-derived test: race, duel,
-   black hole (with the GIF or procedural art), boss, then rescue, repair, courier, scan and defrag.
+## Milestone 2 — campaign, saves, all mission families ✅ (implemented; device check pending)
+- [x] New Operation setup (pilot, drive incl. CUSTOM names, action/strategy, difficulty, faction, ship)
+- [x] Directory map (12 directories, themes, rewards), upgrade bay (tuning, components, rare tech), relations
+- [x] SaveService (versioned, atomic, backups), continue, three separate resets, legacy JSON import
+- [x] Every mission family: icon recovery, rescue, repair, race, courier, black hole + dragon, scan, duel, defrag, Inner Demon
+- [x] Hazards, icon defenders → escorts, boss, discoveries, talking programs, ambulance, strategy autopilot
+- [x] Tests for every mission family, campaign migration and saves; the smoke run enters all 12 directories
 
-Later: Milestone 3 (full faction world), Milestone 4 (native Ship Factory, the biggest UI task),
-and Milestone 5 (polish, platform signoff).
+## Next — Milestone 4: native Ship Factory (in progress)
+Editor model (24/32/48), 48-colour palette with salvage unlocks, paint/erase/fill/mirror/rotate,
+undo/redo, mounts (3 thrusters, 4 hardpoints), stats/modules with budgets and telemetry,
+save/duplicate/delete/import/export library, starter templates, stencils, test flight, draft
+persistence.
+
+Then Milestone 3 (deeper faction world checks) and Milestone 5 (polish, platform sign-off).

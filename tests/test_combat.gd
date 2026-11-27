@@ -134,3 +134,12 @@ func test_long_simulation_is_stable() -> void:
 		check(s.pos.x >= 0 and s.pos.x <= SimWorld.W and s.pos.y >= 0 and s.pos.y <= SimWorld.H, "ship within wrapped world")
 		check(s.vel.length() <= s.ai_max_speed + 1e-3, "ship obeys speed cap")
 	check(is_finite(w.player.pos.x), "player state finite")
+
+
+func test_dispose_breaks_cycles() -> void:
+	var w := SimWorld.new()
+	var c := Campaign.create({})
+	w.setup_directory(c, c["dirs"][1], 3)
+	var weak: WeakRef = weakref(w.mission)
+	w.dispose()
+	check(weak.get_ref() == null, "mission controller freed after dispose")

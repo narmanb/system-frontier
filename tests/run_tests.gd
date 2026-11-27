@@ -22,8 +22,8 @@ func _ready() -> void:
 	var t0 := Time.get_ticks_msec()
 	for f in files:
 		var script: GDScript = load("res://tests/" + f)
-		if script == null:
-			print("LOAD FAIL ", f)
+		if script == null or not script.can_instantiate():
+			print("  FAIL %s (script failed to load/compile)" % f)
 			failures += 1
 			continue
 		var inst: Object = script.new()

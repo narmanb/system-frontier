@@ -14,11 +14,25 @@ var end_label: Label
 var _user_zoom := 1.0
 var _pinch := {}          ## touch index -> position, for touches not on flight buttons
 var _pinch_dist := 0.0
+var campaign_mode := false
+var _campaign: Dictionary = {}
+var _dir: Dictionary = {}
+var _root: Control
+var strategy_bar: StrategyBar
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_PAUSABLE
+	campaign_mode = str(AppState.launch.get("mode", "sandbox")) == "campaign"
+	if campaign_mode:
+		var loaded = SaveService.load_campaign()
+		if loaded == null:
+			get_tree().change_scene_to_file.call_deferred("res://scenes/main_menu/main_menu.tscn")
+			return
+		_campaign = loaded
+		_dir = Campaign.directory(_campaign, int(AppState.launch.get("dir_id", 0)))
 	var hull := DataStore.starter_hull(str(AppState.settings["hull"]))
+	world.dialog.connect(_on_dialog)
 	world.message.connect(func(t, d): hud.show_message(t, d))
 	world.sound.connect(func(f, d, w, v): Sfx.beep(f, d, w, v))
 	world.finished.connect(_on_finished)
@@ -33,6 +47,7 @@ func _ready() -> void:
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.theme = Win95.make_theme()
 	ui.add_child(root)
+	_root = root
 	# No window chrome in flight: pause/zoom/map live in the pause menu (Back/Esc/Start or
 	# the small pause chip); the radar window opens the tactical map when tapped.
 	hud = Hud.new()
@@ -48,13 +63,93 @@ func _ready() -> void:
 	map_view.visible = false
 	map_view.closed.connect(_toggle_map)
 	root.add_child(map_view)
+	var strategy := campaign_mode and str(_campaign.get("mode", "action")) == "strategy"
 	touch = TouchControls.new()
 	touch.visible = AppState.is_touch_ui()
+	touch.show_ambulance = campaign_mode
+	touch.flight_pads = not strategy
+	touch.ambulance_pressed.connect(_ambulance)
 	root.add_child(touch)
+	if strategy:
+		strategy_bar = StrategyBar.new()
+		strategy_bar.command.connect(func(cmd):
+			world.strategy = cmd
+			hud.show_message("Autopilot priority: %s" % cmd.to_upper(), 2.0)
+			Sfx.beep(420, 0.04))
+		root.add_child(strategy_bar)
+		get_viewport().size_changed.connect(_layout_strategy)
+		_layout_strategy()
 	_build_pause(root)
 	_build_end(root)
 	_user_zoom = float(AppState.settings.get("zoom", 1.0))
-	world.setup(hull, str(AppState.launch.get("mode", "sandbox")), int(AppState.launch.get("threat", 3)))
+	if campaign_mode:
+		world.setup_directory(_campaign, _dir)
+	else:
+		world.setup(hull, str(AppState.launch.get("mode", "sandbox")), int(AppState.launch.get("threat", 3)))
+
+
+func _layout_strategy() -> void:
+	var vs := get_viewport().get_visible_rect().size
+	var w := minf(vs.x - 24, 460)
+	strategy_bar.size = Vector2(w, 50)
+	strategy_bar.position = Vector2((vs.x - w) / 2, vs.y - 64)
+
+
+# ---------------------------------------------------------------- dialogs
+
+func _on_dialog(kind: String, payload: Dictionary) -> void:
+	AppState.release_gameplay_inputs()
+	touch.release_all()
+	var choose := func(choice: String) -> bool:
+		return world.resolve_dialog(kind, choice, payload)
+	match kind:
+		"dragon":
+			Win95.popup(_root, "Dragon Process", "A corrupted dragon guards a Noble Program inside the black hole.\n\nSpend %d credits to deploy a logic bomb, or fight it as a high-risk simulated encounter. Damage inside the simulation is restored afterward." % payload.get("cost", 40), [
+				["Logic Bomb (%d credits)" % payload.get("cost", 40), choose.bind("bomb")],
+				["Fight", choose.bind("fight")],
+				["Retreat", choose.bind("retreat")]])
+		"vendor":
+			var c := world.campaign
+			Win95.popup(_root, "Wandering Patch Program", "PATCH.GRL: \"Your hull checksum looks rough. I can install a temporary repair patch.\"\n\nHull %d/%d · Credits %d" % [roundi(world.player.hull), roundi(world.player.max_hull), c["credits"]], [
+				["Repair for 25", choose.bind("repair")],
+				["Trade 1 data core", choose.bind("trade")],
+				["Decline", choose.bind("decline")]])
+		"quarantine":
+			Win95.popup(_root, "Quarantined Cache", "A sealed cache contains unstable but valuable fabrication data.", [
+				["Purge and recover", choose.bind("purge")],
+				["Leave sealed", choose.bind("leave")]])
+
+
+## Legacy callAmbulance: refuel, repair, missiles, laser/armor upgrades, clear warrant.
+func _ambulance() -> void:
+	if not campaign_mode or world.over or world.blocked or get_tree().paused:
+		return
+	world.blocked = true
+	AppState.release_gameplay_inputs()
+	touch.release_all()
+	var list := VBoxContainer.new()
+	var credits := Win95.label("", 16, Win95.TEXT, true)
+	list.add_child(credits)
+	var rows := VBoxContainer.new()
+	list.add_child(rows)
+	var rebuild := func(again: Callable) -> void:
+		credits.text = "Ambulance docked. Credits: %d" % world.campaign["credits"]
+		for ch in rows.get_children():
+			ch.queue_free()
+		for o in world.ambulance_offers():
+			var b := Win95.button("%s — %d credits" % [o[1], o[2]], 46)
+			b.disabled = o[2] <= 0 or world.campaign["credits"] < o[2]
+			var id: String = o[0]
+			b.pressed.connect(func():
+				world.buy_ambulance(id)
+				again.call(again))
+			rows.add_child(b)
+	rebuild.call(rebuild)
+	Win95.popup(_root, "Ambulance Service", "", [["Undock", func(): world.close_dialog()]], list)
+
+
+func _exit_tree() -> void:
+	world.dispose()
 
 
 func _auto_zoom() -> float:
@@ -82,7 +177,9 @@ func _physics_process(dt: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("pause"):
+	if event.is_action_pressed("ambulance"):
+		_ambulance()
+	elif event.is_action_pressed("pause"):
 		set_paused(not get_tree().paused)
 	elif event.is_action_pressed("map"):
 		_toggle_map()
@@ -183,6 +280,10 @@ func _build_pause(root: Control) -> void:
 		zb.pressed.connect(func(): _set_zoom(_user_zoom + dz))
 		row.add_child(zb)
 	box.add_child(row)
+	if campaign_mode:
+		var amb := Win95.button("Ambulance Service")
+		amb.pressed.connect(func(): set_paused(false); _ambulance())
+		box.add_child(amb)
 	var map_btn := Win95.button("Tactical Map")
 	map_btn.pressed.connect(func(): set_paused(false); _toggle_map())
 	box.add_child(map_btn)
@@ -200,7 +301,7 @@ func _build_pause(root: Control) -> void:
 		AppState.set_setting("show_touch", next)
 		touch_btn.text = "Touch pads: %s" % next)
 	box.add_child(touch_btn)
-	var quit := Win95.button("Quit to Menu")
+	var quit := Win95.button("Retreat to Directory Map" if campaign_mode else "Quit to Menu")
 	quit.pressed.connect(_quit_to_menu)
 	box.add_child(quit)
 
@@ -220,6 +321,7 @@ func _build_end(root: Control) -> void:
 	again.pressed.connect(_restart)
 	box.add_child(again)
 	var menu := Win95.button("Main Menu")
+	menu.name = "Menu"
 	menu.pressed.connect(_quit_to_menu)
 	box.add_child(menu)
 
@@ -228,19 +330,47 @@ func _on_finished(won: bool, reason: String) -> void:
 	AppState.release_gameplay_inputs()
 	touch.release_all()
 	touch.visible = false
+	if strategy_bar:
+		strategy_bar.visible = false
+	var again := end_panel.find_child("Again", true, false) as Button
+	var menu := end_panel.find_child("Menu", true, false) as Button
 	(end_panel.get_child(0).get_child(0) as TitleBar).title = "Operation Debriefing" if won else "Ship Lost"
-	end_label.text = "%s\n\nCredits: %d" % [reason, world.campaign["credits"]]
+	if not campaign_mode:
+		end_label.text = "%s\n\nCredits: %d" % [reason, world.campaign["credits"]]
+	else:
+		var reward := {}
+		if won:
+			reward = Campaign.complete_directory(_campaign, int(_dir["id"]))
+			SaveService.save_campaign(_campaign)
+		var c := _campaign
+		var salvage := ""
+		if not reward.is_empty():
+			salvage = "\n\nRecovered: %s\nSpend alloy, circuitry and data cores in the Ship Factory library." % Campaign.reward_text(reward)
+		end_label.text = "%s\n\nCredits: %d\nDirectories cleared: %d/%d\nNoble Programs: %d/4%s" % [reason, c["credits"], c["wavesCleared"], c["dirs"].size(), c["noble"], salvage]
+		menu.text = "Directory Map"
+		again.text = "Restore Save" if not won else "Directory Map"
+		again.visible = not won
 	end_panel.visible = true
-	(end_panel.find_child("Again", true, false) as Button).grab_focus()
+	(again if again.visible else menu).grab_focus()
 
 
 func _restart() -> void:
 	get_tree().paused = false
 	AppState.save_settings()
+	if campaign_mode and world.over:
+		# Restore Save: discard this run and return to the map from the last save.
+		get_tree().change_scene_to_file("res://scenes/directory_map/directory_map.tscn")
+		return
 	get_tree().reload_current_scene()
 
 
 func _quit_to_menu() -> void:
 	get_tree().paused = false
 	AppState.save_settings()
+	if campaign_mode:
+		# Keep in-run earnings, relations and warrants (legacy kept them in memory and saved later).
+		if not world.over or not world.campaign.is_empty():
+			SaveService.save_campaign(_campaign)
+		get_tree().change_scene_to_file("res://scenes/directory_map/directory_map.tscn")
+		return
 	get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")

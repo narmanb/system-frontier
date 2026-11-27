@@ -50,8 +50,8 @@ numerically) · **verified** (compared against legacy-derived fixtures or behavi
 | Skirmisher state machine | `v723SkirmisherStep` | `skirmisher_step` | — | implemented |
 | Beam state machine | `v723BeamStep` | `beam_step` | — | implemented |
 | Collector pickup / carrier roam / cargo badge | v7.2.2 + `updateShips` 11 | `pickup_icon`, `carrier_roam` | test_dropped_cargo_protected | verified |
-| Icon defenders → escorts | `makeDefender` 0:996, updateShips | not yet spawned (escort AI ported) | — | partial |
-| Boss (Inner Demon) | `spawnBoss`, updateShips boss branch | — | — | not started |
+| Icon defenders → escorts | `makeDefender` 0:996, updateShips 11 | `_make_defender`, NpcAI defender/escort | test_defender_becomes_escort | verified |
+| Boss (Inner Demon) | `spawnBoss` 0:1005, updateShips 11 boss branch | `spawn_boss`, NpcAI boss | test_missions:test_boss | verified |
 | Faction recolor (v6.9 → v7.2.4 material) | `v69FactionRecolor`, `v724MaterialPixel` | `FactionPalette.recolor_grid` | test_recolor (20 grids, per pixel) | verified; runtime is an **intentional change** (D-007) |
 | Enforcer cockpit flash (no floating siren) | `v724PoliceGrid`, `drawShipEntity` 12:3760 | `FactionPalette.police_texture` | — | implemented |
 
@@ -63,9 +63,18 @@ numerically) · **verified** (compared against legacy-derived fixtures or behavi
 | Fuel cells | `spawnFuel`, `updateItems` | `spawn_fuel` | — | implemented |
 | Normal directory objective → exit gate | `updateMission` 0:1106 path | `_update_mission` | — | implemented |
 | Test range (targets, telemetry) | `startWave(test)` 1:1637, `update` | `_setup_test_range`, HUD | — | implemented |
-| Hazards (turret, virus, asteroid) | `spawnHazard`, `updateHazards` | — | — | not started |
-| Ten mission families (icon, rescue, repair, race, courier, black hole, scan, duel, defrag, boss) | `V64_*`, `updateMission` 11:3609 | — | — | not started (M2) |
-| Campaign, drives, directory map, upgrades, salvage, blueprints, ambulance, saves | many (see OVERRIDE_INVENTORY) | — | — | not started (M2) |
+| Hazards (turret, virus, asteroid) | `spawnHazard` 0:995, `updateHazards` 0:1100 | `spawn_hazard`, `_update_hazards` | test_boss (count) | implemented |
+| Ten mission families (icon, rescue, repair, race, courier, black hole, scan, duel, defrag, boss) | base `updateMission`, v6.4 `v64*`, v7.2.3 duel rule | `MissionController` | test_missions (one test per family) | verified |
+| Campaign create/migrate, drives, directory builder, themes | `newCampaign` v6.6, `buildDirectories` v6.4, `ensureCampaignDefaults` chain | `Campaign` | test_campaign (fixture: directories, migration) | verified |
+| Directory map, upgrade bay, relations | `renderMap` v6.6, `openUpgradeBay` v6/v6.6, `showRelations` | `directory_map.gd` | smoke run | implemented |
+| Completion rewards and salvage (theme bonus) | `v64AwardCompletion` | `Campaign.award_completion` | test_completion_rewards_once_with_theme_bonus | verified |
+| Discoveries, ambient programs | `v64TriggerDiscovery`, `v64UpdatePrograms` | `MissionController` | — | implemented |
+| Dragon encounter | `dragonEncounter` | `resolve_dialog("dragon")` | test_black_hole_dragon | verified (D-022 fix) |
+| Ambulance | `callAmbulance` | `ambulance_offers`/`buy_ambulance` | test_ambulance_and_strategy | verified |
+| Strategy mode | `updateStrategy`, #strategyControls | `_update_strategy`, `StrategyBar` | test_ambulance_and_strategy | intentional change (D-023) |
+| Saves, resets, legacy import | `saveCampaign`, `v68DoReset`, SAVE_KEY/SHIP_KEY | `SaveService` | test_saves | verified (D-027) |
+| Built-in faction ships (procedural 24×24) | `buildBuiltinShipGrid`, `v6ApplyBuiltins`, `v68ApplyRedFalconDefault` | `BuiltinShips`, data/campaign.json | test_builtin_grids_match_legacy | verified |
+| Black hole visual | v7.1 GIF at 160 px; collision r58 + 10 | sprite sheet (8 × 150 ms), `MissionController.black_hole` | — | implemented |
 | Ship Factory | `v6*`/`v61*`/`v62*`/`v65*`/`v67*` | — | — | not started (M4) |
 
 ## Presentation and platform

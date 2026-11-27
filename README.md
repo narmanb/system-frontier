@@ -7,8 +7,8 @@ fighting over them. It's an original spiritual successor to the 1990s game *Oper
 This repository holds the **native Godot 4 / GDScript port** of the earlier single-file HTML
 build. The HTML build is kept under `legacy/` as the frozen reference implementation.
 
-> **Status: Milestone 1 (flight and combat sandbox).** You can't play the campaign, directory
-> map, the ten mission families or the Ship Factory yet. See [docs/ROADMAP.md](docs/ROADMAP.md) and
+> **Status: Milestone 2 done (campaign, saves, all ten mission families).** The Ship Factory
+> is the next milestone. See [docs/ROADMAP.md](docs/ROADMAP.md) and
 > [docs/PARITY_MATRIX.md](docs/PARITY_MATRIX.md) for what's ported, what's tested, and what's left.
 
 ## What's playable now

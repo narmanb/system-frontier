@@ -35,14 +35,26 @@ func _ready() -> void:
 func _run_smoke() -> void:
 	var tree := get_tree()
 	await tree.create_timer(1.0).timeout
-	for mode in ["sandbox", "test"]:
-		launch = {"mode": mode, "threat": 5}
+	for scene in ["res://scenes/setup/setup.tscn", "res://scenes/free_flight/free_flight.tscn"]:
+		tree.change_scene_to_file(scene)
+		await tree.create_timer(0.5).timeout
+	var c := Campaign.create({"pilot": "Smoke"})
+	c["noble"] = 4
+	SaveService.save_campaign(c)
+	tree.change_scene_to_file("res://scenes/directory_map/directory_map.tscn")
+	await tree.create_timer(0.5).timeout
+	var runs := [{"mode": "sandbox", "threat": 5}, {"mode": "test", "threat": 1}]
+	for i in c["dirs"].size():
+		runs.append({"mode": "campaign", "dir_id": i})
+	for l in runs:
+		launch = l
 		tree.change_scene_to_file("res://scenes/mission/mission.tscn")
 		Input.action_press("thrust")
 		Input.action_press("fire")
 		Input.action_press("turn_left")
-		await tree.create_timer(4.0).timeout
+		await tree.create_timer(1.5).timeout
 		release_gameplay_inputs()
+	SaveService.reset("campaign")
 	print("SMOKE OK")
 	tree.quit(0)
 
@@ -71,6 +83,7 @@ func _register_inputs() -> void:
 	_action("zoom_in", [KEY_EQUAL, KEY_KP_ADD], [], [])
 	_action("zoom_out", [KEY_MINUS, KEY_KP_SUBTRACT], [], [])
 	_action("fullscreen", [KEY_F11], [], [])
+	_action("ambulance", [KEY_A], [JOY_BUTTON_RIGHT_STICK], [])
 
 
 func _action(name: String, keys: Array, buttons: Array, axes: Array) -> void:
