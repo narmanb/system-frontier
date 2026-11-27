@@ -13,7 +13,7 @@ build. The HTML build is kept under `legacy/` as the frozen reference implementa
 
 ## What's playable now
 
-The interface keeps the legacy build's Windows 95 look: a teal desktop, captioned windows, bevelled buttons and a status bar.
+The interface keeps the legacy build's Windows 95 look. In flight the HUD stays compact: a status window, an icon/missile chip bar with a pause button, and a draggable radar window. Tap the radar for the tactical map.
 
 
 - Title screen with the five retained starter hulls (Red Falcon, Nova Sting, Wisp Needle,
@@ -36,9 +36,9 @@ The interface keeps the legacy build's Windows 95 look: a teal desktop, captione
 | Thrust | ↑ (or W) | A / right trigger | ▲ (bottom right) |
 | Fire | Space | X / RB | ✳ |
 | Missile | X | Y / LB / left trigger | M |
-| Map | M | Back/Select | MAP |
-| Pause | Esc / P | Start | ‖ (top right) or Android Back |
-| Zoom | + / − / wheel | — | + / − or pinch |
+| Map | M | Back/Select | Tap the radar |
+| Pause (zoom and map are in this menu too) | Esc / P | Start | ‖ chip (top centre) or Android Back |
+| Zoom | + / − / wheel | — | Pinch, or the pause menu |
 
 There's no brake (owner decision, carried over from the HTML build). Turn around and
 counter-thrust instead. Inertia Stabilization sets how quickly you lose speed while coasting.

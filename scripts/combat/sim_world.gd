@@ -91,6 +91,7 @@ var fuel_cells: Array[FuelCell] = []
 var particles: Array[Particle] = []
 var gate_pos := Vector2(W - 180, H - 160)
 var gate_open := false
+var icons_collected := 0         ## icons picked up by the player (HUD shows collected/total)
 var over := false
 var campaign := {"team": "Avengers", "difficulty": 1.0, "missiles": 5, "laserLevel": 1, "credits": 0, "warrant": 0, "relations": {}}
 var telemetry := {"started": 0.0, "maxSpeed": 0.0, "timeTo90": -1.0, "shots": 0}
@@ -717,6 +718,7 @@ func _update_items(dt: float) -> void:
 		o.pos = Vector2(clampf(o.pos.x, 70, W - 70), clampf(o.pos.y, 70, H - 70))
 		if p.pos.distance_to(o.pos) < p.r + o.r + p.pickup_radius:
 			icons.remove_at(i)
+			icons_collected += 1
 			if o.infected:
 				p.vel += Vector2(rnd(-150, 150), rnd(-150, 150))
 				p.a += PI

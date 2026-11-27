@@ -7,8 +7,6 @@ extends Control
 ## Change from legacy: button sizes are computed in millimetres from the screen DPI rather
 ## than as a fraction of canvas size, so they stay thumb-sized on high-density phones.
 
-signal map_pressed
-
 var buttons: Array = []          ## {id, rect, action, label, round}
 var bottom_inset := 0.0          ## space reserved below the pads (HUD status bar)
 var _finger_button := {}         ## touch index -> button id
@@ -37,28 +35,29 @@ func layout() -> void:
 	var mm := _logical_per_mm()
 	var w := size_v.x
 	var h := size_v.y
-	var portrait := h > w
-	var pad := clampf(4.0 * mm, 14, 40)
-	var gap := clampf(2.5 * mm, 8, 24)
-	var turn := Vector2(clampf(17 * mm, 72, 190), clampf(14 * mm, 56, 160))
-	var main := Vector2(clampf(17 * mm, 66, 190), clampf(14 * mm, 54, 160))
-	var mini := Vector2(clampf(11 * mm, 44, 120), clampf(10 * mm, 40, 110))
-	var map_s := clampf(10 * mm, 42, 100)
-	if portrait:
-		pad = maxf(pad, h * 0.02)
+	var pad := clampf(3.5 * mm, 12, 32)
+	var gap := clampf(2.0 * mm, 6, 18)
+	var turn := Vector2(clampf(13 * mm, 60, 130), clampf(11 * mm, 50, 110))
+	var main := Vector2(clampf(13 * mm, 60, 130), clampf(11 * mm, 50, 110))
+	var mini := Vector2(clampf(9 * mm, 42, 90), clampf(8 * mm, 38, 80))
+	# Never let the left (turn) and right (fire/thrust/missile) clusters collide.
+	var left_w := turn.x * 2 + gap
+	var right_w := main.x + gap + mini.x
+	var avail := w - pad * 2 - gap * 2
+	if left_w + right_w > avail:
+		var k := avail / (left_w + right_w)
+		turn *= k; main *= k; mini *= k; gap *= k
 	var bottom := h - pad - bottom_inset
-	var lx := pad
 	var ly := bottom - turn.y
 	var right_x := w - pad - main.x
 	var thrust_y := bottom - main.y
 	var fire_y := thrust_y - main.y - gap
 	var mini_x := right_x - gap - mini.x
 	buttons = [
-		{"id": "left", "rect": Rect2(lx, ly, turn.x, turn.y), "action": "turn_left", "label": "◀"},
-		{"id": "right", "rect": Rect2(lx + turn.x + gap, ly, turn.x, turn.y), "action": "turn_right", "label": "▶"},
-		{"id": "map", "rect": Rect2(lx + turn.x + gap / 2 - map_s * 0.65, ly - map_s - gap, map_s * 1.3, map_s), "action": "", "label": "MAP"},
-		{"id": "fire", "rect": Rect2(right_x, fire_y, main.x, main.y), "action": "fire", "label": "✦"},
-		{"id": "thrust", "rect": Rect2(right_x, thrust_y, main.x, main.y), "action": "thrust", "label": "▲"},
+		{"id": "left", "rect": Rect2(pad, ly, turn.x, turn.y), "action": "turn_left", "label": "<"},
+		{"id": "right", "rect": Rect2(pad + turn.x + gap, ly, turn.x, turn.y), "action": "turn_right", "label": ">"},
+		{"id": "fire", "rect": Rect2(right_x, fire_y, main.x, main.y), "action": "fire", "label": "*"},
+		{"id": "thrust", "rect": Rect2(right_x, thrust_y, main.x, main.y), "action": "thrust", "label": "^"},
 		{"id": "missile", "rect": Rect2(mini_x, fire_y + (main.y - mini.y) / 2, mini.x, mini.y), "action": "missile", "label": "M"},
 	]
 	queue_redraw()
@@ -93,8 +92,6 @@ func _set_finger(index: int, id: String) -> void:
 		var nb := _button(id)
 		if nb.get("action", "") != "":
 			_press(nb["action"])
-		elif id == "map" and old == "":
-			map_pressed.emit()
 	queue_redraw()
 
 
@@ -134,9 +131,7 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventScreenDrag and _finger_button.has(event.index):
 		var id := _hit(event.position)
 		# Sliding onto another button switches to it; sliding off all buttons releases (legacy behaviour).
-		if _button(_finger_button[event.index]).get("id") == "map":
-			return
-		_set_finger(event.index, id if id != "map" else "")
+		_set_finger(event.index, id)
 		get_viewport().set_input_as_handled()
 
 
@@ -154,7 +149,7 @@ func _draw() -> void:
 	for b in buttons:
 		var r: Rect2 = b["rect"]
 		var on: bool = active.has(b["id"])
-		Win95.bevel(self, r, "pressed" if on else "raised", Color(Win95.FACE, 0.9) if not on else Color(Win95.LIGHT, 0.95))
+		Win95.bevel(self, r, "pressed" if on else "raised", Color(Win95.FACE, 0.78) if not on else Color(Win95.LIGHT, 0.9))
 		var c := r.get_center()
 		var k := minf(r.size.x, r.size.y) * 0.22
 		var ink := Win95.TEXT
@@ -170,6 +165,6 @@ func _draw() -> void:
 					draw_line(c - Vector2(cos(ang), sin(ang)) * k, c + Vector2(cos(ang), sin(ang)) * k, ink, 3)
 				draw_circle(c, k * 0.35, ink)
 			_:
-				var fs := int(clampf(r.size.y * (0.34 if b["id"] == "map" else 0.42), 12, 56))
+				var fs := int(clampf(r.size.y * 0.42, 12, 48))
 				var ts := Win95.bold_font().get_string_size(b["label"], HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
 				draw_string(Win95.bold_font(), c + Vector2(-ts.x / 2, fs * 0.36), b["label"], HORIZONTAL_ALIGNMENT_LEFT, -1, fs, ink)

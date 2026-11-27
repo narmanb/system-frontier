@@ -1,13 +1,19 @@
 class_name TacticalMap
-extends Control
+extends TouchRegion
 ## Full-screen tactical map (legacy `drawMap` + v7.2.2/v7.2.3 faction/cargo markers).
+## Tap anywhere (outside the flight pads) to close.
+
+signal closed
 
 var world: SimWorld
 
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func _on_release(_p: Vector2) -> void:
+	closed.emit()
 
 
 func _process(_dt: float) -> void:
@@ -27,7 +33,7 @@ func _draw() -> void:
 	var map_size := Vector2(SimWorld.W, SimWorld.H) * k
 	var win := Rect2(Vector2((vs.x - map_size.x) / 2 - 8, top), map_size + Vector2(16, 44))
 	Win95.bevel(self, win, "window", Win95.FACE)
-	Win95.caption(self, Rect2(win.position + Vector2(3, 3), Vector2(win.size.x - 6, 24)), "Tactical Map — press M / MAP to close", 13)
+	Win95.caption(self, Rect2(win.position + Vector2(3, 3), Vector2(win.size.x - 6, 24)), "Tactical Map — tap to close", 13)
 	var origin := win.position + Vector2(8, 34)
 	Win95.bevel(self, Rect2(origin - Vector2(2, 2), map_size + Vector2(4, 4)), "sunken", Color("#06101c"))
 	var m := func(p: Vector2) -> Vector2: return origin + p * k

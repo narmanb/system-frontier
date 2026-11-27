@@ -7,6 +7,7 @@ var view: WorldView
 var hud: Hud
 var touch: TouchControls
 var map_view: TacticalMap
+var radar: RadarWindow
 var pause_panel: PanelContainer
 var end_panel: PanelContainer
 var end_label: Label
@@ -32,26 +33,23 @@ func _ready() -> void:
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.theme = Win95.make_theme()
 	ui.add_child(root)
-	var bar := TitleBar.new()
-	bar.title = "TEST RANGE" if str(AppState.launch.get("mode")) == "test" else "SANDBOX://FLIGHT"
-	bar.add_button("zoom_out", func(): _set_zoom(_user_zoom - 0.15))
-	bar.add_button("zoom_in", func(): _set_zoom(_user_zoom + 0.15))
-	bar.add_button("map", _toggle_map)
-	bar.add_button("pause", set_paused.bind(true))
-	bar.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	# No window chrome in flight: pause/zoom/map live in the pause menu (Back/Esc/Start or
+	# the small pause chip); the radar window opens the tactical map when tapped.
+	hud = Hud.new()
+	hud.world = world
+	hud.pause_pressed.connect(set_paused.bind(true))
+	root.add_child(hud)
+	radar = RadarWindow.new()
+	radar.world = world
+	radar.open_map.connect(_toggle_map)
+	root.add_child(radar)
 	map_view = TacticalMap.new()
 	map_view.world = world
 	map_view.visible = false
+	map_view.closed.connect(_toggle_map)
 	root.add_child(map_view)
-	hud = Hud.new()
-	hud.world = world
-	root.add_child(hud)
-	root.add_child(bar)
-	hud.top_inset = 40.0 if AppState.is_touch_ui() else 30.0
 	touch = TouchControls.new()
-	touch.bottom_inset = Hud.STATUS_BAR_H
 	touch.visible = AppState.is_touch_ui()
-	touch.map_pressed.connect(_toggle_map)
 	root.add_child(touch)
 	_build_pause(root)
 	_build_end(root)
@@ -124,6 +122,8 @@ func _toggle_map() -> void:
 	map_view.visible = not map_view.visible
 	view.visible = not map_view.visible
 	hud.visible = not map_view.visible
+	radar.visible = not map_view.visible
+	radar.cancel()
 
 
 func set_paused(p: bool) -> void:
@@ -175,6 +175,17 @@ func _build_pause(root: Control) -> void:
 	resume.name = "Resume"
 	resume.pressed.connect(set_paused.bind(false))
 	box.add_child(resume)
+	var row := HBoxContainer.new()
+	for spec in [["Zoom -", -0.15], ["Zoom +", 0.15]]:
+		var zb := Win95.button(spec[0])
+		zb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var dz: float = spec[1]
+		zb.pressed.connect(func(): _set_zoom(_user_zoom + dz))
+		row.add_child(zb)
+	box.add_child(row)
+	var map_btn := Win95.button("Tactical Map")
+	map_btn.pressed.connect(func(): set_paused(false); _toggle_map())
+	box.add_child(map_btn)
 	var restart := Win95.button("Restart")
 	restart.pressed.connect(_restart)
 	box.add_child(restart)

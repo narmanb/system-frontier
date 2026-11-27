@@ -78,6 +78,7 @@ func _draw() -> void:
 			_draw_icon(p, o, now)
 	if world.gate_open:
 		_draw_gate(rel(world.gate_pos), now)
+		_draw_gate_pointer(rel(world.gate_pos), now)
 	for s in world.ships:
 		var p := rel(s.pos)
 		if _visible(p, half):
@@ -223,6 +224,23 @@ func _draw_gate(p: Vector2, now: float) -> void:
 	for i in 4:
 		var base := now + i * TAU / 4
 		draw_arc(p, 31, base - 0.55, base + 0.55, 12, glow, 2)
+
+
+## Edge arrow toward the open exit gate when it is off-screen (port addition, D-018).
+func _draw_gate_pointer(p: Vector2, now: float) -> void:
+	var half := get_viewport_rect().size / 2 / zoom
+	if absf(p.x) < half.x - 40 and absf(p.y) < half.y - 40:
+		return
+	var dir := p.normalized()
+	var edge := half - Vector2(56, 56) / zoom
+	var t := minf(edge.x / maxf(0.001, absf(dir.x)), edge.y / maxf(0.001, absf(dir.y)))
+	var at := dir * t
+	var pulse := 0.65 + 0.35 * sin(now * 6.0)
+	var k := 14.0 / zoom
+	var pts := PackedVector2Array([at + dir * k * 1.4, at + dir.orthogonal() * k * 0.8 - dir * k * 0.6, at - dir.orthogonal() * k * 0.8 - dir * k * 0.6])
+	draw_colored_polygon(pts, Color(0.38, 0.95, 1.0, pulse))
+	pts.append(pts[0])
+	draw_polyline(pts, Color(0, 0, 0, 0.8), 1.5 / zoom)
 
 
 func _draw_fuel(p: Vector2, f: SimWorld.FuelCell) -> void:
