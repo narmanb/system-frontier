@@ -70,6 +70,10 @@ func _ready() -> void:
 	touch.flight_pads = not strategy
 	touch.ambulance_pressed.connect(_ambulance)
 	root.add_child(touch)
+	AppState.input_mode_changed.connect(func(_g):
+		touch.visible = AppState.is_touch_ui() and not get_tree().paused and not world.over
+		if not touch.visible:
+			touch.release_all())
 	if strategy:
 		strategy_bar = StrategyBar.new()
 		strategy_bar.command.connect(func(cmd):

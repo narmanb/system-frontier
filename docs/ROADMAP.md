@@ -14,7 +14,7 @@ acceptance checks are verified on device. Passing CI alone isn't enough.
 - [x] Player flight, fuel, heat, shield, cloak, repair, lasers, homing missiles, damage and destruction
 - [x] NPC traffic with v7.2.3/v7.2.4 AI: collectors and carriers, hostile, skirmisher, beam, Enforcer, faction war, retaliation
 - [x] Keyboard, gamepad, multi-touch, pause, zoom, map, fullscreen, test range
-- [ ] **Owner check on a phone and the RPi5**: feel, touch button size, frame rate, no stuck inputs
+- [ ] **Owner check on a phone and the Retroid Pocket 5**: feel, touch button size, frame rate, no stuck inputs
 - [ ] Measure Android performance on a real device (not claimed yet)
 
 ## Milestone 2 — campaign, saves, all mission families ✅ (implemented; device check pending)
@@ -33,7 +33,7 @@ acceptance checks are verified on device. Passing CI alone isn't enough.
 - [x] Library (save/duplicate/delete/clipboard import-export), draft autosave, assign to campaign, test flight
 
 ## Remaining — Milestone 3/5 polish and sign-off
-- Owner playtest on phone + RPi5; tune touch sizes, HUD, factory layout on real devices
+- Owner playtest on phone + Retroid Pocket 5 (Android handheld with gamepad); tune touch sizes, HUD, factory layout on real devices
 - Deeper faction-world review (NPC-vs-NPC long runs, relation effects), balancing
 - Release signing (when authorised), app icon variants, optional web hosting
 - Move the legacy HTML out of the public repo once the owner signs off the port (owner request)

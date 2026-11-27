@@ -43,22 +43,20 @@ The interface keeps the legacy build's Windows 95 look. In flight the HUD stays 
 There's no brake (owner decision, carried over from the HTML build). Turn around and
 counter-thrust instead. Inertia Stabilization sets how quickly you lose speed while coasting.
 
-## Getting test builds (APK, Raspberry Pi 5, Windows)
+## Getting test builds (APK)
 
-GitHub Actions builds every platform. Nothing has to be built locally.
+Every push that changes game files builds a debug APK. GitHub Actions publishes it as a plain
+`.apk` at a fixed link, so there's no zip to unpack:
 
-1. Open the repository's **Actions** tab, then **Export builds**.
-2. Pick the latest successful run. If you want a fresh build, use **Run workflow**.
-3. Download an artifact:
-   - `SystemFrontier-android-debug-…`: a zip containing the APK. Sideload it on your phone and
-     allow "install unknown apps".
-   - `SystemFrontier-linux-arm64-rpi5-…`: a Raspberry Pi 5 binary. Run
-     `chmod +x SystemFrontier.arm64 && ./SystemFrontier.arm64`. If it complains about OpenGL,
-     run `./SystemFrontier.arm64 --rendering-driver opengl3_es`.
-   - `SystemFrontier-windows-…`, `SystemFrontier-linux-x86_64-…`, `SystemFrontier-web-…`
-     (the web build has to be served over HTTP; it doesn't run from a file).
+**https://github.com/narmanb/system-frontier/releases/download/dev-latest/SystemFrontier.apk**
 
-Artifacts are kept for 7 days.
+The same file is on the repository's Releases page under "Latest test build". It works on
+Android phones and on the Retroid Pocket 5. On the Retroid the built-in controls work as a
+gamepad, and the on-screen pads hide automatically while you use them (set Touch pads to
+"auto"). They come back when you touch the screen.
+
+Windows, Linux and Web builds are only made on request: Actions → **Export builds** →
+**Run workflow** → platforms: `all`. They're also made for version tags.
 
 **Updating the APK in place:** Android only installs an update over an existing build when both
 were signed with the same key. The workflow keeps a generated debug key in the Actions cache.
@@ -71,8 +69,6 @@ keytool -genkeypair -keystore debug.keystore -storepass android -alias androidde
   -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
 base64 -w0 debug.keystore   # paste the output into the secret
 ```
-
-That key is for debug builds only. Release signing isn't set up yet.
 
 ## Developing
 

@@ -3,6 +3,11 @@ extends Node
 ## Gameplay simulation never reads this directly; scenes pass values in.
 
 signal settings_changed
+signal input_mode_changed(using_gamepad: bool)
+
+## True after gamepad input, false after a screen touch. With show_touch = "auto" the
+## on-screen pads hide while a gamepad (e.g. Retroid Pocket controls) is in use.
+var using_gamepad := false
 
 const SETTINGS_PATH := "user://settings.json"
 const SETTINGS_VERSION := 1
@@ -157,7 +162,7 @@ func is_touch_ui() -> bool:
 	match str(settings["show_touch"]):
 		"on": return true
 		"off": return false
-	return DisplayServer.is_touchscreen_available() or OS.has_feature("mobile")
+	return (DisplayServer.is_touchscreen_available() or OS.has_feature("mobile")) and not using_gamepad
 
 
 func toggle_fullscreen() -> void:
@@ -167,6 +172,16 @@ func toggle_fullscreen() -> void:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+
+
+func _input(event: InputEvent) -> void:
+	var pad := event is InputEventJoypadButton or (event is InputEventJoypadMotion and absf(event.axis_value) > 0.5)
+	if pad and not using_gamepad:
+		using_gamepad = true
+		input_mode_changed.emit(true)
+	elif event is InputEventScreenTouch and using_gamepad:
+		using_gamepad = false
+		input_mode_changed.emit(false)
 
 
 func _unhandled_input(event: InputEvent) -> void:

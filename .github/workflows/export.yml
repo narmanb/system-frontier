@@ -1,9 +1,16 @@
 name: Export builds
 
-# Debug Android APK, Windows, Linux x86_64, Linux arm64 (Raspberry Pi 5) and Web.
-# Runs on manual dispatch, version tags, and pushes that touch game files.
+# Default: Android debug APK only, published as a plain .apk on the "dev-latest"
+# pre-release (fixed download link). Other platforms (Windows, Linux x86_64/arm64, Web)
+# only when requested via "Run workflow" → platforms: all, or on a version tag.
 on:
   workflow_dispatch:
+    inputs:
+      platforms:
+        description: "Which builds to make"
+        type: choice
+        options: [android, all]
+        default: android
   push:
     tags: ["v*"]
     branches: ["**"]
@@ -29,6 +36,10 @@ jobs:
   export:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: write   # only to update the dev-latest pre-release with the APK
+    env:
+      ALL_PLATFORMS: ${{ github.event.inputs.platforms == 'all' || startsWith(github.ref, 'refs/tags/v') }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
@@ -76,8 +87,6 @@ jobs:
       - name: Configure Godot editor settings (Android SDK, JDK, keystore)
         run: |
           SDK="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
-          echo "Android SDK: $SDK"
-          ls "$SDK/build-tools" "$SDK/platform-tools" | head -20
           mkdir -p ~/.config/godot
           for f in editor_settings-4.tres editor_settings-4.7.tres; do
             {
@@ -91,30 +100,36 @@ jobs:
               echo 'export/android/debug_keystore_pass = "android"'
             } > ~/.config/godot/$f
           done
-          cat ~/.config/godot/editor_settings-4.7.tres
 
       - name: Import project
         run: ~/godot-bin/godot --headless --path . --editor --import
 
-      - name: Export all presets
+      - name: Export
         run: |
           export GODOT_ANDROID_KEYSTORE_DEBUG_PATH="$HOME/android-debug/debug.keystore"
           export GODOT_ANDROID_KEYSTORE_DEBUG_USER="androiddebugkey"
           export GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD="android"
           mkdir -p build/android build/windows build/linux-x86_64 build/linux-arm64 build/web
+          # Linux x86_64 is always built (not published) so CI can smoke-run the game.
+          presets=("Android" "Linux x86_64")
+          if [ "$ALL_PLATFORMS" = "true" ]; then
+            presets+=("Windows Desktop" "Linux arm64 (Raspberry Pi 5)" "Web")
+          fi
           status=0
-          for p in "Android" "Windows Desktop" "Linux x86_64" "Linux arm64 (Raspberry Pi 5)" "Web"; do
+          for p in "${presets[@]}"; do
             echo "::group::Export $p"
             log="export-$(echo "$p" | tr ' ()' '___').log"
             ~/godot-bin/godot --headless --path . --export-debug "$p" > "$log" 2>&1 || status=1
-            cat "$log"
+            grep -E "ERROR|WARNING" "$log" | head -20 || true
             echo "::endgroup::"
           done
           ls -la build/*/
-          # Never report success unless every artifact exists and is non-empty.
-          for f in build/android/SystemFrontier-debug.apk build/windows/SystemFrontier.exe \
-                   build/linux-x86_64/SystemFrontier.x86_64 build/linux-arm64/SystemFrontier.arm64 \
-                   build/web/index.html build/web/index.wasm; do
+          need=(build/android/SystemFrontier-debug.apk build/linux-x86_64/SystemFrontier.x86_64)
+          if [ "$ALL_PLATFORMS" = "true" ]; then
+            need+=(build/windows/SystemFrontier.exe build/linux-arm64/SystemFrontier.arm64 build/web/index.html build/web/index.wasm)
+          fi
+          # Never report success unless every requested artifact exists and is non-empty.
+          for f in "${need[@]}"; do
             [ -s "$f" ] || { echo "::error::missing export output $f"; status=1; }
           done
           exit $status
@@ -125,43 +140,44 @@ jobs:
           BT=$(ls -d "$SDK"/build-tools/* | sort -V | tail -1)
           "$BT/apksigner" verify --print-certs build/android/SystemFrontier-debug.apk | head -3
 
-      - name: Smoke-run Linux build (menu -> sandbox -> test range)
+      - name: Smoke-run the game (menus, factory, every campaign directory)
         run: |
           chmod +x build/linux-x86_64/SystemFrontier.x86_64
-          timeout 60 build/linux-x86_64/SystemFrontier.x86_64 --headless -- --smoke 2>&1 | tee smoke.log
+          timeout 120 build/linux-x86_64/SystemFrontier.x86_64 --headless -- --smoke 2>&1 | tee smoke.log
           grep -q "SMOKE OK" smoke.log
           ! grep -E "SCRIPT ERROR" smoke.log
 
-      - name: Name artifacts
-        id: meta
+      - name: Publish APK to the dev-latest pre-release (plain .apk, fixed link)
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           VER=$(grep -oP 'config/version="\K[^"]+' project.godot)
-          TAG="${VER}-${GITHUB_SHA::7}"
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          mv build/android/SystemFrontier-debug.apk "build/android/SystemFrontier-${TAG}-debug.apk"
+          SHORT=${GITHUB_SHA::7}
+          cp build/android/SystemFrontier-debug.apk SystemFrontier.apk
+          NOTES="Debug APK for testing (Android phone / Retroid Pocket 5). Version ${VER}, commit ${SHORT} on ${GITHUB_REF_NAME}. Built $(date -u +'%Y-%m-%d %H:%M UTC')."
+          gh release delete dev-latest --cleanup-tag --yes 2>/dev/null || true
+          gh release create dev-latest SystemFrontier.apk --prerelease --target "$GITHUB_SHA" \
+            --title "Latest test build (${VER}-${SHORT})" --notes "$NOTES"
+          echo "APK: https://github.com/${GITHUB_REPOSITORY}/releases/download/dev-latest/SystemFrontier.apk" >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Name desktop/web artifacts
+        if: env.ALL_PLATFORMS == 'true'
+        id: meta
+        run: echo "tag=$(grep -oP 'config/version="\K[^"]+' project.godot)-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: SystemFrontier-android-debug-${{ steps.meta.outputs.tag }}
-          path: build/android/*.apk
-          retention-days: 7
-          compression-level: 0
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: SystemFrontier-linux-arm64-rpi5-${{ steps.meta.outputs.tag }}
-          path: build/linux-arm64/
-          retention-days: 7
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: env.ALL_PLATFORMS == 'true'
         with:
           name: SystemFrontier-windows-${{ steps.meta.outputs.tag }}
           path: build/windows/
           retention-days: 7
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: env.ALL_PLATFORMS == 'true'
         with:
-          name: SystemFrontier-linux-x86_64-${{ steps.meta.outputs.tag }}
-          path: build/linux-x86_64/
+          name: SystemFrontier-linux-arm64-${{ steps.meta.outputs.tag }}
+          path: build/linux-arm64/
           retention-days: 7
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: env.ALL_PLATFORMS == 'true'
         with:
           name: SystemFrontier-web-${{ steps.meta.outputs.tag }}
           path: build/web/
