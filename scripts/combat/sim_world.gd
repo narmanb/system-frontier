@@ -101,6 +101,7 @@ var mission: MissionController  ## objectives + mission objects (null in test ra
 var hazards: Array[Hazard] = []
 var blocked := false            ## a dialog (dragon, vendor, shop…) is open
 var strategy := "collect"       ## strategy-mode autopilot priority
+var player_kills := 0           ## ships destroyed by the player this run
 var threat := 3                 ## directory difficulty
 var player: SimShip
 var ships: Array[SimShip] = []
@@ -161,6 +162,52 @@ func setup_directory(c: Dictionary, d: Dictionary, seed_value := -1) -> void:
 	player.team = str(c.get("team", "Avengers"))
 	_spawn_directory(d, true)
 	sfx(330, 0.1)
+
+
+## EXPERIMENTAL — Recycle Bin endless survival: escalating waves of hostile programs.
+func setup_endless(hull: Dictionary, seed_value := -1) -> void:
+	if seed_value >= 0:
+		rng.seed = seed_value
+	else:
+		rng.randomize()
+	mode = "endless"
+	dir_type = "endless"
+	threat = 1
+	var team: String = campaign["team"]
+	var rel := {}
+	var fac := DataStore.factions()
+	for f in fac:
+		rel[f] = float(fac[team]["bias"].get(f, 0))
+	rel[team] = 100.0
+	campaign["relations"] = rel
+	campaign["armorLevel"] = 1
+	campaign["salvage"] = {"alloy": 0, "circuitry": 0, "data": 0}
+	player = make_player(hull)
+	for i in 4:
+		spawn_fuel()
+	mission = MissionController.new(self, {"id": -2, "name": "RECYCLE BIN", "type": "endless", "difficulty": 1})
+	mission.start()
+	sfx(330, 0.1)
+
+
+## A smaller, orange cousin of the Inner Demon that guards every fifth Recycle Bin wave.
+func spawn_purge_daemon(level: int) -> SimShip:
+	var s := SimShip.new()
+	s.id = _id()
+	s.pos = far_spawn(600)
+	s.r = 40
+	s.hull = 220 + 60 * level
+	s.max_hull = s.hull
+	s.team = "Daemon"
+	s.color = Color("#ff8a1e")
+	s.ai = "boss"
+	s.boss = true
+	s.name = "PURGE DAEMON Mk %d" % level
+	s.hull_def = {"gridSize": 24}
+	s.draw_size = 104
+	ships.append(s)
+	msg("PURGE DAEMON Mk %d detected. It feeds on deleted files." % level)
+	return s
 
 
 func _spawn_directory(d: Dictionary, with_hazards: bool) -> void:
@@ -331,7 +378,7 @@ func spawn_icon() -> Icon:
 	o.vel = Vector2(cos(ang), sin(ang)) * spd
 	o.drift_timer = rnd(1.8, 4.2)
 	icons.append(o)
-	if mode != "test" and rng.randf() < 0.16 + threat * 0.07:
+	if not mode in ["test", "endless"] and rng.randf() < 0.16 + threat * 0.07:
 		ships.append(_make_defender(o))
 	return o
 
@@ -450,7 +497,7 @@ func spawn_ai() -> SimShip:
 			factions.append(f)
 	var team: String = pick(factions)
 	var rel: float = campaign["relations"].get(team, 0.0)
-	var hostile := dir_type == "duel" or (rel < -25 and rng.randf() < 0.28 + threat * 0.05) or rng.randf() < 0.06 + threat * 0.055
+	var hostile := dir_type in ["duel", "endless"] or (rel < -25 and rng.randf() < 0.28 + threat * 0.05) or rng.randf() < 0.06 + threat * 0.055
 	var at := far_spawn(720 - threat * 35)
 	var weights: Dictionary = DataStore.npc_archetypes()["hostileWeights" if hostile else "collectorWeights"]
 	var s := _make_npc(_weighted(weights), team, hostile, at)
@@ -838,12 +885,13 @@ func destroy_ship(s: SimShip, killer: SimShip) -> void:
 	if s.boss:
 		sfx(65, 0.5, "sawtooth", 0.05)
 	if killer == player:
+		player_kills += 1
 		campaign["credits"] += 0 if s.boss else 8 + threat * 3
 		if s.team == "Enforcers":
 			crime("Attacked an Enforcer", 40)
 		if campaign["relations"].has(s.team):
 			campaign["relations"][s.team] -= 10
-		if s.boss:
+		if s.boss and mode != "endless":
 			gate_open = true
 			msg("INNER DEMON DEFEATED. CORE GATE OPEN.")
 

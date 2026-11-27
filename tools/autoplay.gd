@@ -17,6 +17,7 @@ var minutes := 4.0
 var out_path := "res://docs/PLAYTEST_REPORT.md"
 var strict := false
 var strategy := false   ## --strategy: campaign in strategy mode; the bot only picks autopilot priorities
+var endless := false    ## --endless: Recycle Bin survival balance runs (experimental)
 
 
 func _ready() -> void:
@@ -26,6 +27,11 @@ func _ready() -> void:
 		if a.begins_with("--out="): out_path = a.substr(6)
 		if a == "--strict": strict = true
 		if a == "--strategy": strategy = true
+		if a == "--endless": endless = true
+	if endless:
+		_endless_runs()
+		get_tree().quit(0)
+		return
 	var rows := []
 	var t0 := Time.get_ticks_msec()
 	for drive in ["SYSTEM"]:
@@ -96,6 +102,32 @@ func _run(drive: String, dir_index: int, diff: float, seed_value: int) -> Dictio
 	stats["shots"] = w.telemetry.shots
 	w.dispose()
 	return stats
+
+
+func _endless_runs() -> void:
+	var lines := ["# Recycle Bin balance (bot pilot, %d-minute cap)" % int(minutes), "", "| Hull | Seed | Waves cleared | Score | Kills | Time | Ambulance |", "|---|---|---|---|---|---|---|"]
+	for hull_id in ["redFalcon", "blockadeRam", "wispNeedle"]:
+		for s in seeds:
+			var w := SimWorld.new()
+			w.setup_endless(DataStore.starter_hull(hull_id), 500 + s)
+			var amb := 0
+			for i in int(minutes * 60.0 / DT):
+				if w.over:
+					break
+				var p := w.player
+				if w.mission.wave_state == "intermission" and (p.hull < p.max_hull * 0.6 or p.fuel < p.max_fuel * 0.4) and int(w.campaign["credits"]) > 30:
+					w.buy_ambulance("hull")
+					w.buy_ambulance("fuel")
+					amb += 1
+				w.step(DT, _pilot(w))
+			var m := w.mission
+			lines.append("| %s | %d | %d | %d | %d | %ds | %d |" % [hull_id, s, m.wave - (0 if m.wave_state == "intermission" else 1), m.score, w.player_kills, int(w.time), amb])
+			w.dispose()
+	var text := "\n".join(lines) + "\n"
+	print(text)
+	var f := FileAccess.open(out_path, FileAccess.WRITE)
+	if f:
+		f.store_string(text)
 
 
 ## Scripted pilot → the same input dictionary the player's controls produce.

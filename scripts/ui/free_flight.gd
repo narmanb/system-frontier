@@ -78,6 +78,9 @@ func _ready() -> void:
 	var launch := _grid_button(grid, "Flight Sandbox", _launch.bind("sandbox"))
 	_grid_button(grid, "Test Range", _launch.bind("test"))
 	_threat_btn = _grid_button(grid, "", func(): _threat = _threat % 5 + 1; _update_threat())
+	var rec := SaveService.records()
+	var bin := _grid_button(grid, "Recycle Bin (Endless)\nBest %d · wave %d" % [rec["best_score"], rec["best_wave"]], _launch.bind("endless"))
+	bin.tooltip_text = "Experimental: survive escalating waves. Score from kills, recovered files and cleared waves."
 	_grid_button(grid, "Back to Menu", _back)
 	var touch_btn := _grid_button(grid, "", func(): pass)
 	var upd_touch := func(): touch_btn.text = "Touch pads: %s" % AppState.settings["show_touch"]

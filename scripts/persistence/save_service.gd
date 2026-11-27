@@ -13,6 +13,7 @@ const CAMPAIGN := "user://campaign.json"
 const SHIPS := "user://ships.json"
 const DRAFT := "user://factory_draft.json"
 const RECENT_COLORS := "user://recent_colors.json"
+const RECORDS := "user://records.json"
 
 static var root := "user://"   ## overridable by tests
 
@@ -101,6 +102,29 @@ static func save_custom_ships(ships: Array) -> bool:
 	return write_json(SHIPS, "ships", out)
 
 
+# ---------------------------------------------------------------- records (experimental)
+
+static func records() -> Dictionary:
+	var r: Variant = read_json(RECORDS)
+	var out := {"best_score": 0, "best_wave": 0, "runs": 0}
+	if r is Dictionary:
+		for k in out:
+			out[k] = int(r.get(k, 0))
+	return out
+
+
+## Records a Recycle Bin run; returns the updated records plus "new_best".
+static func record_endless(score: int, wave_reached: int) -> Dictionary:
+	var r := records()
+	var new_best := score > int(r["best_score"])
+	r["best_score"] = maxi(int(r["best_score"]), score)
+	r["best_wave"] = maxi(int(r["best_wave"]), wave_reached)
+	r["runs"] = int(r["runs"]) + 1
+	write_json(RECORDS, "records", r)
+	r["new_best"] = new_best
+	return r
+
+
 ## kind: "campaign" | "factory" | "all" (legacy v68DoReset).
 static func reset(kind: String) -> void:
 	if kind == "campaign" or kind == "all":
@@ -109,6 +133,8 @@ static func reset(kind: String) -> void:
 		delete(SHIPS)
 		delete(DRAFT)
 		delete(RECENT_COLORS)
+	if kind == "all":
+		delete(RECORDS)
 
 
 ## Import JSON exported from the legacy browser build (a campaign object from

@@ -10,7 +10,7 @@ extends Control
 signal pause_pressed
 
 const SHORT := {"rescue": "RESCUE", "repair": "REPAIR", "scan": "SCAN", "defrag": "DEFRAG", "courier": "COURIER",
-	"race": "RACE", "duel": "DUEL", "boss": "DEMON", "blackhole": "BLACK HOLE"}
+	"race": "RACE", "duel": "DUEL", "boss": "DEMON", "blackhole": "BLACK HOLE", "endless": "BIN"}
 
 var world: SimWorld
 var radar: Control                ## RadarWindow, so the chip bar can avoid it
@@ -120,6 +120,8 @@ func _draw_chip_bar(vs: Vector2, fs: int) -> void:
 		chips.append(["text", "%s %s" % [SHORT.get(m.type, m.type.to_upper()), m.objective_text()]])
 	else:
 		chips.append(["icon", "%d/%d" % [world.icons_collected, world.icons_collected + world.icons.size()]])
+	if m and m.type == "endless":
+		chips.append(["text", "PTS %d" % m.score])
 	chips.append(["missile", "INF" if world.mode == "test" else str(world.campaign["missiles"])])
 	if world.campaign["warrant"] > 0:
 		chips.append(["warrant", str(world.campaign["warrant"])])

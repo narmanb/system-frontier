@@ -15,6 +15,7 @@ var _user_zoom := 1.0
 var _pinch := {}          ## touch index -> position, for touches not on flight buttons
 var _pinch_dist := 0.0
 var campaign_mode := false
+var endless_mode := false   ## EXPERIMENTAL: Recycle Bin survival
 var _campaign: Dictionary = {}
 var _dir: Dictionary = {}
 var _root: Control
@@ -24,6 +25,7 @@ var strategy_bar: StrategyBar
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 	campaign_mode = str(AppState.launch.get("mode", "sandbox")) == "campaign"
+	endless_mode = str(AppState.launch.get("mode", "")) == "endless"
 	if campaign_mode:
 		var loaded = SaveService.load_campaign()
 		if loaded == null:
@@ -67,7 +69,7 @@ func _ready() -> void:
 	var strategy := campaign_mode and str(_campaign.get("mode", "action")) == "strategy"
 	touch = TouchControls.new()
 	touch.visible = AppState.is_touch_ui()
-	touch.show_ambulance = campaign_mode
+	touch.show_ambulance = campaign_mode or endless_mode
 	touch.flight_pads = not strategy
 	touch.ambulance_pressed.connect(_ambulance)
 	root.add_child(touch)
@@ -92,6 +94,8 @@ func _ready() -> void:
 	_user_zoom = float(AppState.settings.get("zoom", 1.0))
 	if campaign_mode:
 		world.setup_directory(_campaign, _dir)
+	elif endless_mode:
+		world.setup_endless(hull)
 	else:
 		if AppState.launch.get("ship") is Dictionary:
 			hull = Campaign.normalize_ship(AppState.launch["ship"])
@@ -148,7 +152,7 @@ func _relations() -> void:
 
 ## Legacy callAmbulance: refuel, repair, missiles, laser/armor upgrades, clear warrant.
 func _ambulance() -> void:
-	if not campaign_mode or world.over or world.blocked or get_tree().paused:
+	if not (campaign_mode or endless_mode) or world.over or world.blocked or get_tree().paused:
 		return
 	world.blocked = true
 	AppState.release_gameplay_inputs()
@@ -324,7 +328,7 @@ func _build_pause(root: Control) -> void:
 		zb.pressed.connect(func(): _set_zoom(_user_zoom + dz))
 		row.add_child(zb)
 	box.add_child(row)
-	if campaign_mode:
+	if campaign_mode or endless_mode:
 		var amb := Win95.button("Ambulance Service")
 		amb.pressed.connect(func(): set_paused(false); _ambulance())
 		box.add_child(amb)
@@ -382,7 +386,14 @@ func _on_finished(won: bool, reason: String) -> void:
 	var again := end_panel.find_child("Again", true, false) as Button
 	var menu := end_panel.find_child("Menu", true, false) as Button
 	(end_panel.get_child(0).get_child(0) as TitleBar).title = "Operation Debriefing" if won else "Ship Lost"
-	if not campaign_mode:
+	if endless_mode:
+		var m := world.mission
+		var reached: int = m.wave - (0 if m.wave_state == "intermission" else 1)
+		var rec := SaveService.record_endless(m.score, reached)
+		(end_panel.get_child(0).get_child(0) as TitleBar).title = "Recycle Bin — Run Over"
+		end_label.text = "%s\n\nScore: %d%s\nWaves cleared: %d · Ships destroyed: %d\nBest: %d (wave %d) · Runs: %d" % [reason, m.score,
+			"   NEW BEST!" if rec["new_best"] else "", reached, world.player_kills, rec["best_score"], rec["best_wave"], rec["runs"]]
+	elif not campaign_mode:
 		end_label.text = "%s\n\nCredits: %d" % [reason, world.campaign["credits"]]
 	else:
 		var reward := {}

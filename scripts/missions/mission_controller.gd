@@ -65,6 +65,14 @@ var race_time := 0.0
 var race_active := false
 var black_hole = null                ## Vector2 or null, r 58
 var wave_salvage := {"alloy": 0, "circuitry": 0, "data": 0}
+# --- EXPERIMENTAL: Recycle Bin endless survival
+var wave := 0
+var wave_state := ""                 ## "fighting" | "intermission"
+var intermission := 0.0
+var score := 0
+var _kills_seen := 0
+var _icons_seen := 0
+const INTERMISSION := 8.0
 
 
 func _init(world: SimWorld, directory: Dictionary) -> void:
@@ -111,6 +119,11 @@ func _program(role: String, objective: bool, at = null) -> Program:
 
 ## Called by SimWorld after the base spawn (legacy v6.4 startWave layer).
 func start() -> void:
+	if type == "endless":
+		wave_state = "intermission"   # short "get ready" before wave 1
+		intermission = 4.0
+		w.msg("RECYCLE BIN — hostile programs are coming to empty it. Get ready.", 4.0)
+		return
 	if type == "race":
 		race_checkpoints = []
 		for i in 5:
@@ -203,6 +216,12 @@ func intro() -> String:
 
 func objective_text() -> String:
 	match type:
+		"endless":
+			if wave_state == "intermission":
+				if wave == 0:
+					return "READY %ds" % ceili(intermission)
+				return "W%d NEXT %ds" % [wave, ceili(intermission)]
+			return "W%d · %d LEFT" % [wave, _endless_remaining()]
 		"rescue": return "%d/%d" % [done, total]
 		"repair": return "%d/%d" % [done, total]
 		"scan": return "%d/%d" % [done, total]
@@ -215,6 +234,70 @@ func objective_text() -> String:
 			if black_hole != null:
 				return "ENTER"
 	return ""
+
+
+# ------------------------------------------------------------------ Recycle Bin (experimental)
+
+func _endless_remaining() -> int:
+	var n := 0
+	for s in w.ships:
+		if not s.dead and NpcAI.aggressive_to_player(w, s):
+			n += 1
+	return n
+
+
+func _next_wave() -> void:
+	wave += 1
+	wave_state = "fighting"
+	w.threat = mini(6, 1 + wave / 2)
+	var count := mini(14, 1 + wave)
+	for i in count:
+		w.spawn_ai()
+	if wave >= 3:
+		w._spawn_required("skirmisher")
+	if wave >= 5:
+		w._spawn_required("beam")
+	if wave % 5 == 0:
+		w.spawn_purge_daemon(wave / 5)
+	if wave % 2 == 0 and w.hazards.size() < 6:
+		w.spawn_hazard()
+	for i in 2:   # bonus files to recover for score
+		var o := w.spawn_icon()
+		o.value = 10 + wave * 5
+	for s in w.ships:
+		NpcAI.prepare(w, s)
+		s.aggro_to_player = true
+	w.msg("WAVE %d — %d hostile programs are trying to empty the Recycle Bin." % [wave, _endless_remaining()])
+	w.sfx(260, 0.2, "sawtooth", 0.04)
+
+
+func _update_endless(dt: float) -> void:
+	var p := w.player
+	# score: kills scale with the wave, recovered files with their value
+	if w.player_kills > _kills_seen:
+		score += (w.player_kills - _kills_seen) * 25 * wave
+		_kills_seen = w.player_kills
+	if w.icons_collected > _icons_seen:
+		score += (w.icons_collected - _icons_seen) * (20 + wave * 10)
+		_icons_seen = w.icons_collected
+	if wave_state == "fighting":
+		if _endless_remaining() == 0:
+			wave_state = "intermission"
+			intermission = INTERMISSION
+			var bonus := 100 * wave
+			score += bonus
+			p.hull = minf(p.max_hull, p.hull + p.max_hull * 0.25)
+			w.campaign["missiles"] = int(w.campaign["missiles"]) + 2
+			for i in 2:
+				w.spawn_fuel()
+			w.msg("WAVE %d CLEARED  +%d. Hull patched, +2 missiles. Ambulance open (✚ / A). Next wave in %ds." % [wave, bonus, int(INTERMISSION)], 4.0)
+			w.sfx(820, 0.15)
+	else:
+		intermission -= dt
+		if intermission <= 0:
+			_next_wave()
+	if p.fuel <= 0 and p.vel.length() < 2:
+		w.msg_if_idle("Stranded. Press A or the ✚ button for the ambulance.")
 
 
 ## Point the strategy autopilot ("collect") should head for when no icons remain.
@@ -266,6 +349,9 @@ func _open_gate(text: String) -> void:
 
 ## Per-frame objective logic (legacy updateMission chain).
 func update(dt: float) -> void:
+	if type == "endless":
+		_update_endless(dt)
+		return
 	var p := w.player
 	_update_discoveries(dt)
 	_update_programs(dt)
