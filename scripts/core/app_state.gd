@@ -162,10 +162,16 @@ func set_setting(key: String, value: Variant) -> void:
 	save_settings()
 
 
+## Dev tools only (capture --insets=L,T,R,B): pretend the screen has these cutout insets.
+var debug_insets := {}
+
+
 ## Screen-cutout / rounded-corner insets in logical (canvas) units: {left, top, right, bottom}.
 ## Mobile only (on desktop the safe area describes the monitor, not the window).
 func safe_insets() -> Dictionary:
 	var z := {"left": 0.0, "top": 0.0, "right": 0.0, "bottom": 0.0}
+	if not debug_insets.is_empty():
+		return debug_insets
 	if not OS.has_feature("mobile"):
 		return z
 	var safe := DisplayServer.get_display_safe_area()

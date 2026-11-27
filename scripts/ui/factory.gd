@@ -45,15 +45,14 @@ func _ready() -> void:
 	outer.set_anchors_preset(Control.PRESET_FULL_RECT)
 	outer.add_theme_constant_override("separation", 0)
 	add_child(outer)
-	Win95.apply_safe_area(outer)
 	bar = TitleBar.new()
 	bar.title = "SHIP FACTORY — Hull Painter"
 	bar.add_button("close", _back)
-	outer.add_child(bar)
+	var safe := Win95.safe_frame(outer, bar)
 	body = BoxContainer.new()
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	body.add_theme_constant_override("separation", 8)
-	outer.add_child(body)
+	safe.add_child(body)
 	var margin_l := MarginContainer.new()
 	for s in ["left", "right", "top", "bottom"]:
 		margin_l.add_theme_constant_override("margin_" + s, 6)
@@ -75,7 +74,7 @@ func _ready() -> void:
 	left.add_child(status)
 	_build_tool_rows(left)
 
-	right_scroll = ScrollContainer.new()
+	right_scroll = Win95.scroll_area()
 	right_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	right_scroll.follow_focus = true
 	right_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL

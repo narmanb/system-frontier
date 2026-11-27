@@ -26,13 +26,12 @@ func _ready() -> void:
 	if not OS.has_feature("mobile") and not OS.has_feature("web"):
 		bar.add_button("fullscreen", AppState.toggle_fullscreen)
 	bar.add_button("close", _back)
-	outer.add_child(bar)
+	var body := Win95.safe_frame(outer, bar)
 
-	var scroll := ScrollContainer.new()
+	var scroll := Win95.scroll_area()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.follow_focus = true
-	outer.add_child(scroll)
+	body.add_child(scroll)
 	var margin := MarginContainer.new()
 	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	for side in ["left", "right", "top", "bottom"]:
@@ -52,8 +51,12 @@ func _ready() -> void:
 	col.add_theme_constant_override("separation", 12)
 	win.add_child(col)
 	# Cap the window width on wide screens so it reads as a dialog, not a page.
-	resized.connect(func(): win.custom_minimum_size.x = minf(760.0, size.x - 28); win.size_flags_horizontal = Control.SIZE_SHRINK_CENTER if size.x > 800 else Control.SIZE_EXPAND_FILL)
-	win.custom_minimum_size.x = minf(760.0, get_viewport_rect().size.x - 28)
+	var fit := func():
+		var w := Win95.usable_width(self, scroll)
+		win.custom_minimum_size.x = minf(760.0, w - 28)
+		win.size_flags_horizontal = Control.SIZE_SHRINK_CENTER if w > 800 else Control.SIZE_EXPAND_FILL
+	resized.connect(fit)
+	fit.call()
 
 
 	col.add_child(Win95.label("Select hull", 16, Win95.TEXT, true))
