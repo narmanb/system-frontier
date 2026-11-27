@@ -15,6 +15,7 @@ extends RefCounted
 signal message(text: String, duration: float)
 signal sound(freq: float, duration: float, wave: String, volume: float)
 signal finished(won: bool, reason: String)
+signal dialog(kind: String, payload: Dictionary)   ## world is blocked until resolve_dialog()
 
 const W := 2600.0
 const H := 1800.0
@@ -69,6 +70,20 @@ class FuelCell:
 	var spin := 0.0
 
 
+class Hazard:
+	var pos: Vector2
+	var vel := Vector2.ZERO
+	var r := 28.0
+	var type := "turret"     ## turret | virus | asteroid
+	var a := 0.0
+	var cd := 0.0
+	var hp := 40.0
+	var rot := 0.0
+	var spin := 0.0
+	var shape: Array = []
+	var hit_cd := 0.0
+
+
 class Particle:
 	var pos: Vector2
 	var vel: Vector2
@@ -80,7 +95,12 @@ class Particle:
 
 var rng := RandomNumberGenerator.new()
 var time := 0.0
-var mode := "sandbox"           ## "sandbox" or "test"
+var mode := "sandbox"           ## "sandbox", "test" or "campaign"
+var dir_type := "normal"        ## directory mission family
+var mission: MissionController  ## objectives + mission objects (null in test range)
+var hazards: Array[Hazard] = []
+var blocked := false            ## a dialog (dragon, vendor, shop…) is open
+var strategy := "collect"       ## strategy-mode autopilot priority
 var threat := 3                 ## directory difficulty
 var player: SimShip
 var ships: Array[SimShip] = []
@@ -98,6 +118,7 @@ var telemetry := {"started": 0.0, "maxSpeed": 0.0, "timeTo90": -1.0, "shots": 0}
 var infinite_test_resources := true
 var message_timer := 0.0        ## legacy game.messageTimer: gates low-priority repeat messages
 var _next_id := 1
+var _dt := 1.0 / 60
 
 
 # ------------------------------------------------------------------ setup
@@ -120,23 +141,54 @@ func setup(hull: Dictionary, p_mode := "sandbox", p_threat := 3, seed_value := -
 	if mode == "test":
 		_setup_test_range()
 	else:
-		var icon_count := 6
-		for i in icon_count:
-			spawn_icon()
-		for i in 3 + threat:
-			spawn_fuel()
-		var base := maxi(1, ceili(threat * 0.72))
-		var count := maxi(1, roundi(base * maxf(0.8, campaign["difficulty"])))
-		for i in count:
-			spawn_ai()
-		ensure_special_enemies()
-		msg("Entering SANDBOX://FLIGHT. Recover %d icons." % icons.size())
+		_spawn_directory({"id": -1, "name": "SANDBOX", "type": "normal", "difficulty": threat, "icons": 6}, false)
 	sfx(330, 0.1)
 
 
+## Campaign directory (legacy startWave chain: base v6 → v6.4 → v6.9 → v7.2.3).
+## `c` is mutated in place (credits, missiles, relations, salvage, noble…).
+func setup_directory(c: Dictionary, d: Dictionary, seed_value := -1) -> void:
+	if seed_value >= 0:
+		rng.seed = seed_value
+	else:
+		rng.randomize()
+	mode = "campaign"
+	campaign = c
+	threat = int(d.get("difficulty", 1))
+	player = make_player(Campaign.effective_ship(c), c.get("components", {}), c.get("rareTech", {}))
+	player.name = str(c.get("pilot", "Operator"))
+	player.team = str(c.get("team", "Avengers"))
+	_spawn_directory(d, true)
+	sfx(330, 0.1)
+
+
+func _spawn_directory(d: Dictionary, with_hazards: bool) -> void:
+	dir_type = str(d.get("type", "normal"))
+	for i in int(d.get("icons", 0)):
+		spawn_icon()
+	for i in 3 + threat:
+		spawn_fuel()
+	var base := (2 + threat) if dir_type == "duel" else maxi(1, ceili(threat * 0.72))
+	var count := maxi(1, roundi(base * maxf(0.8, float(campaign["difficulty"]))))
+	for i in count:
+		spawn_ai()
+	if with_hazards:
+		var hz := threat if dir_type == "boss" else maxi(0, threat - 1)
+		for i in hz:
+			spawn_hazard()
+	if dir_type == "boss":
+		spawn_boss()
+	mission = MissionController.new(self, d)
+	mission.start()
+	for s in ships:
+		NpcAI.prepare(self, s)
+	if dir_type in ["normal", "duel", "blackhole"]:
+		ensure_special_enemies()
+
+
 ## Mirrors startWave's player construction from v6Performance.
-func make_player(hull: Dictionary) -> SimShip:
-	var perf := ShipPerformance.compute(hull)
+func make_player(hull: Dictionary, components: Dictionary = {}, rare: Dictionary = {}) -> SimShip:
+	var perf := ShipPerformance.compute(hull, components, rare)
 	var p := SimShip.new()
 	p.id = _id()
 	p.is_player = true
@@ -146,7 +198,7 @@ func make_player(hull: Dictionary) -> SimShip:
 	p.a = -PI / 2
 	p.r = 18
 	p.hull_def = hull
-	p.texture = load(hull.get("art", "res://assets/ships/red_falcon.png")) if hull.has("art") else null
+	p.texture = Campaign.ship_texture(hull)
 	p.max_hull = perf.maxHull; p.hull = perf.maxHull
 	p.max_fuel = perf.maxFuel; p.fuel = perf.maxFuel
 	p.max_speed = perf.maxSpeed
@@ -166,6 +218,7 @@ func make_player(hull: Dictionary) -> SimShip:
 	p.pickup_radius = perf.pickupRadius
 	p.salvage_mult = perf.salvageMult
 	p.invuln = 4.0
+	p.ai_accel = perf.acceleration
 	p.stats = perf.stats
 	p.modules = perf.mods
 	return p
@@ -273,8 +326,71 @@ func spawn_icon() -> Icon:
 	o.vel = Vector2(cos(ang), sin(ang)) * spd
 	o.drift_timer = rnd(1.8, 4.2)
 	icons.append(o)
-	# Legacy also spawns orbiting icon defenders here (makeDefender) — Milestone 2.
+	if mode != "test" and rng.randf() < 0.16 + threat * 0.07:
+		ships.append(_make_defender(o))
 	return o
+
+
+## makeDefender: small orbiting guard; becomes the player's escort once its icon is gone.
+func _make_defender(icon: Icon) -> SimShip:
+	var s := SimShip.new()
+	s.id = _id()
+	s.pos = icon.pos + Vector2(35, 0)
+	s.r = 9
+	s.hull = 18
+	s.max_hull = 18
+	s.team = "Defender"
+	s.color = Color("#ffee58")
+	s.ai = "defender"
+	s.name = "Icon Defender"
+	s.guard_icon = icon
+	s.orbit_angle = rnd(0, TAU)
+	s.orbit_speed = rnd(0.9, 1.5)
+	s.orbit_r = 36 + rng.randf() * 8
+	s.hull_def = {"gridSize": 24}
+	s.texture = BuiltinShips.texture("needle")
+	s.draw_size = 48
+	return s
+
+
+func spawn_hazard() -> void:
+	var h := Hazard.new()
+	var roll := rng.randf()
+	h.type = "turret" if roll < 0.36 else ("virus" if roll < 0.68 else "asteroid")
+	h.a = rnd(0, TAU)
+	var spd := rnd(18, 42)
+	h.pos = Vector2(rnd(200, W - 200), rnd(200, H - 200))
+	h.r = rnd(24, 40) if h.type == "asteroid" else 28.0
+	h.cd = rnd(0, 2)
+	h.hp = 55.0 if h.type == "asteroid" else 40.0
+	if h.type == "asteroid":
+		h.vel = Vector2(cos(h.a), sin(h.a)) * spd
+	h.rot = rnd(0, TAU)
+	h.spin = rnd(-0.7, 0.7)
+	for i in 9:
+		h.shape.append(rnd(0.72, 1.12))
+	hazards.append(h)
+
+
+func spawn_boss() -> void:
+	icons.clear()
+	var s := SimShip.new()
+	s.id = _id()
+	s.pos = Vector2(W * 0.75, H * 0.5)
+	s.a = PI
+	s.r = 55
+	s.hull = 600
+	s.max_hull = 600
+	s.team = "Demon"
+	s.color = Color("#ff204d")
+	s.ai = "boss"
+	s.boss = true
+	s.name = "INNER DEMON"
+	s.hull_def = {"gridSize": 24}
+	s.draw_size = 132
+	ships.append(s)
+	gate_open = false
+	msg("INNER DEMON CORE DETECTED.")
 
 
 func spawn_fuel() -> void:
@@ -329,7 +445,7 @@ func spawn_ai() -> SimShip:
 			factions.append(f)
 	var team: String = pick(factions)
 	var rel: float = campaign["relations"].get(team, 0.0)
-	var hostile := (rel < -25 and rng.randf() < 0.28 + threat * 0.05) or rng.randf() < 0.06 + threat * 0.055
+	var hostile := dir_type == "duel" or (rel < -25 and rng.randf() < 0.28 + threat * 0.05) or rng.randf() < 0.06 + threat * 0.055
 	var at := far_spawn(720 - threat * 35)
 	var weights: Dictionary = DataStore.npc_archetypes()["hostileWeights" if hostile else "collectorWeights"]
 	var s := _make_npc(_weighted(weights), team, hostile, at)
@@ -418,14 +534,16 @@ func crime(reason: String, points: int) -> void:
 
 ## input: {turn: float -1..1, thrust: bool, fire: bool, missile: bool}
 func step(dt: float, input: Dictionary) -> void:
-	if over:
+	if over or blocked:
 		return
 	time += dt
+	_dt = dt
 	message_timer -= dt
 	_update_player(dt, input)
 	_update_bullets(dt)
 	NpcAI.update_ships(self, dt)
 	_update_items(dt)
+	_update_hazards(dt)
 	_update_beams(dt)
 	_update_particles(dt)
 	if mode != "test":
@@ -439,16 +557,19 @@ func _update_player(dt: float, input: Dictionary) -> void:
 	p.missile_cd -= dt
 	p.thrusting = false
 	p.weapon_heat = maxf(0.0, p.weapon_heat - p.weapon_cooling * dt)
-	var turn := clampf(float(input.get("turn", 0.0)), -1.0, 1.0)
-	p.a += p.turn_rate * dt * turn
-	if input.get("thrust", false) and p.fuel > 0:
-		p.vel += Vector2(cos(p.a), sin(p.a)) * p.acceleration * dt
-		p.fuel -= dt * p.fuel_burn
-		p.thrusting = true
-	if input.get("fire", false):
-		fire_player()
-	if input.get("missile", false):
-		fire_missile()
+	if campaign.get("mode", "action") == "strategy" and mode == "campaign":
+		_update_strategy(dt)
+	else:
+		var turn := clampf(float(input.get("turn", 0.0)), -1.0, 1.0)
+		p.a += p.turn_rate * dt * turn
+		if input.get("thrust", false) and p.fuel > 0:
+			p.vel += Vector2(cos(p.a), sin(p.a)) * p.acceleration * dt
+			p.fuel -= dt * p.fuel_burn
+			p.thrusting = true
+		if input.get("fire", false):
+			fire_player()
+		if input.get("missile", false):
+			fire_missile()
 	var sp := p.vel.length()
 	if sp > p.max_speed:
 		p.vel *= p.max_speed / sp
@@ -472,6 +593,53 @@ func _update_player(dt: float, input: Dictionary) -> void:
 			telemetry.timeTo90 = time - telemetry.started
 	if p.fuel <= 0:
 		p.vel *= pow(0.5, dt)
+
+
+## Legacy updateStrategy: autopilot toward the priority target. Port fix: autopilot thrust
+## burns fuel (legacy steering did not), and turning uses the ship's real turn rate.
+func _update_strategy(dt: float) -> void:
+	var p := player
+	var target = null
+	match strategy:
+		"collect":
+			var best := INF
+			for o in icons:
+				if o.carrier == null and p.pos.distance_to(o.pos) < best:
+					best = p.pos.distance_to(o.pos)
+					target = o.pos
+			if target == null and mission:
+				var mt = mission.objective_point()
+				if mt != null:
+					target = mt
+		"attack":
+			var best := INF
+			for s in ships:
+				if (s.team != p.team and s.ai != "defender") or s.boss:
+					if p.pos.distance_to(s.pos) < best:
+						best = p.pos.distance_to(s.pos)
+						target = s.pos
+		"exit":
+			if gate_open:
+				target = gate_pos
+		"evade":
+			var best := INF
+			var threat_ship: SimShip = null
+			for s in ships:
+				if NpcAI.COMBAT_AIS.has(s.ai) and p.pos.distance_to(s.pos) < best:
+					best = p.pos.distance_to(s.pos)
+					threat_ship = s
+			if threat_ship:
+				target = p.pos + (p.pos - threat_ship.pos).normalized() * 300
+	if target != null and p.fuel > 0:
+		var diff := NpcAI.norm_angle((target - p.pos).angle() - p.a)
+		p.a += clampf(diff, -p.turn_rate * dt, p.turn_rate * dt)
+		p.vel += Vector2(cos(p.a), sin(p.a)) * p.acceleration * dt
+		p.fuel -= dt * p.fuel_burn
+		p.thrusting = true
+		if strategy == "attack" and p.pos.distance_to(target) < 420:
+			fire_player()
+			if p.pos.distance_to(target) < 300:
+				fire_missile()
 
 
 func _bullet_color(owner: SimShip) -> Color:
@@ -542,16 +710,16 @@ func ai_fire(s: SimShip, target: Vector2, kind := "laser") -> void:
 		return
 	var scale: float = campaign["difficulty"]
 	var cycle := clampf(s.weapon_cycle_factor, 0.5, 1.0)
-	s.cd = (rnd(1.7, 2.5) if kind == "defender" else rnd(1.25, 2.05)) / cycle
+	s.cd = (0.40 if kind == "boss" else (rnd(1.7, 2.5) if kind == "defender" else rnd(1.25, 2.05))) / cycle
 	var ang := (target - s.pos).angle()
-	var raw := 3.2 if kind == "defender" else (s.weapon_damage if s.weapon_damage > 0 else 4 + threat * 0.7)
+	var raw := 8.5 if kind == "boss" else (3.2 if kind == "defender" else (s.weapon_damage if s.weapon_damage > 0 else 4 + threat * 0.7))
 	var b := Bullet.new()
 	b.pos = s.pos
-	b.vel = Vector2(cos(ang), sin(ang)) * 310
+	b.vel = Vector2(cos(ang), sin(ang)) * (370 if kind == "boss" else 310)
 	b.life = 2.2
 	b.team = s.team
 	b.damage = raw * scale
-	b.color = _bullet_color(s)
+	b.color = Color("#ff326f") if kind == "boss" else _bullet_color(s)
 	b.owner = s
 	bullets.append(b)
 
@@ -615,12 +783,17 @@ func destroy_ship(s: SimShip, killer: SimShip) -> void:
 	s.dead = true
 	burst(s.pos, s.color, 25)
 	sfx(120, 0.18, "sawtooth", 0.05)
+	if s.boss:
+		sfx(65, 0.5, "sawtooth", 0.05)
 	if killer == player:
-		campaign["credits"] += 8 + threat * 3
+		campaign["credits"] += 0 if s.boss else 8 + threat * 3
 		if s.team == "Enforcers":
 			crime("Attacked an Enforcer", 40)
 		if campaign["relations"].has(s.team):
 			campaign["relations"][s.team] -= 10
+		if s.boss:
+			gate_open = true
+			msg("INNER DEMON DEFEATED. CORE GATE OPEN.")
 
 
 func _update_bullets(dt: float) -> void:
@@ -666,7 +839,19 @@ func _update_bullets(dt: float) -> void:
 					crime("Destroyed a clean icon", 20)
 					msg("ICON DESTROYED — LAW VIOLATION")
 					sfx(110, 0.2)
+				consumed = true
 				break
+		if consumed:
+			continue
+		for h in hazards:
+			if b.pos.distance_to(h.pos) >= h.r:
+				continue
+			h.hp -= b.damage
+			b.life = 0
+			if h.hp <= 0:
+				burst(h.pos, Color("#ff8"), 18)
+				hazards.erase(h)
+			break
 	bullets = bullets.filter(func(x: Bullet) -> bool: return x.life > 0)
 
 
@@ -749,6 +934,9 @@ func _update_particles(dt: float) -> void:
 
 
 func _update_mission() -> void:
+	if mission:
+		mission.update(_dt)
+		return
 	if icons.is_empty() and not gate_open:
 		gate_open = true
 		msg("All icons recovered. Exit gate open.")
@@ -756,6 +944,102 @@ func _update_mission() -> void:
 		_end(true, "Directory disinfected.")
 	if player.fuel <= 0 and player.vel.length() < 2:
 		msg_if_idle("Stranded. Fuel exhausted — collect a fuel cell or restart.")
+
+
+func _update_hazards(dt: float) -> void:
+	var p := player
+	for h in hazards:
+		h.a += dt
+		h.cd -= dt
+		h.hit_cd = maxf(0, h.hit_cd - dt)
+		match h.type:
+			"turret":
+				if h.pos.distance_to(p.pos) < 500 and h.cd <= 0:
+					h.cd = 1.2
+					var turret := SimShip.new()
+					turret.pos = h.pos
+					turret.team = "Hazard"
+					turret.weapon_damage = 0
+					ai_fire(turret, p.pos)
+			"virus":
+				if h.pos.distance_to(p.pos) < h.r + p.r:
+					p.a += rnd(-1, 1)
+					p.fuel = maxf(0, p.fuel - 10 * dt)
+					if rng.randf() < dt:
+						msg("Virus field: fuel drain and control noise.")
+			"asteroid":
+				h.rot += h.spin * dt
+				h.pos = wrap_pos(h.pos + h.vel * dt)
+				if h.hit_cd <= 0 and h.pos.distance_to(p.pos) < h.r + p.r:
+					h.hit_cd = 1
+					damage_player(8 + threat * 2)
+					var ang := (p.pos - h.pos).angle()
+					p.vel += Vector2(cos(ang), sin(ang)) * 80
+
+
+func end_mission(won: bool, reason: String) -> void:
+	_end(won, reason)
+
+
+func request_dialog(kind: String, payload: Dictionary) -> void:
+	blocked = true
+	dialog.emit(kind, payload)
+
+
+## Returns true when the dialog is finished (world resumes); false keeps it open.
+func resolve_dialog(kind: String, choice: String, payload: Dictionary = {}) -> bool:
+	var ok := true
+	if kind == "ambulance":
+		ok = buy_ambulance(choice)
+		return ok
+	if mission:
+		ok = mission.resolve_dialog(kind, choice, payload)
+	if ok:
+		blocked = false
+	return ok
+
+
+func close_dialog() -> void:
+	blocked = false
+
+
+## callAmbulance offers: [id, label, cost]. Costs follow legacy formulas.
+func ambulance_offers() -> Array:
+	var p := player
+	var c := campaign
+	return [
+		["fuel", "Refuel to 100%", ceili((p.max_fuel - p.fuel) * 0.18)],
+		["hull", "Repair hull", ceili((p.max_hull - p.hull) * 0.35)],
+		["missiles", "Buy 3 missiles", 30],
+		["laser", "Laser upgrade", 80 * int(c.get("laserLevel", 1))],
+		["armor", "Armor upgrade", 90 * int(c.get("armorLevel", 1))],
+		["warrant", "Clear warrant", int(c.get("warrant", 0)) * 2],
+	]
+
+
+func buy_ambulance(id: String) -> bool:
+	var c := campaign
+	for o in ambulance_offers():
+		if o[0] != id:
+			continue
+		var cost: int = o[2]
+		if cost <= 0 or int(c["credits"]) < cost:
+			sfx(110, 0.1)
+			return false
+		c["credits"] = int(c["credits"]) - cost
+		match id:
+			"fuel": player.fuel = player.max_fuel
+			"hull": player.hull = player.max_hull
+			"missiles": c["missiles"] = int(c["missiles"]) + 3
+			"laser": c["laserLevel"] = int(c.get("laserLevel", 1)) + 1
+			"armor":
+				c["armorLevel"] = int(c.get("armorLevel", 1)) + 1
+				player.max_hull += 12
+				player.hull += 12
+			"warrant": c["warrant"] = 0
+		sfx(620, 0.06)
+		return true
+	return false
 
 
 func _end(won: bool, reason: String) -> void:

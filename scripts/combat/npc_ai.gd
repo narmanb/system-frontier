@@ -354,6 +354,20 @@ static func update_ships(w: SimWorld, dt: float) -> void:
 				s.pos = w.wrap_pos(s.pos + s.vel * dt)
 			continue
 
+		if s.ai == "defender":
+			if s.guard_icon == null or not w.icons.has(s.guard_icon):
+				s.ai = "escort"
+				s.team = p.team
+				s.color = Color("#62ffbd")
+				w.msg("Icon defender joined your escort.")
+				continue
+			s.orbit_angle += s.orbit_speed * dt
+			s.pos = s.guard_icon.pos + Vector2(cos(s.orbit_angle), sin(s.orbit_angle)) * s.orbit_r
+			s.a = s.orbit_angle + PI * 0.5
+			if s.pos.distance_to(p.pos) < 245 and p.team != s.team:
+				w.ai_fire(s, p.pos, "defender")
+			continue
+
 		if s.ai == "collector" and s.cargo_icon == null:
 			var o := nearest_icon(w, s, false)
 			if o and s.pos.distance_to(o.pos) < s.r + o.r + 34:
@@ -400,6 +414,20 @@ static func update_ships(w: SimWorld, dt: float) -> void:
 				s.flash_police = true
 			"hostile":
 				generic_combat(w, s, dt, choose_target(w, s))
+			"boss":
+				var ang := (p.pos - s.pos).angle() + sin(w.time / 0.9) * 0.5
+				s.a = ang
+				s.vel += Vector2(cos(ang), sin(ang)) * 35 * dt
+				s.thrusting = true
+				if s.pos.distance_to(p.pos) < 650:
+					w.ai_fire(s, p.pos, "boss")
+				if w.rng.randf() < dt * 0.4:
+					var h := SimWorld.Hazard.new()
+					h.pos = s.pos + Vector2(w.rnd(-120, 120), w.rnd(-120, 120))
+					h.r = 18
+					h.type = "virus"
+					h.hp = 25
+					w.hazards.append(h)
 
 		for other in w.ships:
 			if other != s and not other.dead:
@@ -408,8 +436,9 @@ static func update_ships(w: SimWorld, dt: float) -> void:
 		var drag := 0.992 if s.ai == "collector" else (0.989 if s.ai == "carrier" else 0.985)
 		s.vel *= pow(drag, dt * 60)
 		var sp := s.vel.length()
-		if sp > s.ai_max_speed:
-			s.vel *= s.ai_max_speed / sp
+		var cap := 145.0 if s.boss else s.ai_max_speed
+		if sp > cap:
+			s.vel *= cap / sp
 		s.pos = w.wrap_pos(s.pos + s.vel * dt)
 
 		for o in w.icons:
@@ -425,7 +454,7 @@ static func update_ships(w: SimWorld, dt: float) -> void:
 		if s.cargo_icon:
 			s.cargo_icon.pos = s.pos
 		if s.pos.distance_to(p.pos) < s.r + p.r:
-			w.damage_player(2.25 if s.ai == "collector" else 3.5)
+			w.damage_player(12.0 if s.boss else (2.25 if s.ai == "collector" else 3.5))
 			var ang := (s.pos - p.pos).angle()
 			s.pos += Vector2(cos(ang), sin(ang)) * 18
 			s.vel += Vector2(cos(ang), sin(ang)) * 32

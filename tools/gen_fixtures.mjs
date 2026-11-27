@@ -150,6 +150,43 @@ for (const [arch, gname] of [["grunt", "GRUNT_GRID"], ["skirmisher", "QUICK_GRID
 }
 write("recolor.json", { source: path.basename(src), note: "v724MaterialPixel output for each 48x48 NPC grid (null = transparent)", cases: recolor });
 
+// --- 3b. campaign data, built-in ship grids, directories ------------------------------
+let ccode = line("const clamp=") + "const TAU=Math.PI*2;\n" + line("const palette=");
+for (const f of ["makeBlankShipGrid","gSet","gSym","gSymSpan","gSymRect","gAbsRect","outlineShipGrid","buildBuiltinShipGrid"]) ccode += fn(f);
+ccode += "const BASE_SHIPS_RAW=" + sliceFrom("const BASE_SHIPS=").replace(/^const BASE_SHIPS=/, "");
+ccode += "const V64_SPECIAL_TYPES=" + T.match(/const V64_SPECIAL_TYPES=(new Set\(\[[^\]]*\]\))/)[1] + ";\n";
+for (const n of ["V64_TYPE_PLAN","V64_TYPE_NAMES","V64_TYPE_SYMBOLS","V64_COMPLETION_REWARDS"]) ccode += sliceFrom("const " + n + "=");
+ccode += sliceFrom("const V64_THEME_CONFIG=") + sliceFrom("const V64_STENCILS=") + sliceFrom("const V66_BASE_PALETTE=") + sliceFrom("const V66_UNLOCK_GROUPS=");
+{ const i = T.indexOf("Object.assign(UPGRADE_DEFS,"); const b = T.indexOf("{", i); ccode += "const UPGRADE_DEFS=" + T.slice(b, matchEnd(T, b) + 1) + ";\n"; }
+ccode += fn("v64ThemeFor") + "var importedNames=[];var __drive='SYSTEM';const $=()=>({value:__drive});var buildDirectories;\n" + sliceFrom("buildDirectories=function(){let base;const drive=$(\"#driveSelect\")");
+ccode += "var dirDescription;\n" + sliceFrom("dirDescription=function(d){return({normal:\"Recover the loose");
+const cctx = { Math, JSON, Number, Object, Array, String, Set };
+vm.createContext(cctx);
+vm.runInContext(ccode + `
+this.__c={palette:V66_BASE_PALETTE,grids:Object.fromEntries(["dart","skull","mantis","wedge","fuzz","lance","needle"].map(k=>[k,buildBuiltinShipGrid(k).map(v=>v===null?null:V66_BASE_PALETTE[v])])),
+ baseShips:BASE_SHIPS_RAW.map(({grid,...r})=>r),special:[...V64_SPECIAL_TYPES],plan:V64_TYPE_PLAN,names:V64_TYPE_NAMES,symbols:V64_TYPE_SYMBOLS,rewards:V64_COMPLETION_REWARDS,themes:V64_THEME_CONFIG,
+ stencils:V64_STENCILS,unlocks:V66_UNLOCK_GROUPS,upgrades:UPGRADE_DEFS,
+ dirs:Object.fromEntries(["SYSTEM","GAMES","ARCHIVE"].map(d=>{__drive=d;return [d,buildDirectories()]})),
+ custom:(()=>{__drive="CUSTOM";importedNames=["MUSIC/a.mp3","MUSIC/b.mp3","WORK/report.doc","x.txt","GAMES/DOOM/doom.exe"];return buildDirectories()})(),
+ desc:Object.fromEntries(Object.keys(V64_TYPE_NAMES).map(t=>[t,dirDescription({type:t})]))};`, cctx);
+const C = cctx.__c;
+// Built-in ship definitions as patched by v6ApplyBuiltins + v68 (Red Falcon replaces "dart").
+const builtin = L.BASE_SHIPS.map(s => {
+  const raw = C.baseShips.find(r => r.id === s.id) || {};
+  return { id: s.id, name: s.name || raw.name, team: s.team, desc: s.desc || raw.desc, shape: raw.shape, stats: s.stats, modules: s.modules, special: s.special,
+    gridSize: s.gridSize || 24, thrusters: s.thrusters || null, hardpoints: s.hardpoints || null,
+    art: s.id === "dart" ? "res://assets/ships/red_falcon.png" : null };
+});
+write("builtin_grids.json", { source: path.basename(src), note: "buildBuiltinShipGrid(kind) output as hex (24x24, null=transparent)", grids: C.grids });
+write("directories.json", { source: path.basename(src), drives: C.dirs, custom: { input: ["MUSIC/a.mp3","MUSIC/b.mp3","WORK/report.doc","x.txt","GAMES/DOOM/doom.exe"], output: C.custom } });
+const campaignData = {
+  palette: C.palette, specialTypes: C.special, typePlan: C.plan, typeNames: C.names, typeSymbols: C.symbols, descriptions: C.desc,
+  rewards: C.rewards, themes: C.themes, upgrades: C.upgrades, paletteUnlocks: C.unlocks, stencils: C.stencils,
+  drives: Object.fromEntries(Object.entries(C.dirs).map(([d, list]) => [d, list.map(x => x.name)])),
+  difficulties: [{ value: 0.78, label: "Relaxed" }, { value: 1, label: "Standard — forgiving opening" }, { value: 1.28, label: "Veteran" }],
+  builtinShips: builtin,
+};
+
 // --- 4. canonical data extracted from effective code -> data/*.json ---------------------
 const dataDir = path.join(path.dirname(outDir), "..", "data");
 fs.mkdirSync(dataDir, { recursive: true });
@@ -164,3 +201,4 @@ writeData("npc_archetypes.json", { archetypes: npc, hostileWeights: { grunt: 42,
 const factions = {};
 for (const [id, f] of Object.entries(L.FACTIONS)) factions[id] = { ...f, playable: id !== "Enforcers", style: L.V724_STYLES[id] || null };
 writeData("factions.json", { factions, defaultStyle: L.V724_STYLES.Default });
+writeData("campaign.json", campaignData);

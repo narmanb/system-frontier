@@ -83,6 +83,12 @@ var beam_charge_start := 1.5
 var beam_fire_time := 0.0
 var beam_recover := 0.0
 var beam_target: SimShip = null
+# defender / boss
+var guard_icon = null            ## SimWorld.Icon guarded by an icon defender
+var orbit_angle := 0.0
+var orbit_speed := 1.15
+var orbit_r := 38.0
+var boss := false
 # test range
 var test_ai := ""
 

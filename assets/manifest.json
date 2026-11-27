@@ -120,6 +120,15 @@
    "note": "Described in legacy code as an 'uploaded animated GIF'; provenance specifically unconfirmed."
   },
   {
+   "path": "assets/effects/black_hole_sheet.png",
+   "source": "Derived in this repo from assets/effects/black_hole_reference.gif (8 frames, 150 ms each, laid out left-to-right, lossless)",
+   "legacy_identifier": "V71_BLACK_HOLE_DATA_URL",
+   "provenance": "Derived from the owner-supplied black-hole GIF; provenance of the original to be confirmed",
+   "use": "Dragon black hole animation (drawn at 160 px like v7.1)",
+   "dimensions": "2048x256",
+   "sha256": "b36fe2ba42afaa3519c76051d6ed2c05d34d7ed8e2be8596ce13061cf3489acf"
+  },
+  {
    "path": "assets/ui/icon.png",
    "source": "Generated in this repo from assets/ships/red_falcon.png (nearest-neighbour 2x, dark tile)",
    "legacy_identifier": "",

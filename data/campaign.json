@@ -1,0 +1,691 @@
+{
+ "palette": [
+  "#4fc3ff",
+  "#ffffff",
+  "#ff4050",
+  "#ffe54a",
+  "#55ee88",
+  "#a86cff",
+  "#ff9138",
+  "#7b8899",
+  "#151b32",
+  "#000000",
+  "#d9eefc",
+  "#b9c8d9",
+  "#536273",
+  "#273142",
+  "#1d2735",
+  "#0d1016",
+  "#0e87d8",
+  "#0066ff",
+  "#00b8c9",
+  "#7fe9ff",
+  "#d32f45",
+  "#ff6d83",
+  "#17b857",
+  "#2a8b67",
+  "#ffd05f",
+  "#c99622",
+  "#c87a2d",
+  "#7f5634",
+  "#7b59db",
+  "#d95bff",
+  "#4f2c83",
+  "#8b274d"
+ ],
+ "specialTypes": [
+  "rescue",
+  "repair",
+  "courier",
+  "scan",
+  "defrag"
+ ],
+ "typePlan": [
+  "normal",
+  "rescue",
+  "repair",
+  "race",
+  "courier",
+  "blackhole",
+  "scan",
+  "duel",
+  "defrag",
+  "blackhole",
+  "normal",
+  "boss"
+ ],
+ "typeNames": {
+  "normal": "ICON RECOVERY",
+  "rescue": "PROGRAM RESCUE",
+  "repair": "SYSTEM REPAIR",
+  "race": "DIRECTORY RACE",
+  "courier": "COURIER ESCORT",
+  "blackhole": "DRAGON BLACK HOLE",
+  "scan": "INFECTION SCAN",
+  "duel": "LOCKED DUEL",
+  "defrag": "DEFRAGMENTATION",
+  "boss": "INNER DEMON"
+ },
+ "typeSymbols": {
+  "normal": "■",
+  "rescue": "☺",
+  "repair": "◆",
+  "race": "»",
+  "courier": "✉",
+  "blackhole": "●",
+  "scan": "⌁",
+  "duel": "⚔",
+  "defrag": "▦",
+  "boss": "!"
+ },
+ "descriptions": {
+  "normal": "Recover the loose clean icons, avoid corrupt data, and leave through the exit gate.",
+  "rescue": "Locate stranded civilian programs. Fly close to release every program from quarantine, then escort them toward the open route.",
+  "repair": "Stabilize damaged directory nodes by remaining close while each repair cycle completes.",
+  "race": "Race rival pilots through every checkpoint. First place still claims the icon cache.",
+  "courier": "Meet the courier program, allow it to link with your ship, and guide it safely to the destination terminal.",
+  "blackhole": "Recover the icons to expose the existing dragon black hole. Entering it still begins the Noble Program encounter.",
+  "scan": "Search the directory for hidden infection signatures. Hold position near each signal until the scanner resolves it.",
+  "duel": "The existing locked combat directory remains active. Destroy all hostile duelists to open the gate.",
+  "defrag": "Touch the numbered memory fragments in order to rebuild the directory path.",
+  "boss": "The Inner Demon stronghold. Four Noble Programs are still required before entry."
+ },
+ "rewards": {
+  "normal": {
+   "credits": 18,
+   "alloy": 1
+  },
+  "rescue": {
+   "credits": 45,
+   "circuitry": 1,
+   "data": 1
+  },
+  "repair": {
+   "credits": 40,
+   "alloy": 2,
+   "circuitry": 1
+  },
+  "race": {
+   "credits": 20,
+   "circuitry": 1
+  },
+  "courier": {
+   "credits": 42,
+   "alloy": 1,
+   "data": 1
+  },
+  "blackhole": {
+   "credits": 28,
+   "data": 1
+  },
+  "scan": {
+   "credits": 38,
+   "data": 2
+  },
+  "duel": {
+   "credits": 36,
+   "alloy": 2
+  },
+  "defrag": {
+   "credits": 40,
+   "alloy": 1,
+   "circuitry": 1,
+   "data": 1
+  },
+  "boss": {
+   "credits": 100,
+   "alloy": 2,
+   "circuitry": 2,
+   "data": 2
+  }
+ },
+ "themes": {
+  "system": {
+   "name": "System Core",
+   "top": "#020812",
+   "bottom": "#071a24",
+   "line": "rgba(75,226,255,.12)",
+   "accent": "#54e6ff",
+   "motif": "circuit"
+  },
+  "games": {
+   "name": "Game Library",
+   "top": "#120321",
+   "bottom": "#07122a",
+   "line": "rgba(255,74,220,.12)",
+   "accent": "#ff58d5",
+   "motif": "arcade"
+  },
+  "media": {
+   "name": "Media Cache",
+   "top": "#130720",
+   "bottom": "#07162a",
+   "line": "rgba(153,105,255,.12)",
+   "accent": "#b68cff",
+   "motif": "wave"
+  },
+  "archive": {
+   "name": "Compressed Archive",
+   "top": "#171004",
+   "bottom": "#251b08",
+   "line": "rgba(255,203,88,.11)",
+   "accent": "#ffd35c",
+   "motif": "archive"
+  },
+  "recycle": {
+   "name": "Recycle Sector",
+   "top": "#06110d",
+   "bottom": "#112016",
+   "line": "rgba(94,255,153,.10)",
+   "accent": "#65f49d",
+   "motif": "shards"
+  },
+  "internet": {
+   "name": "Internet Cache",
+   "top": "#03111b",
+   "bottom": "#17102a",
+   "line": "rgba(60,255,224,.10)",
+   "accent": "#4fffd3",
+   "motif": "windows"
+  },
+  "default": {
+   "name": "Data Sector",
+   "top": "#020512",
+   "bottom": "#05091a",
+   "line": "rgba(100,190,255,.08)",
+   "accent": "#63dfff",
+   "motif": "stars"
+  }
+ },
+ "upgrades": {
+  "acceleration": {
+   "name": "Engine Tuning",
+   "desc": "Raises effective acceleration.",
+   "base": 55
+  },
+  "maxSpeed": {
+   "name": "Drive Governor Tuning",
+   "desc": "Raises maximum velocity.",
+   "base": 60
+  },
+  "inertia": {
+   "name": "Stabilizer Tuning",
+   "desc": "Increases passive speed loss while coasting.",
+   "base": 48
+  },
+  "turn": {
+   "name": "Vector Thruster Tuning",
+   "desc": "Improves rotation rate.",
+   "base": 52
+  },
+  "hull": {
+   "name": "Hull Reinforcement",
+   "desc": "Raises maximum hull.",
+   "base": 70
+  },
+  "fuelCapacity": {
+   "name": "Tank Expansion",
+   "desc": "Increases fuel capacity.",
+   "base": 55
+  },
+  "fuelEfficiency": {
+   "name": "Mixture Optimization",
+   "desc": "Reduces thrust fuel use.",
+   "base": 60
+  },
+  "weaponPower": {
+   "name": "Weapon Amplifier",
+   "desc": "Raises primary weapon damage.",
+   "base": 75
+  },
+  "weaponCooling": {
+   "name": "Cooling Tuning",
+   "desc": "Raises fire rate and heat recovery.",
+   "base": 68
+  },
+  "reactor": {
+   "name": "Reactor Tuning",
+   "desc": "Raises available module power.",
+   "base": 80
+  }
+ },
+ "paletteUnlocks": {
+  "chrome": {
+   "name": "Chrome Alloy Palette",
+   "cost": {
+    "alloy": 3,
+    "circuitry": 1
+   },
+   "colors": [
+    "#c9d6e4",
+    "#70849b"
+   ],
+   "desc": "Adds bright and dark metallic hull colors."
+  },
+  "neon": {
+   "name": "Circuit Neon Palette",
+   "cost": {
+    "circuitry": 2,
+    "data": 1
+   },
+   "colors": [
+    "#00f6ff",
+    "#ff4fd8"
+   ],
+   "desc": "Adds vivid cyan and magenta circuit colors."
+  },
+  "void": {
+   "name": "Void Data Palette",
+   "cost": {
+    "data": 3
+   },
+   "colors": [
+    "#3b1766",
+    "#a783ff"
+   ],
+   "desc": "Adds deep violet and luminous archive colors."
+  },
+  "rust": {
+   "name": "Rustbelt Palette",
+   "cost": {
+    "alloy": 2,
+    "data": 1
+   },
+   "colors": [
+    "#8a4d2f",
+    "#b66c43"
+   ],
+   "desc": "Adds corroded salvage browns and warm plated steel."
+  },
+  "noble": {
+   "name": "Noble Program Palette",
+   "cost": {
+    "data": 2,
+    "circuitry": 2
+   },
+   "colors": [
+    "#8ff7ff",
+    "#f5f1a8"
+   ],
+   "desc": "Adds luminous Noble highlights and pale relic gold."
+  },
+  "hazard": {
+   "name": "Hazard Stripe Palette",
+   "cost": {
+    "alloy": 2,
+    "circuitry": 1
+   },
+   "colors": [
+    "#ffc300",
+    "#2c2c2c"
+   ],
+   "desc": "Adds industrial warning yellow and machinery graphite."
+  },
+  "bio": {
+   "name": "Bio-Lume Palette",
+   "cost": {
+    "circuitry": 1,
+    "data": 2
+   },
+   "colors": [
+    "#8effc1",
+    "#0d8d6e"
+   ],
+   "desc": "Adds saturated bio-green and dark sea-teal."
+  },
+  "royal": {
+   "name": "Royal Signal Palette",
+   "cost": {
+    "alloy": 1,
+    "circuitry": 1,
+    "data": 2
+   },
+   "colors": [
+    "#5d224f",
+    "#ff7ad6"
+   ],
+   "desc": "Adds deep magenta hull trim and bright signal pink."
+  }
+ },
+ "stencils": {
+  "salvageSkiff": {
+   "name": "Salvage Skiff Stencil",
+   "cost": {
+    "alloy": 4,
+    "circuitry": 2
+   },
+   "desc": "A broad 32×32 recovery hull with visible cargo arms."
+  },
+  "archiveNeedle": {
+   "name": "Archive Needle Stencil",
+   "cost": {
+    "alloy": 2,
+    "data": 2
+   },
+   "desc": "A narrow 32×32 courier hull built for precise editing."
+  }
+ },
+ "drives": {
+  "SYSTEM": [
+   "WINDOWS",
+   "SYSTEM",
+   "PROGRAMS",
+   "DESKTOP",
+   "FONTS",
+   "MEDIA",
+   "TEMP",
+   "DRIVERS",
+   "TOOLS",
+   "GAMES",
+   "RECYCLED",
+   "INNER_DEMON"
+  ],
+  "GAMES": [
+   "ARCADE",
+   "RPG",
+   "SIMS",
+   "STRATEGY",
+   "SAVES",
+   "MODS",
+   "SCREENSHOTS",
+   "DEMOS",
+   "TOOLS",
+   "CLASSICS",
+   "INDIE",
+   "BOSSES"
+  ],
+  "ARCHIVE": [
+   "MUSIC",
+   "PHOTOS",
+   "MOVIES",
+   "BOOKS",
+   "BACKUP",
+   "ZIPFILES",
+   "SAMPLES",
+   "PROJECTS",
+   "OLD_PC",
+   "MISC",
+   "VAULT",
+   "DEMON"
+  ]
+ },
+ "difficulties": [
+  {
+   "value": 0.78,
+   "label": "Relaxed"
+  },
+  {
+   "value": 1,
+   "label": "Standard — forgiving opening"
+  },
+  {
+   "value": 1.28,
+   "label": "Veteran"
+  }
+ ],
+ "builtinShips": [
+  {
+   "id": "dart",
+   "name": "Red Falcon",
+   "team": "Avengers",
+   "desc": "Responsive hero fighter with balanced handling, solid control, and dependable standard systems.",
+   "shape": "galaga",
+   "stats": {
+    "acceleration": 6,
+    "maxSpeed": 6,
+    "inertia": 6,
+    "turn": 7,
+    "hull": 4,
+    "fuelCapacity": 4,
+    "fuelEfficiency": 4,
+    "weaponPower": 4,
+    "weaponCooling": 4,
+    "reactor": 5
+   },
+   "modules": {
+    "primary": "pulse",
+    "secondary": "missile",
+    "defense": "shield",
+    "utility": "repair",
+    "scanner": "standard"
+   },
+   "special": "shield",
+   "gridSize": 48,
+   "thrusters": [
+    {
+     "id": "center",
+     "x": 24,
+     "y": 43,
+     "enabled": true,
+     "cost": 0,
+     "scale": 1.15
+    },
+    {
+     "id": "left",
+     "x": 17,
+     "y": 41,
+     "enabled": true,
+     "cost": 2,
+     "scale": 0.74
+    },
+    {
+     "id": "right",
+     "x": 31,
+     "y": 41,
+     "enabled": true,
+     "cost": 2,
+     "scale": 0.74
+    }
+   ],
+   "hardpoints": [
+    {
+     "id": "primary",
+     "x": 24,
+     "y": 12
+    },
+    {
+     "id": "secondary",
+     "x": 15,
+     "y": 27
+    },
+    {
+     "id": "defense",
+     "x": 33,
+     "y": 27
+    },
+    {
+     "id": "utility",
+     "x": 24,
+     "y": 31
+    }
+   ],
+   "art": "res://assets/ships/red_falcon.png"
+  },
+  {
+   "id": "skull",
+   "name": "Red Marauder",
+   "team": "Pirates",
+   "desc": "Hard-hitting raider with strong acceleration, heavy weapons and poor efficiency.",
+   "shape": "skull",
+   "stats": {
+    "acceleration": 6,
+    "maxSpeed": 5,
+    "inertia": 3,
+    "turn": 4,
+    "hull": 6,
+    "fuelCapacity": 4,
+    "fuelEfficiency": 3,
+    "weaponPower": 9,
+    "weaponCooling": 6,
+    "reactor": 4
+   },
+   "modules": {
+    "primary": "heavy",
+    "secondary": "missile",
+    "defense": "ram",
+    "utility": "tractor",
+    "scanner": "salvage"
+   },
+   "special": "ram",
+   "gridSize": 24,
+   "thrusters": null,
+   "hardpoints": null,
+   "art": null
+  },
+  {
+   "id": "mantis",
+   "name": "Night Mantis",
+   "team": "Predators",
+   "desc": "Fast hunter with sharp handling, weak stabilization and a cloaking field.",
+   "shape": "mantis",
+   "stats": {
+    "acceleration": 7,
+    "maxSpeed": 7,
+    "inertia": 2,
+    "turn": 8,
+    "hull": 3,
+    "fuelCapacity": 4,
+    "fuelEfficiency": 5,
+    "weaponPower": 6,
+    "weaponCooling": 4,
+    "reactor": 4
+   },
+   "modules": {
+    "primary": "rapid",
+    "secondary": "emp",
+    "defense": "cloak",
+    "utility": "fuelRecycler",
+    "scanner": "longRange"
+   },
+   "special": "cloak",
+   "gridSize": 24,
+   "thrusters": null,
+   "hardpoints": null,
+   "art": null
+  },
+  {
+   "id": "wedge",
+   "name": "Orange Wedge",
+   "team": "Renegades",
+   "desc": "Adaptable recovery craft with efficient fuel systems and salvage equipment.",
+   "shape": "wedge",
+   "stats": {
+    "acceleration": 5,
+    "maxSpeed": 5,
+    "inertia": 6,
+    "turn": 5,
+    "hull": 5,
+    "fuelCapacity": 6,
+    "fuelEfficiency": 7,
+    "weaponPower": 4,
+    "weaponCooling": 3,
+    "reactor": 4
+   },
+   "modules": {
+    "primary": "pulse",
+    "secondary": "missile",
+    "defense": "shield",
+    "utility": "tractor",
+    "scanner": "salvage"
+   },
+   "special": "tractor",
+   "gridSize": 24,
+   "thrusters": null,
+   "hardpoints": null,
+   "art": null
+  },
+  {
+   "id": "fuzz",
+   "name": "Fuzzy Comet",
+   "team": "Fuzzy",
+   "desc": "Slow armored cruiser with strong stabilization, deep fuel reserves and shields.",
+   "shape": "fuzz",
+   "stats": {
+    "acceleration": 3,
+    "maxSpeed": 3,
+    "inertia": 8,
+    "turn": 4,
+    "hull": 9,
+    "fuelCapacity": 7,
+    "fuelEfficiency": 7,
+    "weaponPower": 3,
+    "weaponCooling": 3,
+    "reactor": 3
+   },
+   "modules": {
+    "primary": "pulse",
+    "secondary": "missile",
+    "defense": "shield",
+    "utility": "repair",
+    "scanner": "standard"
+   },
+   "special": "shield",
+   "gridSize": 24,
+   "thrusters": null,
+   "hardpoints": null,
+   "art": null
+  },
+  {
+   "id": "lance",
+   "name": "Silver Lance",
+   "team": "Knights",
+   "desc": "Armored escort with deliberate handling, reinforced plating and steady weapons.",
+   "shape": "lance",
+   "stats": {
+    "acceleration": 4,
+    "maxSpeed": 4,
+    "inertia": 7,
+    "turn": 4,
+    "hull": 9,
+    "fuelCapacity": 5,
+    "fuelEfficiency": 5,
+    "weaponPower": 6,
+    "weaponCooling": 3,
+    "reactor": 3
+   },
+   "modules": {
+    "primary": "heavy",
+    "secondary": "missile",
+    "defense": "plating",
+    "utility": "repair",
+    "scanner": "standard"
+   },
+   "special": "ram",
+   "gridSize": 24,
+   "thrusters": null,
+   "hardpoints": null,
+   "art": null
+  },
+  {
+   "id": "needle",
+   "name": "Green Needle",
+   "team": "Speed",
+   "desc": "Extreme racing craft with exceptional acceleration and speed but almost no armor.",
+   "shape": "needle",
+   "stats": {
+    "acceleration": 9,
+    "maxSpeed": 10,
+    "inertia": 2,
+    "turn": 9,
+    "hull": 2,
+    "fuelCapacity": 4,
+    "fuelEfficiency": 4,
+    "weaponPower": 3,
+    "weaponCooling": 3,
+    "reactor": 4
+   },
+   "modules": {
+    "primary": "rapid",
+    "secondary": "none",
+    "defense": "cloak",
+    "utility": "fuelRecycler",
+    "scanner": "longRange"
+   },
+   "special": "cloak",
+   "gridSize": 24,
+   "thrusters": null,
+   "hardpoints": null,
+   "art": null
+  }
+ ]
+}

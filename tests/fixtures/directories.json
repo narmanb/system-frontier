@@ -1,0 +1,358 @@
+{
+ "source": "inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html",
+ "drives": {
+  "SYSTEM": [
+   {
+    "name": "WINDOWS",
+    "type": "normal",
+    "diff": 1,
+    "icons": 4,
+    "theme": "system"
+   },
+   {
+    "name": "SYSTEM",
+    "type": "rescue",
+    "diff": 1,
+    "icons": 0,
+    "theme": "system"
+   },
+   {
+    "name": "PROGRAMS",
+    "type": "repair",
+    "diff": 1,
+    "icons": 0,
+    "theme": "system"
+   },
+   {
+    "name": "DESKTOP",
+    "type": "race",
+    "diff": 2,
+    "icons": 5,
+    "theme": "internet"
+   },
+   {
+    "name": "FONTS",
+    "type": "courier",
+    "diff": 2,
+    "icons": 0,
+    "theme": "system"
+   },
+   {
+    "name": "MEDIA",
+    "type": "blackhole",
+    "diff": 2,
+    "icons": 6,
+    "theme": "media"
+   },
+   {
+    "name": "TEMP",
+    "type": "scan",
+    "diff": 3,
+    "icons": 0,
+    "theme": "recycle"
+   },
+   {
+    "name": "DRIVERS",
+    "type": "duel",
+    "diff": 3,
+    "icons": 7,
+    "theme": "system"
+   },
+   {
+    "name": "TOOLS",
+    "type": "defrag",
+    "diff": 3,
+    "icons": 0,
+    "theme": "system"
+   },
+   {
+    "name": "GAMES",
+    "type": "blackhole",
+    "diff": 4,
+    "icons": 8,
+    "theme": "games"
+   },
+   {
+    "name": "RECYCLED",
+    "type": "normal",
+    "diff": 4,
+    "icons": 9,
+    "theme": "recycle"
+   },
+   {
+    "name": "INNER_DEMON",
+    "type": "boss",
+    "diff": 4,
+    "icons": 9,
+    "theme": "games"
+   }
+  ],
+  "GAMES": [
+   {
+    "name": "ARCADE",
+    "type": "normal",
+    "diff": 1,
+    "icons": 4,
+    "theme": "games"
+   },
+   {
+    "name": "RPG",
+    "type": "rescue",
+    "diff": 1,
+    "icons": 0,
+    "theme": "games"
+   },
+   {
+    "name": "SIMS",
+    "type": "repair",
+    "diff": 1,
+    "icons": 0,
+    "theme": "games"
+   },
+   {
+    "name": "STRATEGY",
+    "type": "race",
+    "diff": 2,
+    "icons": 5,
+    "theme": "games"
+   },
+   {
+    "name": "SAVES",
+    "type": "courier",
+    "diff": 2,
+    "icons": 0,
+    "theme": "games"
+   },
+   {
+    "name": "MODS",
+    "type": "blackhole",
+    "diff": 2,
+    "icons": 6,
+    "theme": "games"
+   },
+   {
+    "name": "SCREENSHOTS",
+    "type": "scan",
+    "diff": 3,
+    "icons": 0,
+    "theme": "games"
+   },
+   {
+    "name": "DEMOS",
+    "type": "duel",
+    "diff": 3,
+    "icons": 7,
+    "theme": "games"
+   },
+   {
+    "name": "TOOLS",
+    "type": "defrag",
+    "diff": 3,
+    "icons": 0,
+    "theme": "system"
+   },
+   {
+    "name": "CLASSICS",
+    "type": "blackhole",
+    "diff": 4,
+    "icons": 8,
+    "theme": "games"
+   },
+   {
+    "name": "INDIE",
+    "type": "normal",
+    "diff": 4,
+    "icons": 9,
+    "theme": "games"
+   },
+   {
+    "name": "BOSSES",
+    "type": "boss",
+    "diff": 4,
+    "icons": 9,
+    "theme": "games"
+   }
+  ],
+  "ARCHIVE": [
+   {
+    "name": "MUSIC",
+    "type": "normal",
+    "diff": 1,
+    "icons": 4,
+    "theme": "media"
+   },
+   {
+    "name": "PHOTOS",
+    "type": "rescue",
+    "diff": 1,
+    "icons": 0,
+    "theme": "media"
+   },
+   {
+    "name": "MOVIES",
+    "type": "repair",
+    "diff": 1,
+    "icons": 0,
+    "theme": "media"
+   },
+   {
+    "name": "BOOKS",
+    "type": "race",
+    "diff": 2,
+    "icons": 5,
+    "theme": "archive"
+   },
+   {
+    "name": "BACKUP",
+    "type": "courier",
+    "diff": 2,
+    "icons": 0,
+    "theme": "archive"
+   },
+   {
+    "name": "ZIPFILES",
+    "type": "blackhole",
+    "diff": 2,
+    "icons": 6,
+    "theme": "archive"
+   },
+   {
+    "name": "SAMPLES",
+    "type": "scan",
+    "diff": 3,
+    "icons": 0,
+    "theme": "media"
+   },
+   {
+    "name": "PROJECTS",
+    "type": "duel",
+    "diff": 3,
+    "icons": 7,
+    "theme": "archive"
+   },
+   {
+    "name": "OLD_PC",
+    "type": "defrag",
+    "diff": 3,
+    "icons": 0,
+    "theme": "archive"
+   },
+   {
+    "name": "MISC",
+    "type": "blackhole",
+    "diff": 4,
+    "icons": 8,
+    "theme": "archive"
+   },
+   {
+    "name": "VAULT",
+    "type": "normal",
+    "diff": 4,
+    "icons": 9,
+    "theme": "archive"
+   },
+   {
+    "name": "DEMON",
+    "type": "boss",
+    "diff": 4,
+    "icons": 9,
+    "theme": "games"
+   }
+  ]
+ },
+ "custom": {
+  "input": [
+   "MUSIC/a.mp3",
+   "MUSIC/b.mp3",
+   "WORK/report.doc",
+   "x.txt",
+   "GAMES/DOOM/doom.exe"
+  ],
+  "output": [
+   {
+    "name": "MUSIC",
+    "type": "normal",
+    "diff": 1,
+    "icons": 4,
+    "theme": "media"
+   },
+   {
+    "name": "WORK",
+    "type": "rescue",
+    "diff": 1,
+    "icons": 0,
+    "theme": "games"
+   },
+   {
+    "name": "ROOT",
+    "type": "repair",
+    "diff": 1,
+    "icons": 0,
+    "theme": "media"
+   },
+   {
+    "name": "GAMES\\DOOM",
+    "type": "race",
+    "diff": 2,
+    "icons": 5,
+    "theme": "games"
+   },
+   {
+    "name": "SECTOR_05",
+    "type": "courier",
+    "diff": 2,
+    "icons": 0,
+    "theme": "recycle"
+   },
+   {
+    "name": "SECTOR_06",
+    "type": "blackhole",
+    "diff": 2,
+    "icons": 6,
+    "theme": "internet"
+   },
+   {
+    "name": "SECTOR_07",
+    "type": "scan",
+    "diff": 3,
+    "icons": 0,
+    "theme": "system"
+   },
+   {
+    "name": "SECTOR_08",
+    "type": "duel",
+    "diff": 3,
+    "icons": 7,
+    "theme": "games"
+   },
+   {
+    "name": "SECTOR_09",
+    "type": "defrag",
+    "diff": 3,
+    "icons": 0,
+    "theme": "media"
+   },
+   {
+    "name": "SECTOR_10",
+    "type": "blackhole",
+    "diff": 4,
+    "icons": 8,
+    "theme": "archive"
+   },
+   {
+    "name": "SECTOR_11",
+    "type": "normal",
+    "diff": 4,
+    "icons": 9,
+    "theme": "recycle"
+   },
+   {
+    "name": "SECTOR_12",
+    "type": "boss",
+    "diff": 4,
+    "icons": 9,
+    "theme": "internet"
+   }
+  ]
+ }
+}
