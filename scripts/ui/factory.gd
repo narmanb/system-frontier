@@ -69,6 +69,7 @@ func _ready() -> void:
 
 	right_scroll = ScrollContainer.new()
 	right_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	right_scroll.follow_focus = true
 	right_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	right_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	body.add_child(right_scroll)
@@ -116,6 +117,8 @@ func _ready() -> void:
 	else:
 		editor.load_starter("redFalcon")   # legacy default: the true 48×48 Red Falcon
 		editor.history.clear()
+	if AppState.using_gamepad:
+		status.text = "Gamepad: Y precision cursor · D-pad/stick move · A paint · LB/RB tabs · LT/RT zoom · B back"
 	if AppState.has_meta("last_test"):
 		status.text = AppState.get_meta("last_test")
 		AppState.remove_meta("last_test")
@@ -833,7 +836,75 @@ func _notification(what: int) -> void:
 		_back()
 
 
+## Gamepad editing (Retroid Pocket 5): Y toggles the precision cursor; with it on, the
+## D-pad / left stick moves the cursor and A paints; LB/RB switch tabs; LT/RT zoom; B backs
+## out of precision mode first, then the Factory.
+func _input(event: InputEvent) -> void:
+	if not (event is InputEventJoypadButton or event is InputEventJoypadMotion) or _popup_open():
+		return
+	if event is InputEventJoypadButton and event.pressed:
+		match event.button_index:
+			JOY_BUTTON_Y:
+				_toggle_precision()
+			JOY_BUTTON_LEFT_SHOULDER, JOY_BUTTON_RIGHT_SHOULDER:
+				var i := (TABS.find(current_tab) + (1 if event.button_index == JOY_BUTTON_RIGHT_SHOULDER else -1) + TABS.size()) % TABS.size()
+				_show_tab(TABS[i])
+			JOY_BUTTON_B:
+				if _precision:
+					_toggle_precision()
+				else:
+					_back()
+			JOY_BUTTON_A:
+				if not _precision:
+					return
+				editor.push_history()
+				editor.paint(canvas.cursor.x, canvas.cursor.y)
+				_refresh()
+			JOY_BUTTON_DPAD_LEFT, JOY_BUTTON_DPAD_RIGHT, JOY_BUTTON_DPAD_UP, JOY_BUTTON_DPAD_DOWN:
+				if not _precision:
+					return
+				var d: Vector2i = {JOY_BUTTON_DPAD_LEFT: Vector2i(-1, 0), JOY_BUTTON_DPAD_RIGHT: Vector2i(1, 0), JOY_BUTTON_DPAD_UP: Vector2i(0, -1), JOY_BUTTON_DPAD_DOWN: Vector2i(0, 1)}[event.button_index]
+				_move_cursor(d)
+				if Input.is_joy_button_pressed(event.device, JOY_BUTTON_A):
+					editor.paint(canvas.cursor.x, canvas.cursor.y)
+			_:
+				return
+		get_viewport().set_input_as_handled()
+	elif event is InputEventJoypadMotion:
+		if event.axis in [JOY_AXIS_TRIGGER_LEFT, JOY_AXIS_TRIGGER_RIGHT] and event.axis_value > 0.6:
+			canvas.set_zoom(canvas.zoom * (1.1 if event.axis == JOY_AXIS_TRIGGER_RIGHT else 1 / 1.1))
+			get_viewport().set_input_as_handled()
+		elif _precision and event.axis in [JOY_AXIS_LEFT_X, JOY_AXIS_LEFT_Y]:
+			get_viewport().set_input_as_handled()   # stick moves the cursor in _process
+
+
+var _stick_acc := Vector2.ZERO
+
+
+func _process(dt: float) -> void:
+	if not _precision:
+		return
+	var v := Vector2(Input.get_joy_axis(0, JOY_AXIS_LEFT_X), Input.get_joy_axis(0, JOY_AXIS_LEFT_Y))
+	if v.length() < 0.35:
+		_stick_acc = Vector2.ZERO
+		return
+	_stick_acc += v * dt * 14.0
+	var step := Vector2i(int(_stick_acc.x), int(_stick_acc.y))
+	if step != Vector2i.ZERO:
+		_stick_acc -= Vector2(step)
+		_move_cursor(step)
+		if Input.is_joy_button_pressed(0, JOY_BUTTON_A):
+			editor.paint(canvas.cursor.x, canvas.cursor.y)
+
+
+func _move_cursor(d: Vector2i) -> void:
+	var n := editor.grid_size
+	canvas.cursor = Vector2i(clampi(canvas.cursor.x + d.x, 0, n - 1), clampi(canvas.cursor.y + d.y, 0, n - 1))
+
+
 func _unhandled_input(event: InputEvent) -> void:
+	if _gamepad_back(event):
+		return
 	if event is InputEventKey and event.pressed and event.ctrl_pressed:
 		if event.keycode == KEY_Z:
 			editor.redo() if event.shift_pressed else editor.undo()
@@ -924,3 +995,18 @@ class PrecisionPad:
 
 	func _process(_dt: float) -> void:
 		queue_redraw()
+
+
+func _gamepad_back(event: InputEvent) -> bool:
+	if event.is_action_pressed("ui_cancel") and not _popup_open():
+		get_viewport().set_input_as_handled()
+		_back()
+		return true
+	return false
+
+
+func _popup_open() -> bool:
+	for ch in get_children():
+		if ch is Win95.PopupOverlay:
+			return true
+	return false

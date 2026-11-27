@@ -31,6 +31,7 @@ func _ready() -> void:
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.follow_focus = true
 	outer.add_child(scroll)
 	var margin := MarginContainer.new()
 	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -185,3 +186,22 @@ func _back() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
 		_back()
+
+
+func _gamepad_back(event: InputEvent) -> bool:
+	if event.is_action_pressed("ui_cancel") and not _popup_open():
+		get_viewport().set_input_as_handled()
+		_back()
+		return true
+	return false
+
+
+func _popup_open() -> bool:
+	for ch in get_children():
+		if ch is Win95.PopupOverlay:
+			return true
+	return false
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	_gamepad_back(event)

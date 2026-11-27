@@ -52,6 +52,10 @@ jobs:
         run: |
           set -o pipefail
           ~/godot-bin/godot --headless --path . res://tools/autoplay.tscn -- --seeds=1 --minutes=5 --strict --out=autoplay.md 2>&1 | tail -25
+      - name: Gamepad navigation check (menus, popups, pause, map, factory)
+        run: |
+          set -o pipefail
+          ~/godot-bin/godot --headless --path . res://tools/gamepad_check.tscn 2>&1 | grep -E "GAMEPAD|  - "
       - name: Upload failure log
         if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

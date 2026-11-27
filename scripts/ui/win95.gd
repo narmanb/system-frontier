@@ -127,8 +127,8 @@ static func make_theme() -> Theme:
 	t.set_stylebox("disabled", "Button", btn_normal)
 	var focus := StyleBoxFlat.new()
 	focus.draw_center = false
-	focus.border_color = Color(0, 0, 0, 0.75)
-	focus.set_border_width_all(1)
+	focus.border_color = Color(0, 0, 0, 0.85)
+	focus.set_border_width_all(2)
 	focus.set_expand_margin_all(-4)
 	t.set_stylebox("focus", "Button", focus)
 	for k in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]:
@@ -219,6 +219,17 @@ static func window(title: String, caption_buttons: Array = []) -> Array:
 	return [win, content]
 
 
+## Modal overlay: B / Esc presses its cancel button (normally the last one).
+class PopupOverlay:
+	extends Control
+	var cancel_button: Button
+
+	func _unhandled_input(event: InputEvent) -> void:
+		if event.is_action_pressed("ui_cancel") and is_instance_valid(cancel_button):
+			get_viewport().set_input_as_handled()
+			cancel_button.pressed.emit()
+
+
 class BevelBox:
 	extends StyleBox
 	var kind := "raised"
@@ -260,6 +271,7 @@ static func desktop(owner: Control, title: String, caption_buttons: Array = [], 
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.follow_focus = true
 	outer.add_child(scroll)
 	var margin := MarginContainer.new()
 	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -301,7 +313,7 @@ static func heading(text: String) -> Control:
 ## Modal Win95 dialog over `parent`. buttons: [[label, callable]]; a callable returning
 ## `false` keeps the dialog open. Returns the overlay node (free it to close manually).
 static func popup(parent: Node, title: String, body: String, buttons: Array, extra: Control = null) -> Control:
-	var overlay := Control.new()
+	var overlay := PopupOverlay.new()
 	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	overlay.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -326,6 +338,7 @@ static func popup(parent: Node, title: String, body: String, buttons: Array, ext
 	if extra:
 		box.add_child(extra)
 	var first: Button = null
+	var last: Button = null
 	for b in buttons:
 		var btn := button(b[0], 48)
 		var cb: Callable = b[1]
@@ -334,8 +347,10 @@ static func popup(parent: Node, title: String, body: String, buttons: Array, ext
 			if not (r is bool and r == false):
 				overlay.queue_free())
 		box.add_child(btn)
+		last = btn
 		if first == null:
 			first = btn
+	overlay.cancel_button = last   # B / Esc presses the last button (Cancel, Close, Decline…)
 	parent.add_child(overlay)
 	if first:
 		first.grab_focus.call_deferred()

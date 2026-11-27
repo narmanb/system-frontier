@@ -85,6 +85,9 @@ func _ready() -> void:
 		_layout_strategy()
 	_build_pause(root)
 	_build_end(root)
+	var pin := PauseInput.new()
+	pin.mission = self
+	add_child(pin)
 	_user_zoom = float(AppState.settings.get("zoom", 1.0))
 	if campaign_mode:
 		world.setup_directory(_campaign, _dir)
@@ -186,6 +189,21 @@ func _physics_process(dt: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if world.over:
+		if event.is_action_pressed("ui_cancel"):
+			_quit_to_menu()
+		return
+	if map_view.visible and event.is_action_pressed("ui_cancel"):
+		_toggle_map()
+		get_viewport().set_input_as_handled()
+		return
+	if strategy_bar and (event.is_action_pressed("turn_left") or event.is_action_pressed("turn_right")):
+		var cmds := StrategyBar.COMMANDS
+		var i := (cmds.find(strategy_bar.current) + (1 if event.is_action_pressed("turn_right") else -1) + cmds.size()) % cmds.size()
+		strategy_bar.current = cmds[i]
+		strategy_bar.command.emit(cmds[i])
+		strategy_bar.queue_redraw()
+		return
 	if event.is_action_pressed("ambulance"):
 		_ambulance()
 	elif event.is_action_pressed("pause"):
@@ -389,3 +407,20 @@ func _quit_to_menu() -> void:
 		get_tree().change_scene_to_file("res://scenes/factory/factory.tscn")
 		return
 	get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")
+
+
+## Handles Start / Esc / B while the tree is paused (the mission node itself is pausable).
+class PauseInput:
+	extends Node
+	var mission
+
+	func _init() -> void:
+		process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+
+	func _unhandled_input(event: InputEvent) -> void:
+		if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
+			for ch in mission._root.get_children():
+				if ch is Win95.PopupOverlay:
+					return
+			get_viewport().set_input_as_handled()
+			mission.set_paused(false)

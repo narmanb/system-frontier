@@ -45,6 +45,7 @@ func _ready() -> void:
 		get_tree().change_scene_to_file("res://scenes/factory/factory.tscn"))
 	_btn(grid, "Main Menu", _menu)
 	_render()
+	_focus_first.call_deferred()
 
 
 func _btn(grid: GridContainer, text: String, cb: Callable) -> Button:
@@ -85,6 +86,14 @@ func _render() -> void:
 		var id := int(d["id"])
 		b.pressed.connect(func(): _select(id))
 		_list.add_child(b)
+
+
+func _focus_first() -> void:
+	for b in _list.get_children():
+		if not b.disabled:
+			b.grab_focus()
+			return
+	_enter.grab_focus()
 
 
 func _select(id: int) -> void:
@@ -249,3 +258,22 @@ class DirButton:
 		draw_rect(Rect2(Vector2(8, 10) + off, Vector2(10, size.y - 20)), accent.darkened(0.35))
 		Win95.text(self, Vector2(26, 22) + off, state + str(dir["name"]), fs, col, true, size.x - 40)
 		Win95.text(self, Vector2(26, 42) + off, "%s · Threat %d · %s" % [type_name, int(dir["difficulty"]), theme_cfg.get("name", "")], 13, Win95.SHADOW if disabled else Color("#202020"), false, size.x - 40)
+
+
+func _gamepad_back(event: InputEvent) -> bool:
+	if event.is_action_pressed("ui_cancel") and not _popup_open():
+		get_viewport().set_input_as_handled()
+		_menu()
+		return true
+	return false
+
+
+func _popup_open() -> bool:
+	for ch in get_children():
+		if ch is Win95.PopupOverlay:
+			return true
+	return false
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	_gamepad_back(event)

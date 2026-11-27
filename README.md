@@ -40,6 +40,12 @@ The interface keeps the legacy build's Windows 95 look. In flight the HUD stays 
 | Pause (zoom and map are in this menu too) | Esc / P | Start | ‖ chip (top centre) or Android Back |
 | Zoom | + / − / wheel | — | Pinch, or the pause menu |
 
+**Gamepad / Retroid Pocket 5 in menus:** D-pad or stick moves between buttons, A selects,
+B goes back or closes a popup, and Start/B resumes from pause. In strategy mode, left/right
+cycles the autopilot priority. **In the Ship Factory:** Y toggles the precision cursor,
+D-pad or stick moves it, A paints (hold A while moving to draw lines), LB/RB switch tabs,
+LT/RT zoom, and B leaves precision mode and then the Factory.
+
 There's no brake (owner decision, carried over from the HTML build). Turn around and
 counter-thrust instead. Inertia Stabilization sets how quickly you lose speed while coasting.
 

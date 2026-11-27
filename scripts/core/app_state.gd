@@ -94,6 +94,9 @@ func _register_inputs() -> void:
 	_action("zoom_out", [KEY_MINUS, KEY_KP_SUBTRACT], [], [])
 	_action("fullscreen", [KEY_F11], [], [])
 	_action("ambulance", [KEY_A], [JOY_BUTTON_RIGHT_STICK], [])
+	# Gamepad menu navigation (Retroid Pocket 5 etc.): A = accept, B = back/cancel.
+	_action("ui_accept", [], [JOY_BUTTON_A], [])
+	_action("ui_cancel", [], [JOY_BUTTON_B], [])
 
 
 func _action(name: String, keys: Array, buttons: Array, axes: Array) -> void:
