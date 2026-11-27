@@ -94,6 +94,7 @@ func _register_inputs() -> void:
 	_action("zoom_out", [KEY_MINUS, KEY_KP_SUBTRACT], [], [])
 	_action("fullscreen", [KEY_F11], [], [])
 	_action("ambulance", [KEY_A], [JOY_BUTTON_RIGHT_STICK], [])
+	_action("relations", [KEY_R], [], [])
 	# Gamepad menu navigation (Retroid Pocket 5 etc.): A = accept, B = back/cancel.
 	_action("ui_accept", [], [JOY_BUTTON_A], [])
 	_action("ui_cancel", [], [JOY_BUTTON_B], [])
@@ -159,6 +160,22 @@ func set_setting(key: String, value: Variant) -> void:
 	if key == "sound":
 		Sfx.enabled = bool(value)
 	save_settings()
+
+
+## Screen-cutout / rounded-corner insets in logical (canvas) units: {left, top, right, bottom}.
+## Mobile only (on desktop the safe area describes the monitor, not the window).
+func safe_insets() -> Dictionary:
+	var z := {"left": 0.0, "top": 0.0, "right": 0.0, "bottom": 0.0}
+	if not OS.has_feature("mobile"):
+		return z
+	var safe := DisplayServer.get_display_safe_area()
+	var win := DisplayServer.window_get_size()
+	var logical := get_tree().root.get_visible_rect().size
+	if safe.size.x <= 0 or win.x <= 0 or logical.x <= 0:
+		return z
+	var k := logical.x / float(win.x)
+	return {"left": maxf(0, safe.position.x) * k, "top": maxf(0, safe.position.y) * k,
+		"right": maxf(0, win.x - safe.end.x) * k, "bottom": maxf(0, win.y - safe.end.y) * k}
 
 
 func is_touch_ui() -> bool:

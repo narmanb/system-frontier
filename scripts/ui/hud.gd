@@ -56,7 +56,8 @@ func _draw_hud() -> void:
 		return
 	var vs := get_viewport_rect().size
 	var fs := _font_size()
-	_status_rect = _draw_status_window(Vector2(6, 6), fs)
+	var ins := AppState.safe_insets()
+	_status_rect = _draw_status_window(Vector2(6 + ins.left, 6 + ins.top), fs)
 	_draw_chip_bar(vs, fs)
 	_draw_message(vs)
 
@@ -130,13 +131,14 @@ func _draw_chip_bar(vs: Vector2, fs: int) -> void:
 		total += cw + 3
 	total += h  # pause button
 	var left := _status_rect.end.x + 6
-	var right := vs.x - 6
+	var ins := AppState.safe_insets()
+	var right: float = vs.x - 6 - ins.right
 	if radar and radar.visible and radar.position.y < _status_rect.end.y:
 		right = minf(right, radar.position.x - 6)
 	var x := clampf(vs.x / 2 - total / 2, left, maxf(left, right - total))
-	var y := 6.0
+	var y: float = 6.0 + ins.top
 	if left + total > right:   # not enough room between the windows: tuck under the status window
-		x = 6
+		x = 6 + ins.left
 		y = _status_rect.end.y + 6
 	for i in chips.size():
 		var c: Array = chips[i]
@@ -182,7 +184,7 @@ func _draw_message(vs: Vector2) -> void:
 	var mw := minf(full, vs.x * (0.55 if touch else 0.8))
 	var lines := ceili(full / maxf(1.0, mw))
 	var h := lines * (fs + 4) + 8
-	var y := vs.y - (vs.y * 0.27 if touch else 24.0) - h
+	var y: float = vs.y - AppState.safe_insets().bottom - (vs.y * 0.27 if touch else 24.0) - h
 	var r := Rect2(vs.x / 2 - mw / 2 - 8, y, mw + 16, h)
 	draw_rect(r, Win95.TOOLTIP)
 	draw_rect(r, Win95.DARK, false, 1)

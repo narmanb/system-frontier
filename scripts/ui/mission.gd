@@ -105,7 +105,7 @@ func _layout_strategy() -> void:
 	var vs := get_viewport().get_visible_rect().size
 	var w := minf(vs.x - 24, 460)
 	strategy_bar.size = Vector2(w, 50)
-	strategy_bar.position = Vector2((vs.x - w) / 2, vs.y - 64)
+	strategy_bar.position = Vector2((vs.x - w) / 2, vs.y - 64 - AppState.safe_insets().bottom)
 
 
 # ---------------------------------------------------------------- dialogs
@@ -131,6 +131,19 @@ func _on_dialog(kind: String, payload: Dictionary) -> void:
 			Win95.popup(_root, "Quarantined Cache", "A sealed cache contains unstable but valuable fabrication data.", [
 				["Purge and recover", choose.bind("purge")],
 				["Leave sealed", choose.bind("leave")]])
+
+
+## Legacy showRelations (R key): current standing with every faction.
+func _relations() -> void:
+	var lines := []
+	for f in DataStore.factions():
+		var v: float = world.campaign["relations"].get(f, 0.0)
+		lines.append("%-10s %5d   %s" % [f, roundi(v), "Friendly" if v > 20 else ("Hostile" if v < -20 else "Neutral")])
+	var field := Win95.field("\n".join(lines), 15)
+	var mono := SystemFont.new()
+	mono.font_names = PackedStringArray(["monospace", "Courier New", "DejaVu Sans Mono"])
+	(field.get_child(0) as Label).add_theme_font_override("font", mono)
+	Win95.popup(_root, "Faction Relations", "Warrant level: %d" % world.campaign.get("warrant", 0), [["Close", func(): pass]], field)
 
 
 ## Legacy callAmbulance: refuel, repair, missiles, laser/armor upgrades, clear warrant.
@@ -205,7 +218,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		strategy_bar.command.emit(cmds[i])
 		strategy_bar.queue_redraw()
 		return
-	if event.is_action_pressed("ambulance"):
+	if event.is_action_pressed("relations"):
+		set_paused(true)
+		_relations()
+	elif event.is_action_pressed("ambulance"):
 		_ambulance()
 	elif event.is_action_pressed("pause"):
 		set_paused(not get_tree().paused)
@@ -312,6 +328,9 @@ func _build_pause(root: Control) -> void:
 		var amb := Win95.button("Ambulance Service")
 		amb.pressed.connect(func(): set_paused(false); _ambulance())
 		box.add_child(amb)
+	var rel_btn := Win95.button("Faction Relations")
+	rel_btn.pressed.connect(_relations)
+	box.add_child(rel_btn)
 	var map_btn := Win95.button("Tactical Map")
 	map_btn.pressed.connect(func(): set_paused(false); _toggle_map())
 	box.add_child(map_btn)

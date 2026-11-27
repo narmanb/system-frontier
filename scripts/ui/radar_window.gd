@@ -24,7 +24,8 @@ func _ready() -> void:
 	if saved is Array and saved.size() == 2:
 		position = Vector2(float(saved[0]) * vs.x, float(saved[1]) * vs.y)
 	else:
-		position = Vector2(vs.x - size.x - 6, 6)
+		var ins := AppState.safe_insets()
+		position = Vector2(vs.x - size.x - 6 - ins.right, 6 + ins.top)
 	_clamp_to_screen()
 
 
@@ -38,7 +39,8 @@ func _resize() -> void:
 func _clamp_to_screen() -> void:
 	_resize()
 	var vs := get_viewport_rect().size
-	position = Vector2(clampf(position.x, 0, maxf(0, vs.x - size.x)), clampf(position.y, 0, maxf(0, vs.y - size.y)))
+	var ins := AppState.safe_insets()
+	position = Vector2(clampf(position.x, ins.left, maxf(ins.left, vs.x - size.x - ins.right)), clampf(position.y, ins.top, maxf(ins.top, vs.y - size.y - ins.bottom)))
 
 
 func _save() -> void:

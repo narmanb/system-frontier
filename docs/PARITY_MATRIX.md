@@ -41,7 +41,9 @@ numerically) · **verified** (compared against legacy-derived fixtures or behavi
 | Feature | Legacy | Godot | Test | Status |
 |---|---|---|---|---|
 | Faction table and v7.2.4 colours | `FACTIONS` 0:721 + v7.2.4 `Object.assign` | data/factions.json | CI fixture diff | verified |
-| Faction war: Pirates/Predators attack every other faction | `v723FactionWar` 11:3253 / `v724FactionWar` | `NpcAI.faction_war` | test_faction_war_rules | verified |
+| Faction war: Pirates/Predators attack every other faction | `v723FactionWar` 11:3253 / `v724FactionWar` | `NpcAI.faction_war` | test_faction_war_rules, test_factions_fight_without_the_player | verified |
+| Relations → spawn aggression, kill penalty | v7.2.2 `spawnAI`, `destroyShip` | `spawn_ai`, `destroy_ship` | test_hostile_relations_spawn_aggressive, test_killing_lowers_relations | verified |
+| Relations view (R key) | `showRelations` | pause menu / R | — | implemented |
 | Target choice: retaliation priority, faction-specific scoring and ranges | `v723ChooseTarget` 11:3281 | `choose_target`, `target_score` | test_retaliation_priority_and_invalidation | verified |
 | Retaliation + one-time relation penalty | `v724Retaliate` | `NpcAI.retaliate` | test_player_attack_provokes_neutral | verified |
 | Spawn chain (v6.9 archetype weights → v7.2.2 relations → v7.2.3 prepare) | `spawnAI` 11:3325 | `SimWorld.spawn_ai` | test_special_archetypes_spawn_by_threat | verified |

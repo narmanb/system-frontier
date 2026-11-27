@@ -143,3 +143,52 @@ func test_dispose_breaks_cycles() -> void:
 	var weak: WeakRef = weakref(w.mission)
 	w.dispose()
 	check(weak.get_ref() == null, "mission controller freed after dispose")
+
+
+func test_factions_fight_without_the_player() -> void:
+	# Milestone 3 acceptance: faction fighting must not need the player to start it.
+	var kills := 0
+	for seed_value in range(1, 6):
+		var w := SimWorld.new()
+		w.setup(DataStore.starter_hull("redFalcon"), "sandbox", 4, seed_value)
+		w.player.invuln = 99999
+		w.player.pos = Vector2(10, 10)        # parked in a corner, never shooting
+		w.player.team = "Observers"           # nobody's friend, but nobody's target either
+		var pirate := w._make_npc("grunt", "Pirates", true, Vector2(1300, 900))
+		var knight := w._make_npc("grunt", "Knights", false, Vector2(1420, 900))
+		w.ships.append_array([pirate, knight])
+		NpcAI.prepare(w, pirate)
+		var credits: int = w.campaign["credits"]
+		for i in 60 * 40:
+			w.step(1.0 / 60, {})
+		if knight.dead or knight.hull < knight.max_hull:
+			kills += 1
+		check(w.campaign["credits"] == credits, "NPC kills never pay the player")
+		w.dispose()
+	check(kills >= 3, "Pirates attack Knights unprompted in most runs (%d/5)" % kills)
+
+
+func test_hostile_relations_spawn_aggressive() -> void:
+	var w := SimWorld.new()
+	w.campaign["relations"] = {}
+	w.setup(DataStore.starter_hull("redFalcon"), "sandbox", 2, 4)
+	for f in DataStore.factions():
+		w.campaign["relations"][f] = -80.0
+	w.ships.clear()
+	var aggressive := 0
+	for i in 30:
+		var s := w.spawn_ai()
+		if NpcAI.aggressive_to_player(w, s):
+			aggressive += 1
+	check(aggressive == 30, "relation <= -25 makes every spawn aggressive (v7.2.2), got %d/30" % aggressive)
+
+
+func test_killing_lowers_relations() -> void:
+	var w := SimWorld.new()
+	w.setup(DataStore.starter_hull("redFalcon"), "sandbox", 1, 2)
+	w.ships.clear()
+	var s := w._make_npc("grunt", "Speed", false, w.player.pos + Vector2(300, 0))
+	w.ships.append(s)
+	var before: float = w.campaign["relations"]["Speed"]
+	w.destroy_ship(s, w.player)
+	near(w.campaign["relations"]["Speed"], before - 10, 1e-9, "kill costs 10 relation")

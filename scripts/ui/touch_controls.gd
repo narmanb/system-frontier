@@ -47,21 +47,23 @@ func layout() -> void:
 	# Never let the left (turn) and right (fire/thrust/missile) clusters collide.
 	var left_w := turn.x * 2 + gap
 	var right_w := main.x + gap + mini.x
-	var avail := w - pad * 2 - gap * 2
+	var si := AppState.safe_insets()
+	var avail: float = w - pad * 2 - gap * 2 - si.left - si.right
 	if left_w + right_w > avail:
 		var k := avail / (left_w + right_w)
 		turn *= k; main *= k; mini *= k; gap *= k
-	var bottom := h - pad - bottom_inset
+	var ins := AppState.safe_insets()
+	var bottom: float = h - pad - bottom_inset - ins.bottom
 	var ly := bottom - turn.y
-	var right_x := w - pad - main.x
+	var right_x: float = w - pad - main.x - ins.right
 	var thrust_y := bottom - main.y
 	var fire_y := thrust_y - main.y - gap
 	var mini_x := right_x - gap - mini.x
 	buttons = []
 	if flight_pads:
 		buttons = [
-			{"id": "left", "rect": Rect2(pad, ly, turn.x, turn.y), "action": "turn_left", "label": "<"},
-			{"id": "right", "rect": Rect2(pad + turn.x + gap, ly, turn.x, turn.y), "action": "turn_right", "label": ">"},
+			{"id": "left", "rect": Rect2(pad + ins.left, ly, turn.x, turn.y), "action": "turn_left", "label": "<"},
+			{"id": "right", "rect": Rect2(pad + ins.left + turn.x + gap, ly, turn.x, turn.y), "action": "turn_right", "label": ">"},
 			{"id": "fire", "rect": Rect2(right_x, fire_y, main.x, main.y), "action": "fire", "label": "*"},
 			{"id": "thrust", "rect": Rect2(right_x, thrust_y, main.x, main.y), "action": "thrust", "label": "^"},
 			{"id": "missile", "rect": Rect2(mini_x, fire_y + (main.y - mini.y) / 2, mini.x, mini.y), "action": "missile", "label": "M"},

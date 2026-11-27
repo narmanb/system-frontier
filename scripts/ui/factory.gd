@@ -40,6 +40,7 @@ func _ready() -> void:
 	outer.set_anchors_preset(Control.PRESET_FULL_RECT)
 	outer.add_theme_constant_override("separation", 0)
 	add_child(outer)
+	Win95.apply_safe_area(outer)
 	bar = TitleBar.new()
 	bar.title = "SHIP FACTORY — Hull Painter"
 	bar.add_button("close", _back)

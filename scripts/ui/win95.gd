@@ -263,6 +263,7 @@ static func desktop(owner: Control, title: String, caption_buttons: Array = [], 
 	outer.set_anchors_preset(Control.PRESET_FULL_RECT)
 	outer.add_theme_constant_override("separation", 0)
 	owner.add_child(outer)
+	apply_safe_area(outer)
 	var bar := TitleBar.new()
 	bar.title = title
 	for cb in caption_buttons:
@@ -295,6 +296,15 @@ static func desktop(owner: Control, title: String, caption_buttons: Array = [], 
 	col.add_theme_constant_override("separation", 12)
 	win.add_child(col)
 	return col
+
+
+## Keep a full-screen container clear of display cutouts (mobile).
+static func apply_safe_area(c: Control) -> void:
+	var ins := AppState.safe_insets()
+	c.offset_left = ins.left
+	c.offset_top = ins.top
+	c.offset_right = -ins.right
+	c.offset_bottom = -ins.bottom
 
 
 ## Section heading in a navy band (legacy "New Operation Setup" style).
