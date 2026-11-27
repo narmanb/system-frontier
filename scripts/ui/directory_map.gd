@@ -140,7 +140,7 @@ func _mono() -> Font:
 
 ## Legacy openUpgradeBay (v6 + v6.6 salvage section).
 func _upgrade_bay() -> void:
-	var scroll := ScrollContainer.new()
+	var scroll := Win95.scroll_area()
 	scroll.custom_minimum_size = Vector2(0, minf(500, get_viewport_rect().size.y - 200))
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	var box := VBoxContainer.new()

@@ -7,6 +7,10 @@ var title := "SYSTEM FRONTIER"
 var font_size := 16
 var _buttons: HBoxContainer
 var _pending: Array = []
+## Display-cutout / status-bar insets the bar reaches under (mobile): the gradient fills
+## them edge to edge while the title and buttons stay inside the safe area.
+var insets := {"left": 0.0, "top": 0.0, "right": 0.0, "bottom": 0.0}
+var _base_h := 30.0
 
 
 func _init() -> void:
@@ -16,7 +20,8 @@ func _init() -> void:
 
 func _ready() -> void:
 	var touch := AppState.is_touch_ui()
-	custom_minimum_size.y = 40.0 if touch else 30.0
+	_base_h = 40.0 if touch else 30.0
+	custom_minimum_size.y = _base_h + float(insets.top)
 	_buttons = HBoxContainer.new()
 	_buttons.add_theme_constant_override("separation", 3)
 	add_child(_buttons)
@@ -38,7 +43,7 @@ func add_button(glyph: String, callback: Callable) -> void:
 func _add(glyph: String, callback: Callable) -> void:
 	var b := CaptionButton.new()
 	b.glyph = glyph
-	var h := custom_minimum_size.y - 6
+	var h := _base_h - 6
 	b.custom_minimum_size = Vector2(h * 1.15, h)
 	b.focus_mode = Control.FOCUS_NONE
 	b.pressed.connect(callback)
@@ -50,14 +55,23 @@ func _layout() -> void:
 	if _buttons == null:
 		return
 	_buttons.size = _buttons.get_combined_minimum_size()
-	_buttons.position = Vector2(size.x - _buttons.size.x - 3, 3)
+	_buttons.position = Vector2(size.x - float(insets.right) - _buttons.size.x - 3, float(insets.top) + 3)
 	queue_redraw()
 
 
 func _draw() -> void:
-	var w := size.x - (_buttons.size.x + 8 if _buttons else 0.0)
-	Win95.caption(self, Rect2(Vector2.ZERO, size), "", font_size)
-	Win95.text(self, Vector2(size.y + 4, size.y / 2 + font_size * 0.36), title, font_size, Win95.HILITE, true, maxf(10, w - size.y - 8))
+	var top := float(insets.top)
+	var h := size.y - top
+	var x0 := float(insets.left)
+	var w := size.x - x0 - float(insets.right) - (_buttons.size.x + 8 if _buttons else 0.0)
+	if top > 0:   # gradient runs up under the status bar / cutout
+		var a := Win95.NAVY
+		var b := Win95.NAVY_END
+		draw_polygon(PackedVector2Array([Vector2.ZERO, Vector2(size.x, 0), Vector2(size.x, top + 1), Vector2(0, top + 1)]), PackedColorArray([a, b, b, a]))
+	Win95.caption(self, Rect2(Vector2(x0, top), Vector2(size.x - x0, h)), "", font_size)
+	if x0 > 0:
+		draw_rect(Rect2(Vector2(0, top), Vector2(x0, h)), Win95.NAVY)
+	Win95.text(self, Vector2(x0 + h + 4, top + h / 2 + font_size * 0.36), title, font_size, Win95.HILITE, true, maxf(10, w - h - 8))
 
 
 class CaptionButton:

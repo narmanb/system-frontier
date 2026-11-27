@@ -141,6 +141,21 @@ static func make_theme() -> Theme:
 	t.set_constant("separation", "VBoxContainer", 8)
 	t.set_constant("separation", "HBoxContainer", 8)
 	t.set_stylebox("panel", "ScrollContainer", StyleBoxEmpty.new())
+	# Win95 scroll bars: wide enough to grab with a thumb, bevelled thumb on a light track
+	var sbw := 11.0 if (DisplayServer.is_touchscreen_available() or OS.has_feature("mobile")) else 8.0
+	var track := StyleBoxFlat.new()
+	track.bg_color = Color("#dcdcdc")
+	track.content_margin_left = sbw
+	track.content_margin_right = sbw
+	track.content_margin_top = sbw
+	track.content_margin_bottom = sbw
+	var thumb := BevelBox.new("raised", FACE, sbw, sbw)
+	for k in ["scroll", "scroll_focus"]:
+		t.set_stylebox(k, "VScrollBar", track)
+		t.set_stylebox(k, "HScrollBar", track)
+	for k in ["grabber", "grabber_highlight", "grabber_pressed"]:
+		t.set_stylebox(k, "VScrollBar", thumb)
+		t.set_stylebox(k, "HScrollBar", thumb)
 	# text fields
 	for k in ["normal", "focus", "read_only"]:
 		t.set_stylebox(k, "LineEdit", BevelBox.new("sunken", FIELD, 8, 6))
@@ -263,17 +278,15 @@ static func desktop(owner: Control, title: String, caption_buttons: Array = [], 
 	outer.set_anchors_preset(Control.PRESET_FULL_RECT)
 	outer.add_theme_constant_override("separation", 0)
 	owner.add_child(outer)
-	apply_safe_area(outer)
 	var bar := TitleBar.new()
 	bar.title = title
 	for cb in caption_buttons:
 		bar.add_button(cb[0], cb[1])
-	outer.add_child(bar)
-	var scroll := ScrollContainer.new()
+	var body := safe_frame(outer, bar)
+	var scroll := scroll_area()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.follow_focus = true
-	outer.add_child(scroll)
+	body.add_child(scroll)
 	var margin := MarginContainer.new()
 	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	for side in ["left", "right", "top", "bottom"]:
@@ -287,7 +300,7 @@ static func desktop(owner: Control, title: String, caption_buttons: Array = [], 
 	win.add_theme_stylebox_override("panel", BevelBox.new("window", FACE, 14, 14))
 	row.add_child(win)
 	var fit := func():
-		var w := owner.get_viewport_rect().size.x
+		var w := usable_width(owner, scroll)
 		win.custom_minimum_size.x = minf(max_width, w - 24)
 		win.size_flags_horizontal = Control.SIZE_SHRINK_CENTER if w > max_width + 40 else Control.SIZE_EXPAND_FILL
 	owner.resized.connect(fit)
@@ -296,6 +309,58 @@ static func desktop(owner: Control, title: String, caption_buttons: Array = [], 
 	col.add_theme_constant_override("separation", 12)
 	win.add_child(col)
 	return col
+
+
+## Full-screen layout with a caption bar: `outer` (a full-rect VBox) gets `bar` at the top,
+## reaching up under the status bar / cutout, and returns a body container (expand-fill)
+## that stays inside the safe area for the screen content.
+static func safe_frame(outer: VBoxContainer, bar: TitleBar) -> MarginContainer:
+	var ins := AppState.safe_insets()
+	outer.offset_left = 0
+	outer.offset_top = 0
+	outer.offset_right = 0
+	outer.offset_bottom = -ins.bottom
+	bar.insets = ins
+	outer.add_child(bar)
+	var body := MarginContainer.new()
+	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	body.add_theme_constant_override("margin_left", int(ins.left))
+	body.add_theme_constant_override("margin_right", int(ins.right))
+	body.add_theme_constant_override("margin_top", 0)
+	body.add_theme_constant_override("margin_bottom", 0)
+	outer.add_child(body)
+	return body
+
+
+## Width available to the content of a full-screen scroll area: the screen minus side
+## cutouts and the vertical scroll bar (which ScrollContainer adds to its minimum width,
+## so ignoring it pushes the caption bar's close button off-screen in portrait).
+static func usable_width(owner: Control, scroll: ScrollContainer) -> float:
+	var ins := AppState.safe_insets()
+	return owner.get_viewport_rect().size.x - ins.left - ins.right - scroll.get_v_scroll_bar().get_combined_minimum_size().x
+
+
+## Vertical ScrollContainer that can be dragged with a finger anywhere on its content.
+## Godot only drag-scrolls when the touch reaches the ScrollContainer itself, and buttons /
+## panels stop mouse events by default, so every control inside is switched to PASS
+## (taps still go to the button first; a drag past the dead zone scrolls and cancels it).
+static func scroll_area() -> ScrollContainer:
+	var sc := ScrollContainer.new()
+	sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	sc.scroll_deadzone = 12
+	var pass_through := func(n: Node) -> void:
+		if n is Control and (n as Control).mouse_filter == Control.MOUSE_FILTER_STOP and sc.is_ancestor_of(n):
+			(n as Control).mouse_filter = Control.MOUSE_FILTER_PASS
+	sc.tree_entered.connect(func():
+		if not sc.get_tree().node_added.is_connected(pass_through):
+			sc.get_tree().node_added.connect(pass_through)
+		for n in sc.find_children("*", "Control", true, false):
+			pass_through.call(n))
+	sc.tree_exiting.connect(func():
+		if sc.get_tree().node_added.is_connected(pass_through):
+			sc.get_tree().node_added.disconnect(pass_through))
+	return sc
 
 
 ## Keep a full-screen container clear of display cutouts (mobile).

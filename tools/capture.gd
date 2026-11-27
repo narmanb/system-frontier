@@ -1,6 +1,6 @@
 extends Node
 ## Dev-only visual smoke capture (not used by the game). Run under a display:
-##   godot --path . res://tools/capture.tscn -- --out=<dir> [--size=WxH] [--touch]
+##   godot --path . res://tools/capture.tscn -- --out=<dir> [--size=WxH] [--touch] [--insets=L,T,R,B]
 ## Saves menu.png, sandbox.png, test.png into <dir>.
 
 var out := "user://capture"
@@ -10,6 +10,9 @@ func _ready() -> void:
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--out="): out = a.substr(6)
 		if a == "--touch": AppState.settings["show_touch"] = "on"
+		if a.begins_with("--insets="):
+			var v := a.substr(9).split(",")
+			AppState.debug_insets = {"left": float(v[0]), "top": float(v[1]), "right": float(v[2]), "bottom": float(v[3])}
 		if a.begins_with("--size="):
 			var p := a.substr(7).split("x")
 			get_window().size = Vector2i(int(p[0]), int(p[1]))
