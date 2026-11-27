@@ -6,7 +6,7 @@ extends TestCase
 func test_flight_matches_legacy_update() -> void:
 	var fx := fixture("flight.json")
 	for run in fx["runs"]:
-		var w := SimWorld.new()
+		var w := track(SimWorld.new())
 		w.rng.seed = 1
 		var hull := DataStore.starter_hull(run["hull"])
 		w.player = w.make_player(hull)

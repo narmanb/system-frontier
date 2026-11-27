@@ -4,7 +4,7 @@ extends TestCase
 
 
 func _world(threat := 3, seed_value := 7) -> SimWorld:
-	var w := SimWorld.new()
+	var w := track(SimWorld.new())
 	w.setup(DataStore.starter_hull("redFalcon"), "sandbox", threat, seed_value)
 	return w
 
@@ -25,7 +25,7 @@ func test_special_archetypes_spawn_by_threat() -> void:
 			if s.archetype in has and NpcAI.COMBAT_AIS.has(s.ai):
 				has[s.archetype] = true
 		check(has["skirmisher"] and has["beam"], "seed %d threat 3 has skirmisher+beam" % seed_value)
-	var t := SimWorld.new()
+	var t := track(SimWorld.new())
 	t.setup(DataStore.starter_hull("redFalcon"), "test", 3, 1)
 	for s in t.ships:
 		check(s.ai == "test", "test range spawns only targets")
@@ -137,7 +137,7 @@ func test_long_simulation_is_stable() -> void:
 
 
 func test_dispose_breaks_cycles() -> void:
-	var w := SimWorld.new()
+	var w := track(SimWorld.new())
 	var c := Campaign.create({})
 	w.setup_directory(c, c["dirs"][1], 3)
 	var weak: WeakRef = weakref(w.mission)
@@ -149,7 +149,7 @@ func test_factions_fight_without_the_player() -> void:
 	# Milestone 3 acceptance: faction fighting must not need the player to start it.
 	var kills := 0
 	for seed_value in range(1, 6):
-		var w := SimWorld.new()
+		var w := track(SimWorld.new())
 		w.setup(DataStore.starter_hull("redFalcon"), "sandbox", 4, seed_value)
 		w.player.invuln = 99999
 		w.player.pos = Vector2(10, 10)        # parked in a corner, never shooting
@@ -169,7 +169,7 @@ func test_factions_fight_without_the_player() -> void:
 
 
 func test_hostile_relations_spawn_aggressive() -> void:
-	var w := SimWorld.new()
+	var w := track(SimWorld.new())
 	w.campaign["relations"] = {}
 	w.setup(DataStore.starter_hull("redFalcon"), "sandbox", 2, 4)
 	for f in DataStore.factions():
@@ -184,7 +184,7 @@ func test_hostile_relations_spawn_aggressive() -> void:
 
 
 func test_killing_lowers_relations() -> void:
-	var w := SimWorld.new()
+	var w := track(SimWorld.new())
 	w.setup(DataStore.starter_hull("redFalcon"), "sandbox", 1, 2)
 	w.ships.clear()
 	var s := w._make_npc("grunt", "Speed", false, w.player.pos + Vector2(300, 0))

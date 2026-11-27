@@ -8,7 +8,7 @@ func _world(type: String, diff := 2, seed_value := 5) -> SimWorld:
 	var c := Campaign.create({"team": "Avengers"})
 	c["noble"] = 4
 	var d := {"id": 0, "name": "TEST", "type": type, "difficulty": diff, "icons": 0 if type in MissionController.SPECIAL else 4, "theme": "system"}
-	var w := SimWorld.new()
+	var w := track(SimWorld.new())
 	w.setup_directory(c, d, seed_value)
 	w.player.invuln = 9999
 	return w
@@ -144,7 +144,7 @@ func test_black_hole_dragon() -> void:
 
 
 func test_defender_becomes_escort() -> void:
-	var w := SimWorld.new()
+	var w := track(SimWorld.new())
 	w.setup(DataStore.starter_hull("redFalcon"), "sandbox", 5, 3)
 	var def := w.ships.filter(func(s): return s.ai == "defender")
 	if def.is_empty():

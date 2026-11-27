@@ -33,6 +33,8 @@ func _ready() -> void:
 				continue
 			inst.set("errors", [])
 			inst.call(name)
+			if inst.has_method("cleanup"):
+				inst.call("cleanup")
 			var errs: Array = inst.get("errors")
 			if errs.is_empty():
 				passed += 1

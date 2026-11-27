@@ -3,6 +3,19 @@ extends RefCounted
 ## Minimal assertion base for tests/run_tests.gd.
 
 var errors: Array = []
+var _worlds: Array = []
+
+
+## Register a SimWorld so the runner disposes it after the test (breaks reference cycles).
+func track(w: SimWorld) -> SimWorld:
+	_worlds.append(w)
+	return w
+
+
+func cleanup() -> void:
+	for w in _worlds:
+		w.dispose()
+	_worlds.clear()
 
 
 func check(cond: bool, what: String) -> void:
