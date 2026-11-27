@@ -371,7 +371,9 @@ static func update_ships(w: SimWorld, dt: float) -> void:
 		if s.ai == "collector" and s.cargo_icon == null:
 			var o := nearest_icon(w, s, false)
 			if o and s.pos.distance_to(o.pos) < s.r + o.r + 34:
-				pickup_icon(s, o)
+				if pickup_icon(s, o):
+					# Port addition: tell the player why an icon vanished (D-036).
+					w.msg_if_idle("%s (%s) grabbed an icon — destroy the carrier to drop it." % [s.name, s.team], 3.0)
 
 		match s.ai:
 			"escort":

@@ -117,6 +117,9 @@ func _draw() -> void:
 		dot.call(o.pos, Color("#f4f") if o.infected else Color("#5ff"))
 	for s in world.ships:
 		dot.call(s.pos, Color("#ff4040") if NpcAI.aggressive_to_player(world, s) else s.color)
+		if s.cargo_icon:   # icon carrier: cyan ring
+			var cp := c + SimWorld.wrapped_delta(world.player.pos, s.pos) * k
+			draw_rect(Rect2(cp - Vector2(4, 4), Vector2(8, 8)), Color("#5ff"), false, 1.5)
 	if world.gate_open:
 		dot.call(world.gate_pos, Color("#9ff"), 6.0)
 	if world.mission:
