@@ -149,12 +149,21 @@ jobs:
           grep -q "SMOKE OK" smoke.log
           ! grep -E "SCRIPT ERROR" smoke.log
 
-      - name: Publish APK to the dev-latest pre-release (plain .apk, fixed link)
+      - name: Publish APK as a pre-release (plain .apk, fixed link per branch)
+        if: github.event_name != 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           VER=$(grep -oP 'config/version="\K[^"]+' project.godot)
           SHORT=${GITHUB_SHA::7}
+          # Main development branch -> "dev-latest"; any other branch (e.g. experimental/*)
+          # gets its own "<branch>-latest" release so it never replaces the main test APK.
+          if [ "$GITHUB_REF_NAME" = "$DEFAULT_BRANCH" ] || [ "$GITHUB_REF_NAME" = "ccr-61cb5a6c-ktfovg" ]; then
+            TAG="dev-latest"; LABEL="Latest test build"
+          else
+            TAG="$(echo "$GITHUB_REF_NAME" | tr '/ ' '--' | tr -cd 'A-Za-z0-9._-')-latest"; LABEL="Experimental build ($GITHUB_REF_NAME)"
+          fi
           cp build/android/SystemFrontier-debug.apk SystemFrontier.apk
           {
             echo "Debug APK for testing (Android phone / Retroid Pocket 5). Version ${VER}, commit ${SHORT} on ${GITHUB_REF_NAME}. Built $(date -u +'%Y-%m-%d %H:%M UTC')."
@@ -162,10 +171,10 @@ jobs:
             echo "Recent changes:"
             git log -12 --format='- %s'
           } > notes.md
-          gh release delete dev-latest --cleanup-tag --yes 2>/dev/null || true
-          gh release create dev-latest SystemFrontier.apk --prerelease --target "$GITHUB_SHA" \
-            --title "Latest test build (${VER}-${SHORT})" --notes-file notes.md
-          echo "APK: https://github.com/${GITHUB_REPOSITORY}/releases/download/dev-latest/SystemFrontier.apk" >> "$GITHUB_STEP_SUMMARY"
+          gh release delete "$TAG" --cleanup-tag --yes 2>/dev/null || true
+          gh release create "$TAG" SystemFrontier.apk --prerelease --target "$GITHUB_SHA" \
+            --title "${LABEL} (${VER}-${SHORT})" --notes-file notes.md
+          echo "APK: https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/SystemFrontier.apk" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Name desktop/web artifacts
         if: env.ALL_PLATFORMS == 'true'
