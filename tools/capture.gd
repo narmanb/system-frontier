@@ -27,6 +27,12 @@ func _ready() -> void:
 	get_tree().change_scene_to_file("res://scenes/setup/setup.tscn")
 	await _frames(20)
 	_shot("setup")
+	SaveService.delete(SaveService.DRAFT)
+	for tab in ["Paint", "Stats", "Telemetry", "Hull"]:
+		AppState.settings["factory_tab"] = tab
+		get_tree().change_scene_to_file("res://scenes/factory/factory.tscn")
+		await _frames(15)
+		_shot("factory_" + tab.to_lower())
 	var c := Campaign.create({"pilot": "Ace", "team": "Avengers"})
 	c["credits"] = 640
 	c["noble"] = 4

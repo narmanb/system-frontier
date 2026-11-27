@@ -43,7 +43,12 @@ func _run_smoke() -> void:
 	SaveService.save_campaign(c)
 	tree.change_scene_to_file("res://scenes/directory_map/directory_map.tscn")
 	await tree.create_timer(0.5).timeout
-	var runs := [{"mode": "sandbox", "threat": 5}, {"mode": "test", "threat": 1}]
+	tree.change_scene_to_file("res://scenes/factory/factory.tscn")
+	await tree.create_timer(0.8).timeout
+	var fe := FactoryEditor.new()
+	fe.load_starter("blockadeRam")
+	var runs := [{"mode": "sandbox", "threat": 5}, {"mode": "test", "threat": 1},
+		{"mode": "test", "threat": 1, "ship": fe.ship_data(), "return": "factory", "test_options": {"infinite": false, "moving": true}}]
 	for i in c["dirs"].size():
 		runs.append({"mode": "campaign", "dir_id": i})
 	for l in runs:

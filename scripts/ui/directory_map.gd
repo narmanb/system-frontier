@@ -40,6 +40,9 @@ func _ready() -> void:
 	_enter.disabled = true
 	_btn(grid, "Upgrade Bay", _upgrade_bay)
 	_btn(grid, "Faction Relations", _relations)
+	_btn(grid, "Ship Factory", func():
+		SaveService.save_campaign(c)
+		get_tree().change_scene_to_file("res://scenes/factory/factory.tscn"))
 	_btn(grid, "Main Menu", _menu)
 	_render()
 

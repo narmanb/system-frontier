@@ -116,6 +116,7 @@ var over := false
 var campaign := {"team": "Avengers", "difficulty": 1.0, "missiles": 5, "laserLevel": 1, "credits": 0, "warrant": 0, "relations": {}}
 var telemetry := {"started": 0.0, "maxSpeed": 0.0, "timeTo90": -1.0, "shots": 0}
 var infinite_test_resources := true
+var test_moving_target := true
 var message_timer := 0.0        ## legacy game.messageTimer: gates low-priority repeat messages
 var _next_id := 1
 var _dt := 1.0 / 60
@@ -237,7 +238,8 @@ func _setup_test_range() -> void:
 	t2.name = "MOVING TARGET"; t2.team = "Target"; t2.color = Color("#63ffb4"); t2.hull = 9999; t2.max_hull = 9999
 	t2.ai = "test"; t2.test_ai = "mover"; t2.r = 25; t2.cd = 99
 	ships.append(t1)
-	ships.append(t2)
+	if test_moving_target:
+		ships.append(t2)
 	msg("Factory test range active. Measure speed, turning, heat and fuel use.")
 
 

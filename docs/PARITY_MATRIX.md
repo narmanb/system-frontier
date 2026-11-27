@@ -75,7 +75,22 @@ numerically) · **verified** (compared against legacy-derived fixtures or behavi
 | Saves, resets, legacy import | `saveCampaign`, `v68DoReset`, SAVE_KEY/SHIP_KEY | `SaveService` | test_saves | verified (D-027) |
 | Built-in faction ships (procedural 24×24) | `buildBuiltinShipGrid`, `v6ApplyBuiltins`, `v68ApplyRedFalconDefault` | `BuiltinShips`, data/campaign.json | test_builtin_grids_match_legacy | verified |
 | Black hole visual | v7.1 GIF at 160 px; collision r58 + 10 | sprite sheet (8 × 150 ms), `MissionController.black_hole` | — | implemented |
-| Ship Factory | `v6*`/`v61*`/`v62*`/`v65*`/`v67*` | — | — | not started (M4) |
+| Factory editor model: 24/32/48 canvases, nearest resize + mount scaling | `v61ApplyCanvasResize`, `v61ResizeGridNearest`, `v61ScalePoint` | `FactoryEditor.resize_canvas` | test_resize_scales_mounts | verified |
+| Paint/erase with mirror, undo/redo (40) | `paintAt`, `v6PushHistory/Undo/Redo` | `FactoryEditor.paint`, history | test_paint_mirror_undo_redo | verified |
+| Fill and pick tools | — (new) | `flood_fill`, `pick` | test_fill_and_replace | intentional change (D-029) |
+| 48-colour palette, salvage unlocks, recent colours, replace/swap | v6.6 palette, v6.7 `selectColor`, `openColorOperation` | `FactoryEditor`, Paint tab | test_fill_and_replace | implemented |
+| Stats (budget 50, cap 8), archetypes, modules, mount budget 4 | v6 `makeStats`, v6.5 cap, `v6ApplyArchetype`, thruster UI | `change_stat`, `toggle_thruster` | test_budgets | verified |
+| Five presets | `preset(n)` | `apply_preset` | test_presets_match_legacy | verified |
+| Starter hull templates, Red Falcon default | `v65LoadStarterHull`, `v70LoadTrueRedFalcon` | `load_starter` | test_resize_scales_mounts | verified |
+| Stencils (Salvage Skiff, Archive Needle) | `v64ApplyStencil` | `apply_stencil` | — | implemented |
+| Auto-Clean (conservative/symmetry/aggressive) + mount realignment | `v62RepairGrid`, `v62RealignMounts` | `repair_preview`, `apply_repair` | test_auto_clean_matches_legacy, test_auto_clean_realigns_mounts | verified |
+| Thruster / hardpoint placement and overlays | thruster/hardpoint UI, `drawThrusterOverlay`, `v6DrawHardpointOverlay` | Engines/Hardpoints tabs, `EditorCanvas` | — | implemented |
+| Telemetry cards, warnings, preview | `v6UpdateTelemetry`, `drawPreview` v6 | Telemetry tab, `FactoryEditor.warnings` | — | implemented |
+| Library: save, duplicate, delete, import/export | `saveShipBtn`… | Library tab (clipboard JSON) | test_ship_data_roundtrip | intentional change (D-030) |
+| Draft autosave, recent-colour persistence | `v6AutoSave`, `RECENT_KEY` | `SaveService.DRAFT/RECENT_COLORS` | — | implemented |
+| Precision pad | v6.2 precision cursor/pad | Paint tab pad + cursor + Dab | — | intentional change (D-031) |
+| Zoom / pan | `v6ApplyZoom` (1–4×) | pinch, wheel, buttons (1–6×), two-finger/right-drag pan | — | implemented |
+| Test flight with options and telemetry summary | `testShipBtn`, `v6FinishTest` | Test tab → test range → back to Factory | smoke run | implemented |
 
 ## Presentation and platform
 

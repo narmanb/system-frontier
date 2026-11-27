@@ -25,10 +25,15 @@ acceptance checks are verified on device. Passing CI alone isn't enough.
 - [x] Hazards, icon defenders → escorts, boss, discoveries, talking programs, ambulance, strategy autopilot
 - [x] Tests for every mission family, campaign migration and saves; the smoke run enters all 12 directories
 
-## Next — Milestone 4: native Ship Factory (in progress)
-Editor model (24/32/48), 48-colour palette with salvage unlocks, paint/erase/fill/mirror/rotate,
-undo/redo, mounts (3 thrusters, 4 hardpoints), stats/modules with budgets and telemetry,
-save/duplicate/delete/import/export library, starter templates, stencils, test flight, draft
-persistence.
+## Milestone 4 — native Ship Factory ✅ (implemented; device check pending)
+- [x] Editor model with legacy-verified presets and Auto-Clean; 24/32/48 canvases, resize, mounts, budgets
+- [x] Paint/erase/fill/pick, mirror, rotate, undo/redo, zoom/pan, precision pad
+- [x] Palette with salvage unlocks, recent colours, replace/swap; starter templates; stencils
+- [x] Stats, archetypes, modules, telemetry, warnings, preview
+- [x] Library (save/duplicate/delete/clipboard import-export), draft autosave, assign to campaign, test flight
 
-Then Milestone 3 (deeper faction world checks) and Milestone 5 (polish, platform sign-off).
+## Remaining — Milestone 3/5 polish and sign-off
+- Owner playtest on phone + RPi5; tune touch sizes, HUD, factory layout on real devices
+- Deeper faction-world review (NPC-vs-NPC long runs, relation effects), balancing
+- Release signing (when authorised), app icon variants, optional web hosting
+- Move the legacy HTML out of the public repo once the owner signs off the port (owner request)

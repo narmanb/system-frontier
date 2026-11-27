@@ -85,6 +85,11 @@ func _ready() -> void:
 	if campaign_mode:
 		world.setup_directory(_campaign, _dir)
 	else:
+		if AppState.launch.get("ship") is Dictionary:
+			hull = Campaign.normalize_ship(AppState.launch["ship"])
+			var opts: Dictionary = AppState.launch.get("test_options", {})
+			world.infinite_test_resources = bool(opts.get("infinite", true))
+			world.test_moving_target = bool(opts.get("moving", true))
 		world.setup(hull, str(AppState.launch.get("mode", "sandbox")), int(AppState.launch.get("threat", 3)))
 
 
@@ -301,7 +306,7 @@ func _build_pause(root: Control) -> void:
 		AppState.set_setting("show_touch", next)
 		touch_btn.text = "Touch pads: %s" % next)
 	box.add_child(touch_btn)
-	var quit := Win95.button("Retreat to Directory Map" if campaign_mode else "Quit to Menu")
+	var quit := Win95.button("Retreat to Directory Map" if campaign_mode else ("Return to Factory" if AppState.launch.get("return") == "factory" else "Quit to Menu"))
 	quit.pressed.connect(_quit_to_menu)
 	box.add_child(quit)
 
@@ -372,5 +377,11 @@ func _quit_to_menu() -> void:
 		if not world.over or not world.campaign.is_empty():
 			SaveService.save_campaign(_campaign)
 		get_tree().change_scene_to_file("res://scenes/directory_map/directory_map.tscn")
+		return
+	if AppState.launch.get("return") == "factory":
+		var t := world.telemetry
+		AppState.set_meta("last_test", "Last test: peak %d, 90%% speed %s, %d shots, %.1f s." % [roundi(t.maxSpeed),
+			("%.2f s" % t.timeTo90) if t.timeTo90 >= 0 else "not reached", t.shots, world.time - t.started])
+		get_tree().change_scene_to_file("res://scenes/factory/factory.tscn")
 		return
 	get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")

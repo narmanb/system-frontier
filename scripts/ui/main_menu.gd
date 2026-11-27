@@ -44,8 +44,7 @@ func _ready() -> void:
 	var first := _btn(grid, "New Operation", func(): _go("res://scenes/setup/setup.tscn"))
 	var cont := _btn(grid, "Continue Saved Game", _continue)
 	cont.disabled = not SaveService.has_campaign()
-	var factory := _btn(grid, "Ship Factory\n(coming soon)", func(): pass)
-	factory.disabled = true
+	_btn(grid, "Ship Factory", func(): _go("res://scenes/factory/factory.tscn"))
 	_btn(grid, "Free Flight", func(): _go("res://scenes/free_flight/free_flight.tscn"))
 	_btn(grid, "Manual / Controls", _manual)
 	_btn(grid, "Options / Reset", _options)
