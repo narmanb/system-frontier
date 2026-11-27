@@ -13,6 +13,9 @@ build. The HTML build is kept under `legacy/` as the frozen reference implementa
 
 ## What's playable now
 
+The interface keeps the legacy build's Windows 95 look: a teal desktop, captioned windows, bevelled buttons and a status bar.
+
+
 - Title screen with the five retained starter hulls (Red Falcon, Nova Sting, Wisp Needle,
   Blockade Ram, Cargo Warden). Each hull shows live engineering telemetry.
 - **Flight sandbox**: icon recovery, fuel cells, exit gate, and NPC traffic from every faction.

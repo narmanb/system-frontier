@@ -30,18 +30,26 @@ func _ready() -> void:
 	var root := Control.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.theme = UiTheme.make()
+	root.theme = Win95.make_theme()
 	ui.add_child(root)
+	var bar := TitleBar.new()
+	bar.title = "TEST RANGE" if str(AppState.launch.get("mode")) == "test" else "SANDBOX://FLIGHT"
+	bar.add_button("zoom_out", func(): _set_zoom(_user_zoom - 0.15))
+	bar.add_button("zoom_in", func(): _set_zoom(_user_zoom + 0.15))
+	bar.add_button("map", _toggle_map)
+	bar.add_button("pause", set_paused.bind(true))
+	bar.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	map_view = TacticalMap.new()
 	map_view.world = world
 	map_view.visible = false
 	root.add_child(map_view)
 	hud = Hud.new()
 	hud.world = world
-	hud.pause_pressed.connect(set_paused.bind(true))
-	hud.zoom_pressed.connect(func(d): _set_zoom(_user_zoom + d))
 	root.add_child(hud)
+	root.add_child(bar)
+	hud.top_inset = 40.0 if AppState.is_touch_ui() else 30.0
 	touch = TouchControls.new()
+	touch.bottom_inset = Hud.STATUS_BAR_H
 	touch.visible = AppState.is_touch_ui()
 	touch.map_pressed.connect(_toggle_map)
 	root.add_child(touch)
@@ -115,6 +123,7 @@ func _pinch_distance() -> float:
 func _toggle_map() -> void:
 	map_view.visible = not map_view.visible
 	view.visible = not map_view.visible
+	hud.visible = not map_view.visible
 
 
 func set_paused(p: bool) -> void:
@@ -144,62 +153,62 @@ func _notification(what: int) -> void:
 				set_paused(true)
 
 
-func _centered_panel(root: Control) -> PanelContainer:
+func _dialog(root: Control, title: String) -> Array:
 	var center := CenterContainer.new()
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
 	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(center)
-	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(320, 0)
-	center.add_child(panel)
-	return panel
+	var parts := Win95.window(title)
+	parts[0].custom_minimum_size = Vector2(340, 0)
+	center.add_child(parts[0])
+	return [center, parts[0], parts[1]]
 
 
 func _build_pause(root: Control) -> void:
-	pause_panel = _centered_panel(root)
-	pause_panel.get_parent().process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+	var d := _dialog(root, "Paused")
+	d[0].process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+	pause_panel = d[1]
 	pause_panel.visible = false
-	var box := VBoxContainer.new()
-	pause_panel.add_child(box)
-	box.add_child(UiTheme.label("PAUSED", 28, UiTheme.ACCENT))
-	var resume := UiTheme.button("Resume")
+	var box: VBoxContainer = d[2]
+	box.add_child(Win95.label("Operation suspended.", 16))
+	var resume := Win95.button("Resume")
 	resume.name = "Resume"
 	resume.pressed.connect(set_paused.bind(false))
 	box.add_child(resume)
-	var restart := UiTheme.button("Restart")
+	var restart := Win95.button("Restart")
 	restart.pressed.connect(_restart)
 	box.add_child(restart)
 	if not OS.has_feature("mobile"):
-		var fs := UiTheme.button("Toggle Fullscreen (F11)")
+		var fs := Win95.button("Toggle Fullscreen (F11)")
 		fs.pressed.connect(AppState.toggle_fullscreen)
 		box.add_child(fs)
-	var touch_btn := UiTheme.button("Touch controls: %s" % AppState.settings["show_touch"])
+	var touch_btn := Win95.button("Touch pads: %s" % AppState.settings["show_touch"])
 	touch_btn.pressed.connect(func():
 		var order := ["auto", "on", "off"]
 		var next: String = order[(order.find(str(AppState.settings["show_touch"])) + 1) % 3]
 		AppState.set_setting("show_touch", next)
-		touch_btn.text = "Touch controls: %s" % next)
+		touch_btn.text = "Touch pads: %s" % next)
 	box.add_child(touch_btn)
-	var quit := UiTheme.button("Quit to Menu")
+	var quit := Win95.button("Quit to Menu")
 	quit.pressed.connect(_quit_to_menu)
 	box.add_child(quit)
 
 
 func _build_end(root: Control) -> void:
-	end_panel = _centered_panel(root)
-	end_panel.get_parent().process_mode = Node.PROCESS_MODE_ALWAYS
+	var d := _dialog(root, "Operation Debriefing")
+	d[0].process_mode = Node.PROCESS_MODE_ALWAYS
+	end_panel = d[1]
 	end_panel.visible = false
-	var box := VBoxContainer.new()
-	end_panel.add_child(box)
-	end_label = UiTheme.label("", 22, UiTheme.ACCENT)
+	var box: VBoxContainer = d[2]
+	end_label = Win95.label("", 17)
 	end_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	end_label.custom_minimum_size = Vector2(300, 0)
 	box.add_child(end_label)
-	var again := UiTheme.button("Fly Again")
+	var again := Win95.button("Fly Again")
 	again.name = "Again"
 	again.pressed.connect(_restart)
 	box.add_child(again)
-	var menu := UiTheme.button("Main Menu")
+	var menu := Win95.button("Main Menu")
 	menu.pressed.connect(_quit_to_menu)
 	box.add_child(menu)
 
@@ -208,7 +217,8 @@ func _on_finished(won: bool, reason: String) -> void:
 	AppState.release_gameplay_inputs()
 	touch.release_all()
 	touch.visible = false
-	end_label.text = "%s\n%s\nCredits: %d" % ["OPERATION DEBRIEFING" if won else "SHIP LOST", reason, world.campaign["credits"]]
+	(end_panel.get_child(0).get_child(0) as TitleBar).title = "Operation Debriefing" if won else "Ship Lost"
+	end_label.text = "%s\n\nCredits: %d" % [reason, world.campaign["credits"]]
 	end_panel.visible = true
 	(end_panel.find_child("Again", true, false) as Button).grab_focus()
 

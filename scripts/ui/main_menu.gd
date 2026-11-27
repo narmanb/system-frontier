@@ -1,6 +1,7 @@
 extends Control
-## Title screen: choose a starter hull and launch the flight sandbox or the test range.
-## Campaign, directory map and Ship Factory arrive in later milestones (see docs/ROADMAP.md).
+## Title screen in the legacy Win95 style: teal desktop, captioned window, bevelled
+## buttons. Choose a starter hull and launch the flight sandbox or the test range.
+## Campaign ("New Operation") and Ship Factory arrive in later milestones.
 
 var _cards := {}
 var _detail: Label
@@ -9,95 +10,109 @@ var _threat_btn: Button
 
 
 func _ready() -> void:
-	theme = UiTheme.make()
+	theme = Win95.make_theme()
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	var bg := ColorRect.new()
-	bg.color = UiTheme.BG
+	bg.color = Win95.DESKTOP
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
+
+	var outer := VBoxContainer.new()
+	outer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	outer.add_theme_constant_override("separation", 0)
+	add_child(outer)
+	var bar := TitleBar.new()
+	bar.title = "SYSTEM FRONTIER"
+	bar.add_button("sound", func(): AppState.set_setting("sound", not AppState.settings["sound"]); bar.queue_redraw(); _redraw_bar(bar))
+	if not OS.has_feature("mobile") and not OS.has_feature("web"):
+		bar.add_button("fullscreen", AppState.toggle_fullscreen)
+	if not OS.has_feature("web"):
+		bar.add_button("close", func(): get_tree().quit())
+	outer.add_child(bar)
+
 	var scroll := ScrollContainer.new()
-	scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	add_child(scroll)
+	outer.add_child(scroll)
 	var margin := MarginContainer.new()
 	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	for side in ["left", "right", "top", "bottom"]:
-		margin.add_theme_constant_override("margin_" + side, 20)
+		margin.add_theme_constant_override("margin_" + side, 14)
 	scroll.add_child(margin)
+	var center := HBoxContainer.new()
+	center.alignment = BoxContainer.ALIGNMENT_CENTER
+	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	margin.add_child(center)
+
+	var win := PanelContainer.new()
+	win.add_theme_stylebox_override("panel", Win95.BevelBox.new("window", Win95.FACE, 14, 14))
+	win.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	win.custom_minimum_size.x = 0
+	center.add_child(win)
 	var col := VBoxContainer.new()
-	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	col.add_theme_constant_override("separation", 14)
-	margin.add_child(col)
+	col.add_theme_constant_override("separation", 12)
+	win.add_child(col)
+	# Cap the window width on wide screens so it reads as a dialog, not a page.
+	resized.connect(func(): win.custom_minimum_size.x = minf(760.0, size.x - 28); win.size_flags_horizontal = Control.SIZE_SHRINK_CENTER if size.x > 800 else Control.SIZE_EXPAND_FILL)
+	win.custom_minimum_size.x = minf(760.0, get_viewport_rect().size.x - 28)
 
-	var title := UiTheme.label("SYSTEM FRONTIER", 40, UiTheme.EDGE)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	col.add_child(title)
-	var sub := UiTheme.label("C:\\FRONTIER> flight sandbox build %s" % ProjectSettings.get_setting("application/config/version"), 15, UiTheme.DIM)
-	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	col.add_child(sub)
+	col.add_child(Banner.new())
 
-	col.add_child(UiTheme.label("SELECT HULL", 18, UiTheme.ACCENT))
+	col.add_child(Win95.label("Select hull", 16, Win95.TEXT, true))
 	var flow := HFlowContainer.new()
-	flow.add_theme_constant_override("h_separation", 10)
-	flow.add_theme_constant_override("v_separation", 10)
+	flow.add_theme_constant_override("h_separation", 8)
+	flow.add_theme_constant_override("v_separation", 8)
 	flow.alignment = FlowContainer.ALIGNMENT_CENTER
 	col.add_child(flow)
 	var hulls := DataStore.starter_hulls()
 	for id in hulls["order"]:
 		flow.add_child(_hull_card(id, hulls["hulls"][id]))
 
-	var detail_panel := PanelContainer.new()
-	col.add_child(detail_panel)
-	_detail = UiTheme.label("", 15)
-	_detail.autowrap_mode = TextServer.AUTOWRAP_WORD
-	detail_panel.add_child(_detail)
+	var detail := Win95.field("", 14)
+	_detail = detail.get_child(0)
+	col.add_child(detail)
 
-	var buttons := HFlowContainer.new()
-	buttons.alignment = FlowContainer.ALIGNMENT_CENTER
-	buttons.add_theme_constant_override("h_separation", 10)
-	buttons.add_theme_constant_override("v_separation", 10)
-	col.add_child(buttons)
-	var launch := UiTheme.button("Launch Flight Sandbox", 60)
-	launch.custom_minimum_size.x = 260
-	launch.pressed.connect(_launch.bind("sandbox"))
-	buttons.add_child(launch)
-	_threat_btn = UiTheme.button("", 60)
-	_threat_btn.custom_minimum_size.x = 170
-	_threat_btn.pressed.connect(func(): _threat = _threat % 5 + 1; _update_threat())
-	buttons.add_child(_threat_btn)
-	var test := UiTheme.button("Factory Test Range", 60)
-	test.custom_minimum_size.x = 220
-	test.pressed.connect(_launch.bind("test"))
-	buttons.add_child(test)
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 10)
+	grid.add_theme_constant_override("v_separation", 10)
+	col.add_child(grid)
+	var launch := _grid_button(grid, "Flight Sandbox", _launch.bind("sandbox"))
+	_grid_button(grid, "Test Range", _launch.bind("test"))
+	_threat_btn = _grid_button(grid, "", func(): _threat = _threat % 5 + 1; _update_threat())
+	var op := _grid_button(grid, "New Operation\n(coming soon)", func(): pass)
+	op.disabled = true
+	var factory := _grid_button(grid, "Ship Factory\n(coming soon)", func(): pass)
+	factory.disabled = true
+	var touch_btn := _grid_button(grid, "", func(): pass)
+	var upd_touch := func(): touch_btn.text = "Touch pads: %s" % AppState.settings["show_touch"]
+	upd_touch.call()
+	touch_btn.pressed.connect(func():
+		var order := ["auto", "on", "off"]
+		AppState.set_setting("show_touch", order[(order.find(str(AppState.settings["show_touch"])) + 1) % 3])
+		upd_touch.call())
 
-	var opts := HFlowContainer.new()
-	opts.alignment = FlowContainer.ALIGNMENT_CENTER
-	opts.add_theme_constant_override("h_separation", 10)
-	col.add_child(opts)
-	var snd := UiTheme.button("", 48)
-	snd.custom_minimum_size.x = 150
-	var upd := func(): snd.text = "Sound: %s" % ("on" if AppState.settings["sound"] else "off")
-	upd.call()
-	snd.pressed.connect(func(): AppState.set_setting("sound", not AppState.settings["sound"]); upd.call())
-	opts.add_child(snd)
-	if not OS.has_feature("mobile") and not OS.has_feature("web"):
-		var fs := UiTheme.button("Fullscreen", 48)
-		fs.custom_minimum_size.x = 150
-		fs.pressed.connect(AppState.toggle_fullscreen)
-		opts.add_child(fs)
-		var quit := UiTheme.button("Quit", 48)
-		quit.custom_minimum_size.x = 110
-		quit.pressed.connect(func(): get_tree().quit())
-		opts.add_child(quit)
-
-	var help := UiTheme.label("Keys: ←/→ turn · ↑ thrust · Space fire · X missile · M map · Esc pause · +/- zoom. "
-		+ "No brake: turn around and counter-thrust. Gamepad: stick/d-pad turn, A thrust, X/RB fire, Y/LB missile, Start pause.", 13, UiTheme.DIM)
-	help.autowrap_mode = TextServer.AUTOWRAP_WORD
-	col.add_child(help)
+	col.add_child(Win95.field("Keys: ←/→ turn · ↑ thrust · Space fire · X missile · M map · Esc pause · +/- zoom. "
+		+ "No brake: turn around and counter-thrust. Gamepad: stick/d-pad turn, A thrust, X/RB fire, Y/LB missile, Start pause.\n"
+		+ "Build %s — flight & combat sandbox." % ProjectSettings.get_setting("application/config/version"), 13))
 
 	_update_threat()
 	_select(str(AppState.settings["hull"]))
 	launch.grab_focus()
+
+
+func _redraw_bar(bar: TitleBar) -> void:
+	for b in bar.find_children("*", "Button", true, false):
+		b.queue_redraw()
+
+
+func _grid_button(grid: GridContainer, text: String, cb: Callable) -> Button:
+	var b := Win95.button(text, 64)
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	b.add_theme_font_size_override("font_size", 18)
+	b.pressed.connect(cb)
+	grid.add_child(b)
+	return b
 
 
 func _update_threat() -> void:
@@ -107,25 +122,30 @@ func _update_threat() -> void:
 func _hull_card(id: String, h: Dictionary) -> Button:
 	var b := Button.new()
 	b.toggle_mode = true
-	b.custom_minimum_size = Vector2(150, 170)
+	b.custom_minimum_size = Vector2(124, 150)
 	b.pressed.connect(_select.bind(id))
 	var box := VBoxContainer.new()
 	box.set_anchors_preset(Control.PRESET_FULL_RECT)
-	box.offset_left = 8; box.offset_right = -8; box.offset_top = 8; box.offset_bottom = -8
+	box.offset_left = 8; box.offset_right = -8; box.offset_top = 8; box.offset_bottom = -6
+	box.add_theme_constant_override("separation", 4)
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	b.add_child(box)
+	var well := PanelContainer.new()
+	well.add_theme_stylebox_override("panel", Win95.BevelBox.new("sunken", Win95.WELL, 4, 4))
+	well.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	well.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_child(well)
 	var tex := TextureRect.new()
 	tex.texture = _cropped(load(h["art"]))
 	tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	tex.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	tex.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	box.add_child(tex)
-	var n := UiTheme.label(h["name"], 15)
+	well.add_child(tex)
+	var n := Win95.label(h["name"], 14, Win95.TEXT, true)
 	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(n)
-	var role := UiTheme.label(h["role"], 12, UiTheme.DIM)
+	var role := Win95.label(h["role"], 12, Win95.SHADOW)
 	role.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(role)
 	_cards[id] = b
@@ -167,3 +187,32 @@ func _launch(mode: String) -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
 		get_tree().quit()
+
+
+## Black sunken banner with the chunky cyan/purple title, as in the legacy title screen.
+class Banner:
+	extends Control
+
+	func _init() -> void:
+		custom_minimum_size = Vector2(0, 130)
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func _draw() -> void:
+		var r := Rect2(Vector2.ZERO, size)
+		Win95.bevel(self, r, "sunken", Color("#070a1c"))
+		for y in range(3, int(size.y) - 3, 3):
+			draw_rect(Rect2(2, y, size.x - 4, 1), Color(1, 1, 1, 0.025))
+		var title := "SYSTEM FRONTIER"
+		var fs := int(clampf(size.x / 11.5, 22, 60))
+		var tw := Win95.text_width(title, fs, true)
+		var p := Vector2((size.x - tw) / 2, size.y * 0.48)
+		for i in range(4, 0, -1):
+			Win95.text(self, p + Vector2(i, i), title, fs, Color("#5a3fd0").lerp(Color("#2a1a70"), i / 4.0), true)
+		Win95.text(self, p, title, fs, Color("#9ff3ff"), true)
+		var sub := "Disinfect the machine. Capture the icons. Build your own ship."
+		var ss := int(clampf(size.x / 34.0, 12, 18))
+		var sw := Win95.text_width(sub, ss)
+		if sw > size.x - 20:
+			sub = "Disinfect the machine. Capture the icons."
+			sw = Win95.text_width(sub, ss)
+		Win95.text(self, Vector2((size.x - sw) / 2, size.y * 0.78), sub, ss, Color.WHITE)

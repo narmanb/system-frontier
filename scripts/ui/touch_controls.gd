@@ -10,6 +10,7 @@ extends Control
 signal map_pressed
 
 var buttons: Array = []          ## {id, rect, action, label, round}
+var bottom_inset := 0.0          ## space reserved below the pads (HUD status bar)
 var _finger_button := {}         ## touch index -> button id
 var _held := {}                  ## action -> count of fingers holding it
 
@@ -45,7 +46,7 @@ func layout() -> void:
 	var map_s := clampf(10 * mm, 42, 100)
 	if portrait:
 		pad = maxf(pad, h * 0.02)
-	var bottom := h - pad
+	var bottom := h - pad - bottom_inset
 	var lx := pad
 	var ly := bottom - turn.y
 	var right_x := w - pad - main.x
@@ -55,7 +56,7 @@ func layout() -> void:
 	buttons = [
 		{"id": "left", "rect": Rect2(lx, ly, turn.x, turn.y), "action": "turn_left", "label": "◀"},
 		{"id": "right", "rect": Rect2(lx + turn.x + gap, ly, turn.x, turn.y), "action": "turn_right", "label": "▶"},
-		{"id": "map", "rect": Rect2(lx + turn.x + gap / 2 - map_s / 2, ly - map_s - gap, map_s, map_s), "action": "", "label": "MAP", "round": true},
+		{"id": "map", "rect": Rect2(lx + turn.x + gap / 2 - map_s * 0.65, ly - map_s - gap, map_s * 1.3, map_s), "action": "", "label": "MAP"},
 		{"id": "fire", "rect": Rect2(right_x, fire_y, main.x, main.y), "action": "fire", "label": "✦"},
 		{"id": "thrust", "rect": Rect2(right_x, thrust_y, main.x, main.y), "action": "thrust", "label": "▲"},
 		{"id": "missile", "rect": Rect2(mini_x, fire_y + (main.y - mini.y) / 2, mini.x, mini.y), "action": "missile", "label": "M"},
@@ -147,23 +148,18 @@ func _notification(what: int) -> void:
 
 
 func _draw() -> void:
-	var font := ThemeDB.fallback_font
 	var active := {}
 	for idx in _finger_button:
 		active[_finger_button[idx]] = true
 	for b in buttons:
 		var r: Rect2 = b["rect"]
 		var on: bool = active.has(b["id"])
-		var sb := StyleBoxFlat.new()
-		sb.bg_color = Color(0.31, 0.76, 1.0, 0.34) if on else Color(0.02, 0.06, 0.12, 0.30)
-		sb.border_color = Color(0.45, 0.86, 1.0, 0.75 if on else 0.42)
-		sb.set_border_width_all(2)
-		var radius := int(r.size.x / 2) if b.get("round", false) else 12
-		sb.set_corner_radius_all(radius)
-		draw_style_box(sb, r)
+		Win95.bevel(self, r, "pressed" if on else "raised", Color(Win95.FACE, 0.9) if not on else Color(Win95.LIGHT, 0.95))
 		var c := r.get_center()
 		var k := minf(r.size.x, r.size.y) * 0.22
-		var ink := Color(0.9, 0.97, 1, 0.9)
+		var ink := Win95.TEXT
+		if on:
+			c += Vector2(1, 1)
 		match b["id"]:
 			"left": draw_colored_polygon(PackedVector2Array([c + Vector2(-k, 0), c + Vector2(k * 0.8, -k), c + Vector2(k * 0.8, k)]), ink)
 			"right": draw_colored_polygon(PackedVector2Array([c + Vector2(k, 0), c + Vector2(-k * 0.8, -k), c + Vector2(-k * 0.8, k)]), ink)
@@ -174,6 +170,6 @@ func _draw() -> void:
 					draw_line(c - Vector2(cos(ang), sin(ang)) * k, c + Vector2(cos(ang), sin(ang)) * k, ink, 3)
 				draw_circle(c, k * 0.35, ink)
 			_:
-				var fs := int(clampf(r.size.y * (0.28 if b.get("round", false) else 0.42), 12, 56))
-				var ts := font.get_string_size(b["label"], HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
-				draw_string(font, c + Vector2(-ts.x / 2, fs * 0.36), b["label"], HORIZONTAL_ALIGNMENT_LEFT, -1, fs, ink)
+				var fs := int(clampf(r.size.y * (0.34 if b["id"] == "map" else 0.42), 12, 56))
+				var ts := Win95.bold_font().get_string_size(b["label"], HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
+				draw_string(Win95.bold_font(), c + Vector2(-ts.x / 2, fs * 0.36), b["label"], HORIZONTAL_ALIGNMENT_LEFT, -1, fs, ink)
