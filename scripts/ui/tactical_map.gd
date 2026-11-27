@@ -46,6 +46,24 @@ func _draw() -> void:
 		draw_rect(Rect2(p - Vector2(3, 3), Vector2(6, 6)), s.color)
 		if s.cargo_icon:
 			draw_rect(Rect2(p - Vector2(6, 6), Vector2(12, 12)), Color("#ffe568"), false, 2)
+	var ms := world.mission
+	if ms:
+		for pr in ms.programs:
+			draw_rect(Rect2(m.call(pr.pos) - Vector2(2, 2), Vector2(4, 4)), Color("#65f49d"))
+		for n in ms.nodes:
+			if not n.complete:
+				draw_rect(Rect2(m.call(n.pos) - Vector2(3, 3), Vector2(6, 6)), Color("#ffe56b"))
+		for o in ms.discoveries:
+			draw_rect(Rect2(m.call(o.pos) - Vector2(2, 2), Vector2(4, 4)), Color("#ff83df"))
+		if ms.race_active:
+			for i in range(ms.race_next, ms.race_checkpoints.size()):
+				draw_arc(m.call(ms.race_checkpoints[i]), 5, 0, TAU, 12, Color("#ffff4a"), 1.5)
+		if ms.black_hole != null:
+			draw_circle(m.call(ms.black_hole), 6, Color("#ff9a20"))
+		if ms.type == "courier":
+			draw_rect(Rect2(m.call(ms.destination) - Vector2(5, 4), Vector2(10, 8)), Color("#73ffca"), false, 2)
+	for h in world.hazards:
+		draw_rect(Rect2(m.call(h.pos) - Vector2(2, 2), Vector2(4, 4)), Color("#d65cff"))
 	var g: Vector2 = m.call(world.gate_pos)
 	draw_rect(Rect2(g - Vector2(5, 5), Vector2(10, 10)), Color("#5ff") if world.gate_open else Color("#555"), false, 2)
 	draw_circle(m.call(world.player.pos), 5, Color.WHITE)

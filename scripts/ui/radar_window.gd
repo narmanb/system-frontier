@@ -119,4 +119,8 @@ func _draw() -> void:
 		dot.call(s.pos, Color("#ff4040") if NpcAI.aggressive_to_player(world, s) else s.color)
 	if world.gate_open:
 		dot.call(world.gate_pos, Color("#9ff"), 6.0)
+	if world.mission:
+		var obj = world.mission.objective_point()
+		if obj != null:
+			dot.call(obj, Color("#ffe56b"), 5.0)
 	draw_rect(Rect2(c - Vector2(2, 2), Vector2(4, 4)), Color.WHITE)
