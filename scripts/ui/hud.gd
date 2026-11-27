@@ -42,7 +42,16 @@ func _font_size() -> int:
 	return 12 if AppState.is_touch_ui() else 11
 
 
+var draw_us := 0
+
+
 func _draw() -> void:
+	var t0 := Time.get_ticks_usec()
+	_draw_hud()
+	draw_us = Time.get_ticks_usec() - t0
+
+
+func _draw_hud() -> void:
 	if world == null or world.player == null:
 		return
 	var vs := get_viewport_rect().size

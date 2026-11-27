@@ -52,6 +52,7 @@ jobs:
         run: |
           set -o pipefail
           ~/godot-bin/godot --headless --path . res://tools/autoplay.tscn -- --seeds=1 --minutes=5 --strict --out=autoplay.md 2>&1 | tail -25
+          ~/godot-bin/godot --headless --path . res://tools/autoplay.tscn -- --seeds=1 --minutes=5 --strict --strategy --out=autoplay_strategy.md 2>&1 | tail -25
       - name: Gamepad navigation check (menus, popups, pause, map, factory)
         run: |
           set -o pipefail

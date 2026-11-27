@@ -600,29 +600,65 @@ func _update_player(dt: float, input: Dictionary) -> void:
 		p.vel *= pow(0.5, dt)
 
 
-## Legacy updateStrategy: autopilot toward the priority target. Port fix: autopilot thrust
-## burns fuel (legacy steering did not), and turning uses the ship's real turn rate.
+## Arrival steering shared by the strategy autopilot (and the dev playtest bot): turn
+## toward the velocity we want, and counter-thrust in time to stop at the target (turn-around
+## time included). `hold` = come to rest on the point (repair/scan nodes).
+func arrive_input(target: Vector2, hold := false) -> Dictionary:
+	var p := player
+	var to := target - p.pos
+	var dist := to.length()
+	var v := p.vel
+	var stop_dist := v.length_squared() / (2.0 * maxf(1.0, p.acceleration)) + v.length() * PI / p.turn_rate + (10.0 if hold else 40.0)
+	var want: float
+	var thrust := false
+	if dist < stop_dist and v.length() > (25.0 if hold else 70.0):
+		want = (-v).angle()
+		thrust = true
+	else:
+		var desired := to.normalized() * minf(p.max_speed, maxf(40.0 if hold else 60.0, dist * (0.5 if hold else 1.0)))
+		var dv := desired - v
+		want = dv.angle()
+		thrust = dv.length() > 20
+	var diff := NpcAI.norm_angle(want - p.a)
+	return {"turn": clampf(diff * 3.0, -1, 1), "thrust": thrust and absf(diff) < 0.6 and p.fuel > 0}
+
+
+## Legacy updateStrategy (collect / attack / evade / exit), with the port's arrival steering
+## so the autopilot can actually stop on objectives (D-037). Autopilot thrust burns fuel and
+## turns at the ship's real turn rate (D-023).
 func _update_strategy(dt: float) -> void:
 	var p := player
 	var target = null
+	var hold := false
+	var shoot: SimShip = null
 	match strategy:
 		"collect":
 			var best := INF
 			for o in icons:
-				if o.carrier == null and p.pos.distance_to(o.pos) < best:
+				if o.carrier == null and not o.infected and p.pos.distance_to(o.pos) < best:
 					best = p.pos.distance_to(o.pos)
 					target = o.pos
 			if target == null and mission:
 				var mt = mission.objective_point()
 				if mt != null:
 					target = mt
+					hold = mission.type in ["repair", "scan"]
+			if target == null:
+				for o in icons:   # only infected or carried icons left
+					if o.carrier:
+						shoot = o.carrier
+						target = o.carrier.pos
+					else:
+						target = o.pos
+					break
 		"attack":
 			var best := INF
 			for s in ships:
-				if (s.team != p.team and s.ai != "defender") or s.boss:
-					if p.pos.distance_to(s.pos) < best:
-						best = p.pos.distance_to(s.pos)
-						target = s.pos
+				if ((s.team != p.team and s.ai != "defender") or s.boss) and p.pos.distance_to(s.pos) < best:
+					best = p.pos.distance_to(s.pos)
+					shoot = s
+			if shoot:
+				target = shoot.pos
 		"exit":
 			if gate_open:
 				target = gate_pos
@@ -635,15 +671,26 @@ func _update_strategy(dt: float) -> void:
 					threat_ship = s
 			if threat_ship:
 				target = p.pos + (p.pos - threat_ship.pos).normalized() * 300
-	if target != null and p.fuel > 0:
-		var diff := NpcAI.norm_angle((target - p.pos).angle() - p.a)
-		p.a += clampf(diff, -p.turn_rate * dt, p.turn_rate * dt)
+	if target == null:
+		return
+	var inp: Dictionary
+	if shoot and p.pos.distance_to(shoot.pos) < 260:
+		# in weapons range: hold off and aim instead of ramming
+		inp = arrive_input(p.pos, true)
+		inp["turn"] = clampf(NpcAI.norm_angle((shoot.pos - p.pos).angle() - p.a) * 3.0, -1, 1)
+	else:
+		inp = arrive_input(target, hold)
+	p.a += p.turn_rate * dt * float(inp["turn"])
+	if inp["thrust"] and p.fuel > 0:
 		p.vel += Vector2(cos(p.a), sin(p.a)) * p.acceleration * dt
 		p.fuel -= dt * p.fuel_burn
 		p.thrusting = true
-		if strategy == "attack" and p.pos.distance_to(target) < 420:
+	if shoot:
+		var d := p.pos.distance_to(shoot.pos)
+		var aim := absf(NpcAI.norm_angle((shoot.pos - p.pos).angle() - p.a))
+		if d < 420 and aim < 0.3:
 			fire_player()
-			if p.pos.distance_to(target) < 300:
+			if d < 300 and NpcAI.aggressive_to_player(self, shoot):
 				fire_missile()
 
 

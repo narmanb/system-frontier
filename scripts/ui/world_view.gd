@@ -62,7 +62,16 @@ func _visible(p: Vector2, half: Vector2) -> bool:
 	return absf(p.x) < half.x and absf(p.y) < half.y
 
 
+var draw_us := 0   ## last _draw cost in microseconds (benchmark/diagnostics)
+
+
 func _draw() -> void:
+	var t0 := Time.get_ticks_usec()
+	_draw_world()
+	draw_us = Time.get_ticks_usec() - t0
+
+
+func _draw_world() -> void:
 	if world == null or world.player == null:
 		return
 	var half := _half_view()

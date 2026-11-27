@@ -154,7 +154,16 @@ func _start_gesture() -> void:
 	_gesture_mid = ((pts[0] as Vector2) + (pts[1] as Vector2)) / 2
 
 
+var draw_us := 0
+
+
 func _draw() -> void:
+	var t0 := Time.get_ticks_usec()
+	_draw_canvas()
+	draw_us = Time.get_ticks_usec() - t0
+
+
+func _draw_canvas() -> void:
 	if editor == null:
 		return
 	var n := editor.grid_size
