@@ -25,7 +25,12 @@ var _draft_timer: Timer
 var _campaign = null
 var test_options := {"infinite": true, "moving": true}
 var _precision := false
+var pad_auto := false     ## precision: moving the cursor paints
+var pad_fine := false     ## precision: 0.42× finger travel
+var pad_speed := 1.0      ## precision: 1–3× finger travel
+var pad_hold := false     ## precision: "Hold to Draw" button is held
 var tool_row: HFlowContainer
+var precision_btn: Button
 var rcol: VBoxContainer
 
 
@@ -173,7 +178,8 @@ func _build_tool_rows(host: VBoxContainer) -> void:
 	redo_btn = _small(row, "Redo", func(): editor.redo())
 	_small(row, "- Zoom", func(): canvas.set_zoom(canvas.zoom / 1.4))
 	_small(row, "+ Zoom", func(): canvas.set_zoom(canvas.zoom * 1.4))
-	_small(row, "Precision", _toggle_precision)
+	precision_btn = _small(row, "Precision", _toggle_precision)
+	precision_btn.toggle_mode = true
 
 
 func _small(row: Container, text: String, cb: Callable) -> Button:
@@ -235,6 +241,7 @@ func _refresh() -> void:
 	for t in tool_buttons:
 		tool_buttons[t].button_pressed = editor.tool == t
 	mirror_btn.text = "Mirror: %s" % ("ON" if editor.mirror else "OFF")
+	precision_btn.button_pressed = _precision
 	undo_btn.disabled = editor.history.is_empty()
 	redo_btn.disabled = editor.future.is_empty()
 	bar.title = "SHIP FACTORY — %d×%d" % [editor.grid_size, editor.grid_size]
@@ -325,7 +332,7 @@ func _panel_paint() -> void:
 		Win95.popup(self, "Clear Hull", "Erase every pixel? Undo is available.", [["Clear", func(): editor.clear()], ["Cancel", func(): pass]]))
 	if _precision:
 		_h("Precision Pad")
-		_note("Drag inside the pad to move the yellow cursor one cell at a time; Dab paints that cell with the current tool.")
+		_note("Drag inside the pad to move the yellow cursor one cell at a time. Dab paints that cell; hold \"Hold to Draw\" or turn on Auto Draw to paint while moving (uses the current tool, so Eraser erases).")
 		var pad := PrecisionPad.new()
 		pad.factory = self
 		panel_host.add_child(pad)
@@ -333,9 +340,41 @@ func _panel_paint() -> void:
 		_btn(pf, "Dab", func():
 			editor.push_history()
 			editor.paint(canvas.cursor.x, canvas.cursor.y)
-			_refresh(), 110)
-		_btn(pf, "Centre", func(): canvas.cursor = Vector2i(editor.grid_size / 2, editor.grid_size / 2), 110)
+			_refresh(), 100)
+		var hold := HoldButton.new()
+		hold.text = "Hold to Draw"
+		hold.custom_minimum_size = Vector2(130, 44)
+		hold.held.connect(func(on):
+			pad_hold = on
+			if on:
+				editor.push_history()
+				editor.paint(canvas.cursor.x, canvas.cursor.y))
+		pf.add_child(hold)
+		var auto := _btn(pf, "Auto %s: %s" % ["Erase" if editor.tool == "erase" else "Draw", "ON" if pad_auto else "OFF"], func():
+			pad_auto = not pad_auto
+			if pad_auto:
+				editor.push_history()
+			_rebuild_panel(), 150)
+		auto.toggle_mode = true
+		auto.button_pressed = pad_auto
+		var fine := _btn(pf, "Fine: %s" % ("ON" if pad_fine else "OFF"), func():
+			pad_fine = not pad_fine
+			_rebuild_panel(), 100)
+		fine.toggle_mode = true
+		fine.button_pressed = pad_fine
+		_btn(pf, "Centre", func(): canvas.cursor = Vector2i(editor.grid_size / 2, editor.grid_size / 2), 100)
 		_btn(pf, "Close Pad", _toggle_precision, 110)
+		var sp := HBoxContainer.new()
+		sp.add_child(Win95.label("Speed", 14, Win95.TEXT, true))
+		var slider := HSlider.new()
+		slider.min_value = 1
+		slider.max_value = 3
+		slider.step = 0.5
+		slider.value = pad_speed
+		slider.custom_minimum_size = Vector2(180, 32)
+		slider.value_changed.connect(func(v): pad_speed = v)
+		sp.add_child(slider)
+		panel_host.add_child(sp)
 
 
 func _swatch(hex: String, idx: int) -> Button:
@@ -985,16 +1024,16 @@ class PrecisionPad:
 			rel = event.relative
 		if rel == Vector2.ZERO:
 			return
-		_acc += rel
-		var c: Vector2i = factory.canvas.cursor
+		_acc += rel * factory.pad_speed * (0.42 if factory.pad_fine else 1.0)
 		var n: int = factory.editor.grid_size
-		while absf(_acc.x) >= 8:
-			c.x += int(signf(_acc.x))
-			_acc.x -= signf(_acc.x) * 8
-		while absf(_acc.y) >= 8:
-			c.y += int(signf(_acc.y))
-			_acc.y -= signf(_acc.y) * 8
-		factory.canvas.cursor = Vector2i(clampi(c.x, 0, n - 1), clampi(c.y, 0, n - 1))
+		var paint: bool = factory.pad_auto or factory.pad_hold
+		while absf(_acc.x) >= 8 or absf(_acc.y) >= 8:
+			var step := Vector2i(int(signf(_acc.x)) if absf(_acc.x) >= 8 else 0, int(signf(_acc.y)) if absf(_acc.y) >= 8 else 0)
+			_acc -= Vector2(step) * 8
+			var c: Vector2i = factory.canvas.cursor + step
+			factory.canvas.cursor = Vector2i(clampi(c.x, 0, n - 1), clampi(c.y, 0, n - 1))
+			if paint:
+				factory.editor.paint(factory.canvas.cursor.x, factory.canvas.cursor.y)
 		accept_event()
 
 	func _draw() -> void:
@@ -1020,3 +1059,13 @@ func _popup_open() -> bool:
 		if ch is Win95.PopupOverlay:
 			return true
 	return false
+
+
+## Button that reports press and release (legacy "Hold to Draw"), touch or mouse.
+class HoldButton:
+	extends Button
+	signal held(on: bool)
+
+	func _init() -> void:
+		button_down.connect(func(): held.emit(true))
+		button_up.connect(func(): held.emit(false))

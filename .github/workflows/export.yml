@@ -42,6 +42,8 @@ jobs:
       ALL_PLATFORMS: ${{ github.event.inputs.platforms == 'all' || startsWith(github.ref, 'refs/tags/v') }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 15   # recent commit titles go into the release notes
 
       - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
@@ -154,10 +156,15 @@ jobs:
           VER=$(grep -oP 'config/version="\K[^"]+' project.godot)
           SHORT=${GITHUB_SHA::7}
           cp build/android/SystemFrontier-debug.apk SystemFrontier.apk
-          NOTES="Debug APK for testing (Android phone / Retroid Pocket 5). Version ${VER}, commit ${SHORT} on ${GITHUB_REF_NAME}. Built $(date -u +'%Y-%m-%d %H:%M UTC')."
+          {
+            echo "Debug APK for testing (Android phone / Retroid Pocket 5). Version ${VER}, commit ${SHORT} on ${GITHUB_REF_NAME}. Built $(date -u +'%Y-%m-%d %H:%M UTC')."
+            echo ""
+            echo "Recent changes:"
+            git log -12 --format='- %s'
+          } > notes.md
           gh release delete dev-latest --cleanup-tag --yes 2>/dev/null || true
           gh release create dev-latest SystemFrontier.apk --prerelease --target "$GITHUB_SHA" \
-            --title "Latest test build (${VER}-${SHORT})" --notes "$NOTES"
+            --title "Latest test build (${VER}-${SHORT})" --notes-file notes.md
           echo "APK: https://github.com/${GITHUB_REPOSITORY}/releases/download/dev-latest/SystemFrontier.apk" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Name desktop/web artifacts

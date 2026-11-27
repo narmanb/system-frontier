@@ -64,6 +64,14 @@ func _ready() -> void:
 	for tab in ["Paint", "Hull", "Engines", "Stats", "Modules", "Telemetry", "Library", "Test"]:
 		AppState.settings["factory_tab"] = tab
 		await _scene("res://scenes/factory/factory.tscn", "15_factory_" + tab.to_lower())
+	AppState.settings["factory_tab"] = "Paint"
+	await _scene("res://scenes/factory/factory.tscn", "15_factory_paint_again")
+	get_tree().current_scene._toggle_precision()
+	await _f(6)
+	var sc: ScrollContainer = get_tree().current_scene.right_scroll
+	sc.scroll_vertical = 100000
+	await _f(4)
+	_shot("17_precision")
 	get_tree().current_scene._auto_clean()
 	await _f(4)
 	_shot("16_auto_clean")

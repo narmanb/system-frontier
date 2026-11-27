@@ -90,7 +90,7 @@ numerically) · **verified** (compared against legacy-derived fixtures or behavi
 | Telemetry cards, warnings, preview | `v6UpdateTelemetry`, `drawPreview` v6 | Telemetry tab, `FactoryEditor.warnings` | — | implemented |
 | Library: save, duplicate, delete, import/export | `saveShipBtn`… | Library tab (clipboard JSON) | test_ship_data_roundtrip | intentional change (D-030) |
 | Draft autosave, recent-colour persistence | `v6AutoSave`, `RECENT_KEY` | `SaveService.DRAFT/RECENT_COLORS` | — | implemented |
-| Precision pad | v6.2 precision cursor/pad | Paint tab pad + cursor + Dab | — | intentional change (D-031) |
+| Precision pad | v6.2 precision cursor/pad | Paint tab pad: Dab, Hold to Draw, Auto Draw, Fine, speed; gamepad cursor | gamepad_check | implemented |
 | Zoom / pan | `v6ApplyZoom` (1–4×) | pinch, wheel, buttons (1–6×), two-finger/right-drag pan | — | implemented |
 | Test flight with options and telemetry summary | `testShipBtn`, `v6FinishTest` | Test tab → test range → back to Factory | smoke run | implemented |
 
