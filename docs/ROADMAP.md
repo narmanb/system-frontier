@@ -32,6 +32,9 @@ acceptance checks are verified on device. Passing CI alone isn't enough.
 - [x] Stats, archetypes, modules, telemetry, warnings, preview
 - [x] Library (save/duplicate/delete/clipboard import-export), draft autosave, assign to campaign, test flight
 
+## Overnight polish ✅
+Automated playtester (CI, both control modes), full gamepad navigation, visual audit fixes, safe-area insets, faction-world and fuzz tests, performance benchmark. See docs/NIGHT_REPORT.md.
+
 ## Remaining — Milestone 3/5 polish and sign-off
 - Owner playtest on phone + Retroid Pocket 5 (Android handheld with gamepad); tune touch sizes, HUD, factory layout on real devices
 - Deeper faction-world review (NPC-vs-NPC long runs, relation effects), balancing
