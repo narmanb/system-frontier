@@ -52,7 +52,7 @@ func _run_smoke() -> void:
 	await tree.create_timer(0.8).timeout
 	var fe := FactoryEditor.new()
 	fe.load_starter("blockadeRam")
-	var runs := [{"mode": "sandbox", "threat": 5}, {"mode": "test", "threat": 1},
+	var runs := [{"mode": "sandbox", "threat": 5}, {"mode": "test", "threat": 1}, {"mode": "endless"},
 		{"mode": "test", "threat": 1, "ship": fe.ship_data(), "return": "factory", "test_options": {"infinite": false, "moving": true}}]
 	for i in c["dirs"].size():
 		runs.append({"mode": "campaign", "dir_id": i})
