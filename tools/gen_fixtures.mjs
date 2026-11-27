@@ -187,6 +187,37 @@ const campaignData = {
   builtinShips: builtin,
 };
 
+// --- 3c. Ship Factory: presets and v6.2 Auto-Clean passes -------------------------------
+{
+  let fcode = line("const clamp=") + line("const palette=") + fn("defaultThrusters") + fn("normalizeThrusters");
+  fcode += "var editor={gridSize:24,grid:[],thrusters:[],hardpoints:[]};function updateThrusterUI(){};function drawEditor(){};function drawPreview(){};\n";
+  fcode += fn("px") + fn("preset");
+  for (const f of ["v62Cell","v62Neighbors","v62Dominant","v62ConservativePass","v62SymmetryPass","v62HexRgb","v62ColorDistance","v62ConsolidateColors","v62ProtectedCell","v62AggressivePass"]) fcode += fn(f);
+  const fctx = { Math, JSON, Number, Object, Array, String, Map, Set };
+  vm.createContext(fctx);
+  vm.runInContext(fcode + "\nthis.__f={editor,preset,v62ConservativePass,v62SymmetryPass,v62AggressivePass};", fctx);
+  const F = fctx.__f;
+  const presets = [];
+  for (let n = 0; n < 5; n++) { F.preset(n); presets.push(F.editor.grid.slice()); }
+  // Repair input: Red Falcon art with deterministic damage (holes, specks, a stray off-hull pixel).
+  const rf = gridOf("RED_FALCON_GRID").map(v => v ? v.toLowerCase() : null);
+  const damaged = rf.slice();
+  for (let i = 0; i < damaged.length; i += 37) damaged[i] = damaged[i] ? null : (i % 3 ? "#ff00ff" : null);
+  damaged[2 * 48 + 2] = "#123456";
+  F.editor.gridSize = 48;
+  F.editor.thrusters = [{ id: "center", x: 24, y: 43, enabled: true }, { id: "left", x: 17, y: 41, enabled: true }, { id: "right", x: 31, y: 41, enabled: true }];
+  F.editor.hardpoints = [{ id: "primary", x: 24, y: 12 }, { id: "secondary", x: 15, y: 27 }, { id: "defense", x: 33, y: 27 }, { id: "utility", x: 24, y: 31 }];
+  const repair = {
+    input: damaged,
+    conservative: F.v62ConservativePass(damaged, 48),
+    symmetry_merge: F.v62SymmetryPass(F.v62ConservativePass(damaged, 48), 48, "merge"),
+    symmetry_left: F.v62SymmetryPass(F.v62ConservativePass(damaged, 48), 48, "left"),
+    aggressive_right: F.v62AggressivePass(damaged, 48, "right"),
+    thrusters: F.editor.thrusters, hardpoints: F.editor.hardpoints,
+  };
+  write("factory.json", { source: path.basename(src), note: "preset(n) grids (24x24 palette indices) and v62 Auto-Clean pass outputs on a damaged Red Falcon", presets, repair });
+}
+
 // --- 4. canonical data extracted from effective code -> data/*.json ---------------------
 const dataDir = path.join(path.dirname(outDir), "..", "data");
 fs.mkdirSync(dataDir, { recursive: true });
