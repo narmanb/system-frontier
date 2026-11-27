@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hygiene:
+    name: Repo hygiene, assets, fixtures
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Hygiene + asset manifest
+        run: python3 -I tools/check_repo.py
+      - name: Fixtures and data reproducible from the legacy reference
+        run: |
+          mkdir -p /tmp/fx/tests/fixtures
+          node tools/gen_fixtures.mjs legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html /tmp/fx/tests/fixtures > /dev/null
+          for f in performance flight recolor; do diff -q /tmp/fx/tests/fixtures/$f.json tests/fixtures/$f.json; done
+          for f in engineering starter_hulls npc_archetypes factions; do diff -q /tmp/fx/data/$f.json data/$f.json; done
+
+  test:
+    name: Godot import + headless tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: ~/godot-bin
+          key: godot-editor-${{ hashFiles('.godot-version', '.github/scripts/setup_godot.sh') }}
+      - name: Install pinned Godot
+        run: .github/scripts/setup_godot.sh ~/godot-bin
+      - name: Import project
+        run: ~/godot-bin/godot --headless --path . --editor --import 2>&1 | tee import.log
+      - name: Fail on script errors during import
+        run: "! grep -E 'SCRIPT ERROR|Parse Error' import.log"
+      - name: Run tests
+        run: |
+          set -o pipefail
+          ~/godot-bin/godot --headless --path . res://tests/run_tests.tscn 2>&1 | tee test.log
+      - name: Upload failure log
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: test-logs
+          path: "*.log"
+          retention-days: 3

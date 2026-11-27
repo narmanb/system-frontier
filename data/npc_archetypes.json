@@ -1,0 +1,101 @@
+{
+ "archetypes": {
+  "grunt": {
+   "id": "grunt",
+   "name": "Directory Grunt",
+   "recolor": true,
+   "ai": "hostile",
+   "radius": 18,
+   "hullBase": 52,
+   "accel": 135,
+   "maxSpeed": 155,
+   "turn": 2.6,
+   "damage": 4.5,
+   "cycle": 0.95,
+   "art": "res://assets/ships/npc_grunt.png"
+  },
+  "skirmisher": {
+   "id": "skirmisher",
+   "name": "Vector Skirmisher",
+   "recolor": true,
+   "ai": "skirmisher",
+   "radius": 17,
+   "hullBase": 42,
+   "accel": 165,
+   "maxSpeed": 215,
+   "turn": 3.45,
+   "damage": 3.7,
+   "cycle": 1.22,
+   "art": "res://assets/ships/npc_skirmisher.png"
+  },
+  "beam": {
+   "id": "beam",
+   "name": "Charge Lancer",
+   "recolor": true,
+   "ai": "beam",
+   "radius": 19,
+   "hullBase": 60,
+   "accel": 118,
+   "maxSpeed": 145,
+   "turn": 2.1,
+   "damage": 6.5,
+   "cycle": 0.72,
+   "art": "res://assets/ships/npc_beam.png"
+  },
+  "hunter": {
+   "id": "hunter",
+   "name": "Shade Hunter",
+   "recolor": false,
+   "ai": "hostile",
+   "radius": 18,
+   "hullBase": 55,
+   "accel": 148,
+   "maxSpeed": 178,
+   "turn": 2.8,
+   "damage": 5.1,
+   "cycle": 0.92,
+   "art": "res://assets/ships/npc_hunter.png"
+  },
+  "raider": {
+   "id": "raider",
+   "name": "Crimson Raider",
+   "recolor": false,
+   "ai": "hostile",
+   "radius": 18,
+   "hullBase": 50,
+   "accel": 142,
+   "maxSpeed": 170,
+   "turn": 2.9,
+   "damage": 4.9,
+   "cycle": 1,
+   "art": "res://assets/ships/npc_raider.png"
+  },
+  "police": {
+   "id": "police",
+   "name": "Intercept Enforcer",
+   "recolor": false,
+   "ai": "enforcer",
+   "radius": 20,
+   "hullBase": 120,
+   "accel": 160,
+   "maxSpeed": 182,
+   "turn": 3,
+   "damage": 5.4,
+   "cycle": 1,
+   "art": "res://assets/ships/npc_police.png"
+  }
+ },
+ "hostileWeights": {
+  "grunt": 42,
+  "skirmisher": 24,
+  "beam": 16,
+  "hunter": 11,
+  "raider": 7
+ },
+ "collectorWeights": {
+  "grunt": 58,
+  "skirmisher": 18,
+  "raider": 14,
+  "beam": 10
+ }
+}

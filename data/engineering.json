@@ -1,0 +1,363 @@
+{
+ "statOrder": [
+  "acceleration",
+  "maxSpeed",
+  "inertia",
+  "turn",
+  "hull",
+  "fuelCapacity",
+  "fuelEfficiency",
+  "weaponPower",
+  "weaponCooling",
+  "reactor"
+ ],
+ "statLabels": {
+  "acceleration": "Acceleration",
+  "maxSpeed": "Maximum Speed",
+  "inertia": "Inertia Stabilization",
+  "turn": "Turning Rate",
+  "hull": "Hull Integrity",
+  "fuelCapacity": "Fuel Capacity",
+  "fuelEfficiency": "Fuel Efficiency",
+  "weaponPower": "Weapon Power",
+  "weaponCooling": "Weapon Cooling",
+  "reactor": "Reactor Output"
+ },
+ "statBudget": 50,
+ "mountBudget": 4,
+ "factoryStatCap": 8,
+ "modules": {
+  "primary": {
+   "pulse": {
+    "name": "Pulse Laser",
+    "mass": 4,
+    "power": 12,
+    "desc": "Balanced damage, heat and firing speed.",
+    "damage": 1,
+    "cooldown": 1,
+    "heat": 1
+   },
+   "rapid": {
+    "name": "Rapid Blaster",
+    "mass": 5,
+    "power": 18,
+    "desc": "Fast fire with lower damage per shot.",
+    "damage": 0.72,
+    "cooldown": 0.62,
+    "heat": 1.08
+   },
+   "heavy": {
+    "name": "Heavy Cannon",
+    "mass": 8,
+    "power": 22,
+    "desc": "High impact, slow cooling and greater mass.",
+    "damage": 1.72,
+    "cooldown": 1.65,
+    "heat": 1.5
+   }
+  },
+  "secondary": {
+   "none": {
+    "name": "Empty Slot",
+    "mass": 0,
+    "power": 0,
+    "desc": "No secondary weapon installed."
+   },
+   "missile": {
+    "name": "Missile Rack",
+    "mass": 5,
+    "power": 4,
+    "desc": "Standard guided missiles and increased capacity.",
+    "missiles": 4
+   },
+   "emp": {
+    "name": "EMP Launcher",
+    "mass": 6,
+    "power": 11,
+    "desc": "Energy-heavy secondary system with strong impact.",
+    "missiles": 2,
+    "missileDamage": 1.3
+   }
+  },
+  "defense": {
+   "shield": {
+    "name": "Recharge Shield",
+    "mass": 6,
+    "power": 18,
+    "desc": "Adds a rechargeable shield buffer.",
+    "shield": 42
+   },
+   "cloak": {
+    "name": "Cloaking Field",
+    "mass": 4,
+    "power": 22,
+    "desc": "Chance to evade fire while coasting quietly.",
+    "cloak": 0.35
+   },
+   "plating": {
+    "name": "Reinforced Plating",
+    "mass": 9,
+    "power": 4,
+    "desc": "Adds hull without a large reactor demand.",
+    "hull": 36
+   },
+   "ram": {
+    "name": "Reinforced Ram",
+    "mass": 8,
+    "power": 6,
+    "desc": "Heavy nose structure with additional hull.",
+    "hull": 24
+   }
+  },
+  "utility": {
+   "repair": {
+    "name": "Auto-Repair Unit",
+    "mass": 5,
+    "power": 14,
+    "desc": "Slowly repairs hull after avoiding damage.",
+    "repair": 0.8
+   },
+   "fuelRecycler": {
+    "name": "Fuel Recycler",
+    "mass": 4,
+    "power": 12,
+    "desc": "Reduces thrust fuel consumption.",
+    "fuelMult": 0.82
+   },
+   "tractor": {
+    "name": "Tractor Beam",
+    "mass": 3,
+    "power": 10,
+    "desc": "Expands icon and fuel pickup range.",
+    "pickup": 34
+   },
+   "none": {
+    "name": "Empty Slot",
+    "mass": 0,
+    "power": 0,
+    "desc": "No utility module installed."
+   }
+  },
+  "scanner": {
+   "standard": {
+    "name": "Standard Scanner",
+    "mass": 2,
+    "power": 4,
+    "desc": "Normal tactical detection."
+   },
+   "longRange": {
+    "name": "Long-Range Scanner",
+    "mass": 4,
+    "power": 10,
+    "desc": "Improves tactical-map detection and target visibility.",
+    "range": 1.35
+   },
+   "salvage": {
+    "name": "Salvage Analyzer",
+    "mass": 3,
+    "power": 8,
+    "desc": "Increases credits recovered from clean icons.",
+    "salvage": 1.22
+   }
+  }
+ },
+ "components": {
+  "engineCore": {
+   "name": "High-Flow Engine Core",
+   "cost": 180,
+   "desc": "+0.8 effective Acceleration.",
+   "stat": "acceleration",
+   "amount": 0.8
+  },
+  "governor": {
+   "name": "Unlocked Drive Governor",
+   "cost": 210,
+   "desc": "+0.8 effective Maximum Speed.",
+   "stat": "maxSpeed",
+   "amount": 0.8
+  },
+  "lightweight": {
+   "name": "Lightweight Frame",
+   "cost": 240,
+   "desc": "Reduces calculated mass by 8%.",
+   "massMult": 0.92
+  },
+  "reactorCoupler": {
+   "name": "Reactor Coupler",
+   "cost": 250,
+   "desc": "+1 effective Reactor Output.",
+   "stat": "reactor",
+   "amount": 1
+  },
+  "coolingJacket": {
+   "name": "Cooling Jacket",
+   "cost": 220,
+   "desc": "+1 effective Weapon Cooling.",
+   "stat": "weaponCooling",
+   "amount": 1
+  },
+  "recycler": {
+   "name": "Campaign Fuel Recycler",
+   "cost": 230,
+   "desc": "Reduces thrust fuel use by 12%.",
+   "fuelMult": 0.88
+  }
+ },
+ "rareTech": {
+  "nobleOverdrive": {
+   "name": "Noble Overdrive",
+   "cost": 420,
+   "noble": 1,
+   "desc": "Raises final top speed by 10%.",
+   "speedMult": 1.1
+  },
+  "dragonShield": {
+   "name": "Dragon-Lattice Shield",
+   "cost": 520,
+   "noble": 2,
+   "desc": "Adds 35 shield capacity.",
+   "shield": 35
+  },
+  "demonCooling": {
+   "name": "Demon-Core Heat Sink",
+   "cost": 650,
+   "noble": 4,
+   "desc": "Increases cooling by 30%.",
+   "coolingMult": 1.3
+  }
+ },
+ "archetypes": {
+  "balanced": {
+   "name": "Balanced Interceptor",
+   "stats": {
+    "acceleration": 5,
+    "maxSpeed": 5,
+    "inertia": 5,
+    "turn": 5,
+    "hull": 5,
+    "fuelCapacity": 5,
+    "fuelEfficiency": 5,
+    "weaponPower": 5,
+    "weaponCooling": 5,
+    "reactor": 5
+   },
+   "modules": {
+    "primary": "pulse",
+    "secondary": "missile",
+    "defense": "shield",
+    "utility": "repair",
+    "scanner": "standard"
+   }
+  },
+  "racer": {
+   "name": "High-Speed Racer",
+   "stats": {
+    "acceleration": 8,
+    "maxSpeed": 9,
+    "inertia": 3,
+    "turn": 8,
+    "hull": 3,
+    "fuelCapacity": 4,
+    "fuelEfficiency": 5,
+    "weaponPower": 4,
+    "weaponCooling": 3,
+    "reactor": 3
+   },
+   "modules": {
+    "primary": "rapid",
+    "secondary": "none",
+    "defense": "cloak",
+    "utility": "fuelRecycler",
+    "scanner": "longRange"
+   }
+  },
+  "gunship": {
+   "name": "Heavy Gunship",
+   "stats": {
+    "acceleration": 5,
+    "maxSpeed": 4,
+    "inertia": 4,
+    "turn": 4,
+    "hull": 7,
+    "fuelCapacity": 5,
+    "fuelEfficiency": 4,
+    "weaponPower": 9,
+    "weaponCooling": 6,
+    "reactor": 2
+   },
+   "modules": {
+    "primary": "heavy",
+    "secondary": "missile",
+    "defense": "plating",
+    "utility": "repair",
+    "scanner": "standard"
+   }
+  },
+  "collector": {
+   "name": "Armored Collector",
+   "stats": {
+    "acceleration": 4,
+    "maxSpeed": 4,
+    "inertia": 6,
+    "turn": 5,
+    "hull": 7,
+    "fuelCapacity": 7,
+    "fuelEfficiency": 7,
+    "weaponPower": 3,
+    "weaponCooling": 3,
+    "reactor": 4
+   },
+   "modules": {
+    "primary": "pulse",
+    "secondary": "missile",
+    "defense": "shield",
+    "utility": "tractor",
+    "scanner": "salvage"
+   }
+  },
+  "explorer": {
+   "name": "Efficient Explorer",
+   "stats": {
+    "acceleration": 5,
+    "maxSpeed": 6,
+    "inertia": 5,
+    "turn": 6,
+    "hull": 4,
+    "fuelCapacity": 7,
+    "fuelEfficiency": 8,
+    "weaponPower": 3,
+    "weaponCooling": 3,
+    "reactor": 3
+   },
+   "modules": {
+    "primary": "pulse",
+    "secondary": "none",
+    "defense": "cloak",
+    "utility": "fuelRecycler",
+    "scanner": "longRange"
+   }
+  },
+  "reactor": {
+   "name": "Advanced Reactor Vessel",
+   "stats": {
+    "acceleration": 4,
+    "maxSpeed": 4,
+    "inertia": 5,
+    "turn": 5,
+    "hull": 4,
+    "fuelCapacity": 4,
+    "fuelEfficiency": 5,
+    "weaponPower": 5,
+    "weaponCooling": 5,
+    "reactor": 9
+   },
+   "modules": {
+    "primary": "rapid",
+    "secondary": "emp",
+    "defense": "shield",
+    "utility": "repair",
+    "scanner": "salvage"
+   }
+  }
+ }
+}

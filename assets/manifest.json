@@ -1,0 +1,195 @@
+{
+ "note": "Every shipped or retained binary asset with source and provenance. Verified by tools/check_repo.py.",
+ "assets": [
+  {
+   "path": "assets/ships/red_falcon.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 787 RED_FALCON_DATA_URL (pixel-identical to RED_FALCON_GRID)",
+   "legacy_identifier": "RED_FALCON_DATA_URL / RED_FALCON_GRID",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "Default player hull; editable 48x48 art",
+   "dimensions": "48x48",
+   "sha256": "86cae18d1b55aa5807c9dbcdbb3fcf5105da1025b846a6febe15b2c6d849a89c"
+  },
+  {
+   "path": "assets/ships/nova_sting.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 1875 V65_HULL_IMAGES.novaSting",
+   "legacy_identifier": "V65_HULL_IMAGES.novaSting",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "Starter hull",
+   "dimensions": "48x48",
+   "sha256": "d9461027e94ad06892af36ecfefc81c397e34472f34e3fecd4767a89881d1dbc"
+  },
+  {
+   "path": "assets/ships/wisp_needle.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 2191 WISP_IMG (v6.9 replacement art)",
+   "legacy_identifier": "WISP_IMG",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "Starter hull",
+   "dimensions": "48x48",
+   "sha256": "fb09ac9447cb270b5593697e012624ef62c7ca5d80b5811c189f696c932121bc"
+  },
+  {
+   "path": "assets/ships/blockade_ram.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 2192 BLOCKADE_IMG (v6.9 replacement art)",
+   "legacy_identifier": "BLOCKADE_IMG",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "Starter hull",
+   "dimensions": "48x48",
+   "sha256": "0d908cb38d9b16764ac5c633724f586488b32a298d0d0e5d33102d1545735e1c"
+  },
+  {
+   "path": "assets/ships/cargo_warden.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 2193 CARGO_IMG (v6.9 replacement art)",
+   "legacy_identifier": "CARGO_IMG",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "Starter hull",
+   "dimensions": "48x48",
+   "sha256": "288e2848cf5437d5bbb067c2fb3e75adcb451313fd0b4e8eb3f89229b8a2535a"
+  },
+  {
+   "path": "assets/ships/npc_grunt.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 2194 GRUNT_IMG (pixel-identical to GRUNT_GRID)",
+   "legacy_identifier": "GRUNT_IMG / GRUNT_GRID",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "NPC archetype grunt",
+   "dimensions": "48x48",
+   "sha256": "c4dda61753760cd47c162a860885f9900f9c69f5ebf57d80c967282b41fa2e27"
+  },
+  {
+   "path": "assets/ships/npc_skirmisher.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 2195 QUICK_IMG (= QUICK_GRID)",
+   "legacy_identifier": "QUICK_IMG / QUICK_GRID",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "NPC archetype skirmisher",
+   "dimensions": "48x48",
+   "sha256": "022636275be87c17f3217dc7728239371226116a16e17dd0a0334f7e7a100cc5"
+  },
+  {
+   "path": "assets/ships/npc_police.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 2196 POLICE_IMG (= POLICE_GRID)",
+   "legacy_identifier": "POLICE_IMG / POLICE_GRID",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "Enforcer (police) ship; cockpit flash",
+   "dimensions": "48x48",
+   "sha256": "a621d24b2403387771cbedda4c707ee7e148d76db4a98c69379243fbaf94ed28"
+  },
+  {
+   "path": "assets/ships/npc_beam.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 2197 BEAM_IMG (= BEAM_GRID)",
+   "legacy_identifier": "BEAM_IMG / BEAM_GRID",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "NPC archetype beam (Charge Lancer)",
+   "dimensions": "48x48",
+   "sha256": "7976defc392642ad076d70a9b000595109c2513d2190527378a62459379f88fa"
+  },
+  {
+   "path": "assets/ships/npc_hunter.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 2198 HUNTER_IMG (= HUNTER_GRID)",
+   "legacy_identifier": "HUNTER_IMG / HUNTER_GRID",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "NPC archetype hunter",
+   "dimensions": "48x48",
+   "sha256": "2e177906fc329909189145005254aa8e889d6e46fc8c3f9c0e2dd9b60a92325d"
+  },
+  {
+   "path": "assets/ships/npc_raider.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 2199 RAIDER_IMG (= RAIDER_GRID)",
+   "legacy_identifier": "RAIDER_IMG / RAIDER_GRID",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "NPC archetype raider",
+   "dimensions": "48x48",
+   "sha256": "1ea81c9bdfd05719418e98066bdab7c264c3baffefd916ef208f90f619150b41"
+  },
+  {
+   "path": "assets/effects/laser.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 2517 V72_LASER_DATA_URL",
+   "legacy_identifier": "V72_LASER_DATA_URL",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "Laser bolt sprite (tinted white mask at runtime)",
+   "dimensions": "32x16",
+   "sha256": "282566471b49bfb35a5262763799c6d0c17cfa8d1d8976581125b475c994c9f9"
+  },
+  {
+   "path": "assets/effects/black_hole_reference.gif",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 2492 V71_BLACK_HOLE_DATA_URL (8 frames, 150 ms)",
+   "legacy_identifier": "V71_BLACK_HOLE_DATA_URL",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "Dragon black hole (Milestone 2); not yet used",
+   "dimensions": "256x256",
+   "sha256": "ed19544c35cff25b22446ec8926435629a732bdead798e549a935ca6fac75147",
+   "note": "Described in legacy code as an 'uploaded animated GIF'; provenance specifically unconfirmed."
+  },
+  {
+   "path": "assets/ui/icon.png",
+   "source": "Generated in this repo from assets/ships/red_falcon.png (nearest-neighbour 2x, dark tile)",
+   "legacy_identifier": "",
+   "provenance": "Derived from owner-supplied Red Falcon art",
+   "use": "App/launcher icon",
+   "dimensions": "128x128",
+   "sha256": "77094cdf4c4a85a6f77c0b32cdd8a45546fc28a10dfecf72f294c0856eb4d1cd"
+  },
+  {
+   "path": "legacy/unused_art/silver_arrow.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 1875 V65_HULL_IMAGES.silverArrow",
+   "legacy_identifier": "V65_HULL_IMAGES.silverArrow",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "Not used: removed/superseded in the effective v7.2.4 build (v6.9 kept five starters). Retained so no supplied asset is discarded.",
+   "dimensions": "48x48",
+   "sha256": "8ce905d60c9258bdd7a8dba7a29cb69b215376f75d5141124203668d4525c4eb"
+  },
+  {
+   "path": "legacy/unused_art/tomb_glider.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 1875 V65_HULL_IMAGES.tombGlider",
+   "legacy_identifier": "V65_HULL_IMAGES.tombGlider",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "Not used: removed/superseded in the effective v7.2.4 build (v6.9 kept five starters). Retained so no supplied asset is discarded.",
+   "dimensions": "48x48",
+   "sha256": "9b89d5b03dfdf9a226e10c664476f6441ebfd1921e40f4819f1aba26e7487510"
+  },
+  {
+   "path": "legacy/unused_art/salvage_skiff.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 1875 V65_HULL_IMAGES.salvageSkiff",
+   "legacy_identifier": "V65_HULL_IMAGES.salvageSkiff",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "Not used: removed/superseded in the effective v7.2.4 build (v6.9 kept five starters). Retained so no supplied asset is discarded.",
+   "dimensions": "48x48",
+   "sha256": "9557eb6e9f734aa55c6b87c97b6cffdff9a173e4974abee255acafa6c2b49251"
+  },
+  {
+   "path": "legacy/unused_art/wisp_needle_v65.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 1875 V65_HULL_IMAGES.wispNeedle (pre-v6.9)",
+   "legacy_identifier": "V65_HULL_IMAGES.wispNeedle (pre-v6.9)",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "Not used: removed/superseded in the effective v7.2.4 build (v6.9 kept five starters). Retained so no supplied asset is discarded.",
+   "dimensions": "48x48",
+   "sha256": "71b902cbe6c1cd31e09e29cce35427a4dfc165a5123e4f9f3d2172f6a0a280fa"
+  },
+  {
+   "path": "legacy/unused_art/blockade_ram_v65.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 1875 V65_HULL_IMAGES.blockadeRam (pre-v6.9)",
+   "legacy_identifier": "V65_HULL_IMAGES.blockadeRam (pre-v6.9)",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "Not used: removed/superseded in the effective v7.2.4 build (v6.9 kept five starters). Retained so no supplied asset is discarded.",
+   "dimensions": "48x48",
+   "sha256": "72704a2d05ad61687dea0dc71fbe1a0605b7927c2efee2f815aa6671e62902bc"
+  },
+  {
+   "path": "legacy/unused_art/cargo_warden_v65.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 1875 V65_HULL_IMAGES.cargoWarden (pre-v6.9)",
+   "legacy_identifier": "V65_HULL_IMAGES.cargoWarden (pre-v6.9)",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "Not used: removed/superseded in the effective v7.2.4 build (v6.9 kept five starters). Retained so no supplied asset is discarded.",
+   "dimensions": "48x48",
+   "sha256": "0d430e04ce8337875ec9126c814ea96daaedb821b67e3a13c66e85bcf8ef8c84"
+  },
+  {
+   "path": "legacy/unused_art/red_falcon_v65_card.png",
+   "source": "legacy/inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html \u2014 line 1875 V65_HULL_IMAGES.redFalcon literal (superseded by RED_FALCON_DATA_URL)",
+   "legacy_identifier": "V65_HULL_IMAGES.redFalcon literal (superseded by RED_FALCON_DATA_URL)",
+   "provenance": "Owner-supplied artwork embedded in the legacy HTML build (prior development sessions). Owner to confirm publishing rights.",
+   "use": "Not used: removed/superseded in the effective v7.2.4 build (v6.9 kept five starters). Retained so no supplied asset is discarded.",
+   "dimensions": "48x48",
+   "sha256": "735645b18c179a35ddb689dfdd01fbf04c2c15ec8628262e3f8242a3f93391b6"
+  }
+ ]
+}

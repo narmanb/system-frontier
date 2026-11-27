@@ -1,0 +1,132 @@
+{
+ "factions": {
+  "Avengers": {
+   "color": "#e5483f",
+   "desc": "Balanced troubleshooters who protect clean data and usually help friendly pilots.",
+   "bias": {
+    "Knights": 35,
+    "Pirates": -45,
+    "Predators": -35
+   },
+   "playable": true,
+   "style": {
+    "dark": "#4a1016",
+    "mid": "#98232a",
+    "light": "#e5483f",
+    "high": "#ff8250",
+    "trim": "#ffad62"
+   }
+  },
+  "Pirates": {
+   "color": "#c85a2d",
+   "desc": "Aggressive scavengers who value salvage, intimidation, and stolen resource packs.",
+   "bias": {
+    "Avengers": -40,
+    "Knights": -55,
+    "Renegades": 15
+   },
+   "playable": true,
+   "style": {
+    "dark": "#3d120d",
+    "mid": "#7d2a1b",
+    "light": "#c85a2d",
+    "high": "#ef873e",
+    "trim": "#ffd078"
+   }
+  },
+  "Predators": {
+   "color": "#b955e2",
+   "desc": "Hunters who stalk damaged ships and prefer decisive combat.",
+   "bias": {
+    "Fuzzy": -40,
+    "Speed": 10
+   },
+   "playable": true,
+   "style": {
+    "dark": "#261034",
+    "mid": "#612174",
+    "light": "#a83bc9",
+    "high": "#d763ee",
+    "trim": "#79d6a5"
+   }
+  },
+  "Renegades": {
+   "color": "#e38b3e",
+   "desc": "Unpredictable independents. Flexible equipment and unstable diplomacy.",
+   "bias": {
+    "Pirates": 10,
+    "Enforcers": -30
+   },
+   "playable": true,
+   "style": {
+    "dark": "#4a2610",
+    "mid": "#96501f",
+    "light": "#e38b3e",
+    "high": "#ffbd68",
+    "trim": "#76aee8"
+   }
+  },
+  "Fuzzy": {
+   "color": "#e3ca55",
+   "desc": "Strange but sociable pilots with strong shields and many allies.",
+   "bias": {
+    "Knights": 30,
+    "Predators": -40
+   },
+   "playable": true,
+   "style": {
+    "dark": "#4a4010",
+    "mid": "#928022",
+    "light": "#e3ca55",
+    "high": "#fff09a",
+    "trim": "#f49c62"
+   }
+  },
+  "Knights": {
+   "color": "#d8dde5",
+   "desc": "Honorable rescuers who assist allies and punish attacks on defenseless icons.",
+   "bias": {
+    "Avengers": 35,
+    "Fuzzy": 30,
+    "Pirates": -55
+   },
+   "playable": true,
+   "style": {
+    "dark": "#29323d",
+    "mid": "#697786",
+    "light": "#cbd2da",
+    "high": "#f3f0e8",
+    "trim": "#d8ad55"
+   }
+  },
+  "Speed": {
+   "color": "#43e58d",
+   "desc": "Racers and couriers. Fast hulls, low armor, and a preference for competition.",
+   "bias": {
+    "Predators": 10
+   },
+   "playable": true,
+   "style": {
+    "dark": "#103c2a",
+    "mid": "#217b50",
+    "light": "#43e58d",
+    "high": "#a5ffc9",
+    "trim": "#f3f7ff"
+   }
+  },
+  "Enforcers": {
+   "color": "#4f8ee8",
+   "desc": "Non-playable law officers who investigate crimes and execute warrants.",
+   "bias": {},
+   "playable": false,
+   "style": null
+  }
+ },
+ "defaultStyle": {
+  "dark": "#26303c",
+  "mid": "#627184",
+  "light": "#aab8c8",
+  "high": "#edf4fa",
+  "trim": "#d7a05b"
+ }
+}

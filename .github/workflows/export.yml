@@ -1,0 +1,175 @@
+name: Export builds
+
+# Debug Android APK, Windows, Linux x86_64, Linux arm64 (Raspberry Pi 5) and Web.
+# Runs on manual dispatch, version tags, and pushes that touch game files.
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+    branches: ["**"]
+    paths:
+      - "project.godot"
+      - "export_presets.cfg"
+      - "scenes/**"
+      - "scripts/**"
+      - "assets/**"
+      - "data/**"
+      - ".godot-version"
+      - ".github/workflows/export.yml"
+      - ".github/scripts/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: export-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: |
+            ~/godot-bin
+            ~/.local/share/godot/export_templates
+          key: godot-export-${{ hashFiles('.godot-version', '.github/scripts/setup_godot.sh') }}
+
+      - name: Install pinned Godot + export templates
+        run: .github/scripts/setup_godot.sh ~/godot-bin templates
+
+      # Debug signing. A stable key lets each new APK install over the previous one.
+      # Preferred: repository secret ANDROID_DEBUG_KEYSTORE_B64 (base64 of a debug keystore,
+      # alias androiddebugkey, password android). Fallback: a generated key kept in the
+      # Actions cache (evicted after 7 days unused; then the APK must be reinstalled once).
+      - name: Restore cached debug keystore
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: ~/android-debug
+          key: android-debug-keystore-v1
+      - name: Prepare debug keystore
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_DEBUG_KEYSTORE_B64 }}
+        run: |
+          mkdir -p ~/android-debug
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > ~/android-debug/debug.keystore
+            echo "Using debug keystore from repository secret"
+          elif [ ! -f ~/android-debug/debug.keystore ]; then
+            keytool -genkeypair -keystore ~/android-debug/debug.keystore -storepass android \
+              -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 \
+              -dname "CN=Android Debug,O=Android,C=US"
+            echo "Generated a new debug keystore (cached)"
+          else
+            echo "Using cached debug keystore"
+          fi
+
+      - name: Configure Godot editor settings (Android SDK, JDK, keystore)
+        run: |
+          SDK="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          echo "Android SDK: $SDK"
+          ls "$SDK/build-tools" "$SDK/platform-tools" | head -20
+          mkdir -p ~/.config/godot
+          for f in editor_settings-4.tres editor_settings-4.7.tres; do
+            {
+              echo '[gd_resource type="EditorSettings" format=3]'
+              echo ''
+              echo '[resource]'
+              echo "export/android/android_sdk_path = \"$SDK\""
+              echo "export/android/java_sdk_path = \"$JAVA_HOME\""
+              echo "export/android/debug_keystore = \"$HOME/android-debug/debug.keystore\""
+              echo 'export/android/debug_keystore_user = "androiddebugkey"'
+              echo 'export/android/debug_keystore_pass = "android"'
+            } > ~/.config/godot/$f
+          done
+          cat ~/.config/godot/editor_settings-4.7.tres
+
+      - name: Import project
+        run: ~/godot-bin/godot --headless --path . --editor --import
+
+      - name: Export all presets
+        run: |
+          export GODOT_ANDROID_KEYSTORE_DEBUG_PATH="$HOME/android-debug/debug.keystore"
+          export GODOT_ANDROID_KEYSTORE_DEBUG_USER="androiddebugkey"
+          export GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD="android"
+          mkdir -p build/android build/windows build/linux-x86_64 build/linux-arm64 build/web
+          status=0
+          for p in "Android" "Windows Desktop" "Linux x86_64" "Linux arm64 (Raspberry Pi 5)" "Web"; do
+            echo "::group::Export $p"
+            log="export-$(echo "$p" | tr ' ()' '___').log"
+            ~/godot-bin/godot --headless --path . --export-debug "$p" > "$log" 2>&1 || status=1
+            cat "$log"
+            echo "::endgroup::"
+          done
+          ls -la build/*/
+          # Never report success unless every artifact exists and is non-empty.
+          for f in build/android/SystemFrontier-debug.apk build/windows/SystemFrontier.exe \
+                   build/linux-x86_64/SystemFrontier.x86_64 build/linux-arm64/SystemFrontier.arm64 \
+                   build/web/index.html build/web/index.wasm; do
+            [ -s "$f" ] || { echo "::error::missing export output $f"; status=1; }
+          done
+          exit $status
+
+      - name: Verify APK signature
+        run: |
+          SDK="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          BT=$(ls -d "$SDK"/build-tools/* | sort -V | tail -1)
+          "$BT/apksigner" verify --print-certs build/android/SystemFrontier-debug.apk | head -3
+
+      - name: Smoke-run Linux build (menu -> sandbox -> test range)
+        run: |
+          chmod +x build/linux-x86_64/SystemFrontier.x86_64
+          timeout 60 build/linux-x86_64/SystemFrontier.x86_64 --headless -- --smoke 2>&1 | tee smoke.log
+          grep -q "SMOKE OK" smoke.log
+          ! grep -E "SCRIPT ERROR" smoke.log
+
+      - name: Name artifacts
+        id: meta
+        run: |
+          VER=$(grep -oP 'config/version="\K[^"]+' project.godot)
+          TAG="${VER}-${GITHUB_SHA::7}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          mv build/android/SystemFrontier-debug.apk "build/android/SystemFrontier-${TAG}-debug.apk"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: SystemFrontier-android-debug-${{ steps.meta.outputs.tag }}
+          path: build/android/*.apk
+          retention-days: 7
+          compression-level: 0
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: SystemFrontier-linux-arm64-rpi5-${{ steps.meta.outputs.tag }}
+          path: build/linux-arm64/
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: SystemFrontier-windows-${{ steps.meta.outputs.tag }}
+          path: build/windows/
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: SystemFrontier-linux-x86_64-${{ steps.meta.outputs.tag }}
+          path: build/linux-x86_64/
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: SystemFrontier-web-${{ steps.meta.outputs.tag }}
+          path: build/web/
+          retention-days: 7
+      - name: Upload export logs on failure
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: export-logs
+          path: "*.log"
+          retention-days: 3

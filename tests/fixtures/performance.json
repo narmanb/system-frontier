@@ -1,0 +1,3243 @@
+{
+ "source": "inner_core_95_v7_2_4_faction_palettes_icon_safety_police_cockpit.html",
+ "generator": "tools/gen_fixtures.mjs",
+ "cases": [
+  {
+   "name": "starter:redFalcon",
+   "input": {
+    "ship": {
+     "name": "Red Falcon",
+     "role": "Balanced",
+     "description": "Responsive hero fighter with enough reactor output to run its standard systems.",
+     "stats": {
+      "acceleration": 6,
+      "maxSpeed": 6,
+      "inertia": 6,
+      "turn": 7,
+      "hull": 4,
+      "fuelCapacity": 4,
+      "fuelEfficiency": 4,
+      "weaponPower": 4,
+      "weaponCooling": 4,
+      "reactor": 5
+     },
+     "modules": {
+      "primary": "pulse",
+      "secondary": "missile",
+      "defense": "shield",
+      "utility": "repair",
+      "scanner": "standard"
+     },
+     "thrusters": [
+      {
+       "id": "center",
+       "x": 24,
+       "y": 43,
+       "enabled": true,
+       "cost": 0,
+       "scale": 1.15
+      },
+      {
+       "id": "left",
+       "x": 17,
+       "y": 41,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.74
+      },
+      {
+       "id": "right",
+       "x": 31,
+       "y": 41,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.74
+      }
+     ],
+     "hardpoints": [
+      {
+       "id": "primary",
+       "x": 24,
+       "y": 12
+      },
+      {
+       "id": "secondary",
+       "x": 15,
+       "y": 27
+      },
+      {
+       "id": "defense",
+       "x": 33,
+       "y": 27
+      },
+      {
+       "id": "utility",
+       "x": 24,
+       "y": 31
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 99.2,
+    "demand": 72,
+    "capacity": 72,
+    "rawPowerRatio": 1,
+    "powerFactor": 1,
+    "overloadAmount": 0,
+    "accelPowerFactor": 1,
+    "turnPowerFactor": 1,
+    "weaponPowerFactor": 1,
+    "modulePowerFactor": 1,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1.28,
+    "maxSpeed": 312,
+    "acceleration": 165.058064516,
+    "turnRate": 2.733770161,
+    "passiveLoss": 0.046,
+    "coastDrag": 0.999215448,
+    "maxHull": 125,
+    "maxFuel": 150,
+    "fuelBurn": 1.2876,
+    "fuelSeconds": 116.495806151,
+    "damage": 13.8,
+    "fireInterval": 0.272,
+    "cooling": 18.4,
+    "heatPerShot": 14,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 42,
+    "cloak": 0,
+    "repair": 0.8,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "pulse",
+     "secondary": "missile",
+     "defense": "shield",
+     "utility": "repair",
+     "scanner": "standard"
+    },
+    "stats": {
+     "acceleration": 6,
+     "maxSpeed": 6,
+     "inertia": 6,
+     "turn": 7,
+     "hull": 4,
+     "fuelCapacity": 4,
+     "fuelEfficiency": 4,
+     "weaponPower": 4,
+     "weaponCooling": 4,
+     "reactor": 5
+    }
+   }
+  },
+  {
+   "name": "starter:silverArrow",
+   "input": {
+    "ship": {
+     "name": "Silver Arrow",
+     "role": "Interceptor",
+     "description": "Fast, narrow interceptor with sharp handling and lighter protection.",
+     "stats": {
+      "acceleration": 7,
+      "maxSpeed": 7,
+      "inertia": 6,
+      "turn": 7,
+      "hull": 3,
+      "fuelCapacity": 4,
+      "fuelEfficiency": 4,
+      "weaponPower": 4,
+      "weaponCooling": 4,
+      "reactor": 4
+     },
+     "modules": {
+      "primary": "rapid",
+      "secondary": "missile",
+      "defense": "shield",
+      "utility": "repair",
+      "scanner": "standard"
+     },
+     "thrusters": [
+      {
+       "id": "center",
+       "x": 24,
+       "y": 43,
+       "enabled": true,
+       "cost": 0,
+       "scale": 1.1
+      },
+      {
+       "id": "left",
+       "x": 18,
+       "y": 42,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.7
+      },
+      {
+       "id": "right",
+       "x": 30,
+       "y": 42,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.7
+      }
+     ],
+     "hardpoints": [
+      {
+       "id": "primary",
+       "x": 24,
+       "y": 12
+      },
+      {
+       "id": "secondary",
+       "x": 15,
+       "y": 27
+      },
+      {
+       "id": "defense",
+       "x": 33,
+       "y": 27
+      },
+      {
+       "id": "utility",
+       "x": 24,
+       "y": 31
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 97,
+    "demand": 78,
+    "capacity": 62,
+    "rawPowerRatio": 0.794871795,
+    "powerFactor": 0.794871795,
+    "overloadAmount": 0.205128205,
+    "accelPowerFactor": 0.852307692,
+    "turnPowerFactor": 0.911794872,
+    "weaponPowerFactor": 0.852307692,
+    "modulePowerFactor": 0.794871795,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1.28,
+    "maxSpeed": 339,
+    "acceleration": 156.782439334,
+    "turnRate": 2.549171663,
+    "passiveLoss": 0.046,
+    "coastDrag": 0.999215448,
+    "maxHull": 110,
+    "maxFuel": 150,
+    "fuelBurn": 1.2876,
+    "fuelSeconds": 116.495806151,
+    "damage": 9.936,
+    "fireInterval": 0.197862816,
+    "cooling": 15.682461538,
+    "heatPerShot": 15.12,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 42,
+    "cloak": 0,
+    "repair": 0.635897436,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "rapid",
+     "secondary": "missile",
+     "defense": "shield",
+     "utility": "repair",
+     "scanner": "standard"
+    },
+    "stats": {
+     "acceleration": 7,
+     "maxSpeed": 7,
+     "inertia": 6,
+     "turn": 7,
+     "hull": 3,
+     "fuelCapacity": 4,
+     "fuelEfficiency": 4,
+     "weaponPower": 4,
+     "weaponCooling": 4,
+     "reactor": 4
+    }
+   }
+  },
+  {
+   "name": "starter:blockadeRam",
+   "input": {
+    "ship": {
+     "name": "Blockade Ram",
+     "role": "Heavy",
+     "description": "Armored bruiser with strong hull and weapons but deliberate handling.",
+     "stats": {
+      "acceleration": 4,
+      "maxSpeed": 4,
+      "inertia": 7,
+      "turn": 4,
+      "hull": 7,
+      "fuelCapacity": 5,
+      "fuelEfficiency": 4,
+      "weaponPower": 6,
+      "weaponCooling": 4,
+      "reactor": 5
+     },
+     "modules": {
+      "primary": "heavy",
+      "secondary": "missile",
+      "defense": "shield",
+      "utility": "repair",
+      "scanner": "standard"
+     },
+     "thrusters": [
+      {
+       "id": "center",
+       "x": 24,
+       "y": 43,
+       "enabled": true,
+       "cost": 0,
+       "scale": 1.15
+      },
+      {
+       "id": "left",
+       "x": 14,
+       "y": 42,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.82
+      },
+      {
+       "id": "right",
+       "x": 34,
+       "y": 42,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.82
+      }
+     ],
+     "hardpoints": [
+      {
+       "id": "primary",
+       "x": 24,
+       "y": 12
+      },
+      {
+       "id": "secondary",
+       "x": 15,
+       "y": 27
+      },
+      {
+       "id": "defense",
+       "x": 33,
+       "y": 27
+      },
+      {
+       "id": "utility",
+       "x": 24,
+       "y": 31
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 116.6,
+    "demand": 82,
+    "capacity": 72,
+    "rawPowerRatio": 0.87804878,
+    "powerFactor": 0.87804878,
+    "overloadAmount": 0.12195122,
+    "accelPowerFactor": 0.912195122,
+    "turnPowerFactor": 0.947560976,
+    "weaponPowerFactor": 0.912195122,
+    "modulePowerFactor": 0.87804878,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1.28,
+    "maxSpeed": 258,
+    "acceleration": 105.10490566,
+    "turnRate": 1.734052839,
+    "passiveLoss": 0.052,
+    "coastDrag": 0.999110383,
+    "maxHull": 170,
+    "maxFuel": 170,
+    "fuelBurn": 1.2876,
+    "fuelSeconds": 132.028580304,
+    "damage": 31.304,
+    "fireInterval": 0.492,
+    "cooling": 16.784390244,
+    "heatPerShot": 21,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 42,
+    "cloak": 0,
+    "repair": 0.702439024,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "heavy",
+     "secondary": "missile",
+     "defense": "shield",
+     "utility": "repair",
+     "scanner": "standard"
+    },
+    "stats": {
+     "acceleration": 4,
+     "maxSpeed": 4,
+     "inertia": 7,
+     "turn": 4,
+     "hull": 7,
+     "fuelCapacity": 5,
+     "fuelEfficiency": 4,
+     "weaponPower": 6,
+     "weaponCooling": 4,
+     "reactor": 5
+    }
+   }
+  },
+  {
+   "name": "starter:wispNeedle",
+   "input": {
+    "ship": {
+     "name": "Wisp Needle",
+     "role": "Scout",
+     "description": "Tiny precision scout with extreme turning and very little armor.",
+     "stats": {
+      "acceleration": 6,
+      "maxSpeed": 7,
+      "inertia": 5,
+      "turn": 8,
+      "hull": 3,
+      "fuelCapacity": 4,
+      "fuelEfficiency": 5,
+      "weaponPower": 4,
+      "weaponCooling": 4,
+      "reactor": 4
+     },
+     "modules": {
+      "primary": "pulse",
+      "secondary": "missile",
+      "defense": "cloak",
+      "utility": "repair",
+      "scanner": "advanced"
+     },
+     "thrusters": [
+      {
+       "id": "center",
+       "x": 24,
+       "y": 43,
+       "enabled": true,
+       "cost": 0,
+       "scale": 1
+      },
+      {
+       "id": "left",
+       "x": 21,
+       "y": 40,
+       "enabled": false,
+       "cost": 2,
+       "scale": 0.58
+      },
+      {
+       "id": "right",
+       "x": 27,
+       "y": 40,
+       "enabled": false,
+       "cost": 2,
+       "scale": 0.58
+      }
+     ],
+     "hardpoints": [
+      {
+       "id": "primary",
+       "x": 24,
+       "y": 12
+      },
+      {
+       "id": "secondary",
+       "x": 15,
+       "y": 27
+      },
+      {
+       "id": "defense",
+       "x": 33,
+       "y": 27
+      },
+      {
+       "id": "utility",
+       "x": 24,
+       "y": 31
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 86,
+    "demand": 76,
+    "capacity": 62,
+    "rawPowerRatio": 0.815789474,
+    "powerFactor": 0.815789474,
+    "overloadAmount": 0.184210526,
+    "accelPowerFactor": 0.867368421,
+    "turnPowerFactor": 0.920789474,
+    "weaponPowerFactor": 0.867368421,
+    "modulePowerFactor": 0.815789474,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1,
+    "maxSpeed": 339,
+    "acceleration": 129.016009792,
+    "turnRate": 3.109912913,
+    "passiveLoss": 0.04,
+    "coastDrag": 0.999319865,
+    "maxHull": 110,
+    "maxFuel": 150,
+    "fuelBurn": 1,
+    "fuelSeconds": 150,
+    "damage": 13.8,
+    "fireInterval": 0.313592233,
+    "cooling": 15.959578947,
+    "heatPerShot": 14,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 0,
+    "cloak": 0.285526316,
+    "repair": 0.652631579,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "pulse",
+     "secondary": "missile",
+     "defense": "cloak",
+     "utility": "repair",
+     "scanner": "standard"
+    },
+    "stats": {
+     "acceleration": 6,
+     "maxSpeed": 7,
+     "inertia": 5,
+     "turn": 8,
+     "hull": 3,
+     "fuelCapacity": 4,
+     "fuelEfficiency": 5,
+     "weaponPower": 4,
+     "weaponCooling": 4,
+     "reactor": 4
+    }
+   }
+  },
+  {
+   "name": "starter:cargoWarden",
+   "input": {
+    "ship": {
+     "name": "Cargo Warden",
+     "role": "Utility",
+     "description": "Stable industrial workship with strong endurance and practical systems.",
+     "stats": {
+      "acceleration": 4,
+      "maxSpeed": 4,
+      "inertia": 7,
+      "turn": 5,
+      "hull": 5,
+      "fuelCapacity": 6,
+      "fuelEfficiency": 6,
+      "weaponPower": 4,
+      "weaponCooling": 4,
+      "reactor": 5
+     },
+     "modules": {
+      "primary": "pulse",
+      "secondary": "missile",
+      "defense": "shield",
+      "utility": "tractor",
+      "scanner": "advanced"
+     },
+     "thrusters": [
+      {
+       "id": "center",
+       "x": 24,
+       "y": 43,
+       "enabled": true,
+       "cost": 0,
+       "scale": 1.05
+      },
+      {
+       "id": "left",
+       "x": 17,
+       "y": 42,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.75
+      },
+      {
+       "id": "right",
+       "x": 31,
+       "y": 42,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.75
+      }
+     ],
+     "hardpoints": [
+      {
+       "id": "primary",
+       "x": 24,
+       "y": 12
+      },
+      {
+       "id": "secondary",
+       "x": 15,
+       "y": 27
+      },
+      {
+       "id": "defense",
+       "x": 33,
+       "y": 27
+      },
+      {
+       "id": "utility",
+       "x": 24,
+       "y": 31
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 103.2,
+    "demand": 68,
+    "capacity": 72,
+    "rawPowerRatio": 1.058823529,
+    "powerFactor": 1,
+    "overloadAmount": 0,
+    "accelPowerFactor": 1,
+    "turnPowerFactor": 1,
+    "weaponPowerFactor": 1,
+    "modulePowerFactor": 1,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1.28,
+    "maxSpeed": 258,
+    "acceleration": 130.182945736,
+    "turnRate": 2.254360465,
+    "passiveLoss": 0.052,
+    "coastDrag": 0.999110383,
+    "maxHull": 140,
+    "maxFuel": 190,
+    "fuelBurn": 1.0324,
+    "fuelSeconds": 184.037194886,
+    "damage": 13.8,
+    "fireInterval": 0.272,
+    "cooling": 18.4,
+    "heatPerShot": 14,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 42,
+    "cloak": 0,
+    "repair": 0,
+    "pickupRadius": 61,
+    "salvageMult": 1,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "pulse",
+     "secondary": "missile",
+     "defense": "shield",
+     "utility": "tractor",
+     "scanner": "standard"
+    },
+    "stats": {
+     "acceleration": 4,
+     "maxSpeed": 4,
+     "inertia": 7,
+     "turn": 5,
+     "hull": 5,
+     "fuelCapacity": 6,
+     "fuelEfficiency": 6,
+     "weaponPower": 4,
+     "weaponCooling": 4,
+     "reactor": 5
+    }
+   }
+  },
+  {
+   "name": "starter:novaSting",
+   "input": {
+    "ship": {
+     "name": "Nova Sting",
+     "role": "Sport Fighter",
+     "description": "Lively swept-wing fighter tuned for speed, turning, and aggressive flight.",
+     "stats": {
+      "acceleration": 6,
+      "maxSpeed": 6,
+      "inertia": 5,
+      "turn": 7,
+      "hull": 4,
+      "fuelCapacity": 4,
+      "fuelEfficiency": 4,
+      "weaponPower": 5,
+      "weaponCooling": 4,
+      "reactor": 5
+     },
+     "modules": {
+      "primary": "rapid",
+      "secondary": "missile",
+      "defense": "shield",
+      "utility": "repair",
+      "scanner": "standard"
+     },
+     "thrusters": [
+      {
+       "id": "center",
+       "x": 24,
+       "y": 43,
+       "enabled": true,
+       "cost": 0,
+       "scale": 1.08
+      },
+      {
+       "id": "left",
+       "x": 19,
+       "y": 42,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.72
+      },
+      {
+       "id": "right",
+       "x": 29,
+       "y": 42,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.72
+      }
+     ],
+     "hardpoints": [
+      {
+       "id": "primary",
+       "x": 24,
+       "y": 12
+      },
+      {
+       "id": "secondary",
+       "x": 15,
+       "y": 27
+      },
+      {
+       "id": "defense",
+       "x": 33,
+       "y": 27
+      },
+      {
+       "id": "utility",
+       "x": 24,
+       "y": 31
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 101.4,
+    "demand": 78,
+    "capacity": 72,
+    "rawPowerRatio": 0.923076923,
+    "powerFactor": 0.923076923,
+    "overloadAmount": 0.076923077,
+    "accelPowerFactor": 0.944615385,
+    "turnPowerFactor": 0.966923077,
+    "weaponPowerFactor": 0.944615385,
+    "modulePowerFactor": 0.923076923,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1.28,
+    "maxSpeed": 312,
+    "acceleration": 152.533585799,
+    "turnRate": 2.585994766,
+    "passiveLoss": 0.04,
+    "coastDrag": 0.999319865,
+    "maxHull": 125,
+    "maxFuel": 150,
+    "fuelBurn": 1.2876,
+    "fuelSeconds": 116.495806151,
+    "damage": 11.52,
+    "fireInterval": 0.178527687,
+    "cooling": 17.380923077,
+    "heatPerShot": 15.12,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 42,
+    "cloak": 0,
+    "repair": 0.738461538,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "rapid",
+     "secondary": "missile",
+     "defense": "shield",
+     "utility": "repair",
+     "scanner": "standard"
+    },
+    "stats": {
+     "acceleration": 6,
+     "maxSpeed": 6,
+     "inertia": 5,
+     "turn": 7,
+     "hull": 4,
+     "fuelCapacity": 4,
+     "fuelEfficiency": 4,
+     "weaponPower": 5,
+     "weaponCooling": 4,
+     "reactor": 5
+    }
+   }
+  },
+  {
+   "name": "starter:tombGlider",
+   "input": {
+    "ship": {
+     "name": "Tomb Glider",
+     "role": "Relic",
+     "description": "Ancient-tech hull with balanced power systems and an unusual defensive profile.",
+     "stats": {
+      "acceleration": 5,
+      "maxSpeed": 5,
+      "inertia": 6,
+      "turn": 5,
+      "hull": 5,
+      "fuelCapacity": 5,
+      "fuelEfficiency": 4,
+      "weaponPower": 5,
+      "weaponCooling": 5,
+      "reactor": 5
+     },
+     "modules": {
+      "primary": "pulse",
+      "secondary": "missile",
+      "defense": "cloak",
+      "utility": "repair",
+      "scanner": "advanced"
+     },
+     "thrusters": [
+      {
+       "id": "center",
+       "x": 24,
+       "y": 43,
+       "enabled": true,
+       "cost": 0,
+       "scale": 1.05
+      },
+      {
+       "id": "left",
+       "x": 19,
+       "y": 40,
+       "enabled": false,
+       "cost": 2,
+       "scale": 0.66
+      },
+      {
+       "id": "right",
+       "x": 29,
+       "y": 40,
+       "enabled": false,
+       "cost": 2,
+       "scale": 0.66
+      }
+     ],
+     "hardpoints": [
+      {
+       "id": "primary",
+       "x": 24,
+       "y": 12
+      },
+      {
+       "id": "secondary",
+       "x": 15,
+       "y": 27
+      },
+      {
+       "id": "defense",
+       "x": 33,
+       "y": 27
+      },
+      {
+       "id": "utility",
+       "x": 24,
+       "y": 31
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 95,
+    "demand": 76,
+    "capacity": 72,
+    "rawPowerRatio": 0.947368421,
+    "powerFactor": 0.947368421,
+    "overloadAmount": 0.052631579,
+    "accelPowerFactor": 0.962105263,
+    "turnPowerFactor": 0.977368421,
+    "weaponPowerFactor": 0.962105263,
+    "modulePowerFactor": 0.947368421,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1,
+    "maxSpeed": 285,
+    "acceleration": 117.923722992,
+    "turnRate": 2.393523823,
+    "passiveLoss": 0.046,
+    "coastDrag": 0.999215448,
+    "maxHull": 140,
+    "maxFuel": 170,
+    "fuelBurn": 1.11,
+    "fuelSeconds": 153.153153153,
+    "damage": 16,
+    "fireInterval": 0.259846827,
+    "cooling": 20.204210526,
+    "heatPerShot": 14,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 0,
+    "cloak": 0.331578947,
+    "repair": 0.757894737,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "pulse",
+     "secondary": "missile",
+     "defense": "cloak",
+     "utility": "repair",
+     "scanner": "standard"
+    },
+    "stats": {
+     "acceleration": 5,
+     "maxSpeed": 5,
+     "inertia": 6,
+     "turn": 5,
+     "hull": 5,
+     "fuelCapacity": 5,
+     "fuelEfficiency": 4,
+     "weaponPower": 5,
+     "weaponCooling": 5,
+     "reactor": 5
+    }
+   }
+  },
+  {
+   "name": "starter:salvageSkiff",
+   "input": {
+    "ship": {
+     "name": "Salvage Skiff",
+     "role": "Junker",
+     "description": "Dependable patched-together craft with balanced handling and three working engines.",
+     "stats": {
+      "acceleration": 5,
+      "maxSpeed": 5,
+      "inertia": 6,
+      "turn": 6,
+      "hull": 5,
+      "fuelCapacity": 5,
+      "fuelEfficiency": 5,
+      "weaponPower": 4,
+      "weaponCooling": 4,
+      "reactor": 5
+     },
+     "modules": {
+      "primary": "pulse",
+      "secondary": "missile",
+      "defense": "shield",
+      "utility": "tractor",
+      "scanner": "salvage"
+     },
+     "thrusters": [
+      {
+       "id": "center",
+       "x": 24,
+       "y": 44,
+       "enabled": true,
+       "cost": 0,
+       "scale": 1.1
+      },
+      {
+       "id": "left",
+       "x": 8,
+       "y": 41,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.74
+      },
+      {
+       "id": "right",
+       "x": 40,
+       "y": 41,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.74
+      }
+     ],
+     "hardpoints": [
+      {
+       "id": "primary",
+       "x": 24,
+       "y": 12
+      },
+      {
+       "id": "secondary",
+       "x": 15,
+       "y": 27
+      },
+      {
+       "id": "defense",
+       "x": 33,
+       "y": 27
+      },
+      {
+       "id": "utility",
+       "x": 24,
+       "y": 31
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 102.8,
+    "demand": 72,
+    "capacity": 72,
+    "rawPowerRatio": 1,
+    "powerFactor": 1,
+    "overloadAmount": 0,
+    "accelPowerFactor": 1,
+    "turnPowerFactor": 1,
+    "weaponPowerFactor": 1,
+    "modulePowerFactor": 1,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1.28,
+    "maxSpeed": 285,
+    "acceleration": 144.983657588,
+    "turnRate": 2.450583658,
+    "passiveLoss": 0.046,
+    "coastDrag": 0.999215448,
+    "maxHull": 140,
+    "maxFuel": 170,
+    "fuelBurn": 1.16,
+    "fuelSeconds": 146.551724138,
+    "damage": 13.8,
+    "fireInterval": 0.272,
+    "cooling": 18.4,
+    "heatPerShot": 14,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 42,
+    "cloak": 0,
+    "repair": 0,
+    "pickupRadius": 61,
+    "salvageMult": 1.22,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "pulse",
+     "secondary": "missile",
+     "defense": "shield",
+     "utility": "tractor",
+     "scanner": "salvage"
+    },
+    "stats": {
+     "acceleration": 5,
+     "maxSpeed": 5,
+     "inertia": 6,
+     "turn": 6,
+     "hull": 5,
+     "fuelCapacity": 5,
+     "fuelEfficiency": 5,
+     "weaponPower": 4,
+     "weaponCooling": 4,
+     "reactor": 5
+    }
+   }
+  },
+  {
+   "name": "builtin:dart",
+   "input": {
+    "ship": {
+     "stats": {
+      "acceleration": 6,
+      "maxSpeed": 6,
+      "inertia": 6,
+      "turn": 7,
+      "hull": 4,
+      "fuelCapacity": 4,
+      "fuelEfficiency": 4,
+      "weaponPower": 4,
+      "weaponCooling": 4,
+      "reactor": 5
+     },
+     "modules": {
+      "primary": "pulse",
+      "secondary": "missile",
+      "defense": "shield",
+      "utility": "repair",
+      "scanner": "standard"
+     },
+     "thrusters": [
+      {
+       "id": "center",
+       "x": 24,
+       "y": 43,
+       "enabled": true,
+       "cost": 0,
+       "scale": 1.15
+      },
+      {
+       "id": "left",
+       "x": 17,
+       "y": 41,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.74
+      },
+      {
+       "id": "right",
+       "x": 31,
+       "y": 41,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.74
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 99.2,
+    "demand": 72,
+    "capacity": 72,
+    "rawPowerRatio": 1,
+    "powerFactor": 1,
+    "overloadAmount": 0,
+    "accelPowerFactor": 1,
+    "turnPowerFactor": 1,
+    "weaponPowerFactor": 1,
+    "modulePowerFactor": 1,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1.28,
+    "maxSpeed": 312,
+    "acceleration": 165.058064516,
+    "turnRate": 2.733770161,
+    "passiveLoss": 0.046,
+    "coastDrag": 0.999215448,
+    "maxHull": 125,
+    "maxFuel": 150,
+    "fuelBurn": 1.2876,
+    "fuelSeconds": 116.495806151,
+    "damage": 13.8,
+    "fireInterval": 0.272,
+    "cooling": 18.4,
+    "heatPerShot": 14,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 42,
+    "cloak": 0,
+    "repair": 0.8,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "pulse",
+     "secondary": "missile",
+     "defense": "shield",
+     "utility": "repair",
+     "scanner": "standard"
+    },
+    "stats": {
+     "acceleration": 6,
+     "maxSpeed": 6,
+     "inertia": 6,
+     "turn": 7,
+     "hull": 4,
+     "fuelCapacity": 4,
+     "fuelEfficiency": 4,
+     "weaponPower": 4,
+     "weaponCooling": 4,
+     "reactor": 5
+    }
+   }
+  },
+  {
+   "name": "builtin:skull",
+   "input": {
+    "ship": {
+     "stats": {
+      "acceleration": 6,
+      "maxSpeed": 5,
+      "inertia": 3,
+      "turn": 4,
+      "hull": 6,
+      "fuelCapacity": 4,
+      "fuelEfficiency": 3,
+      "weaponPower": 9,
+      "weaponCooling": 6,
+      "reactor": 4
+     },
+     "modules": {
+      "primary": "heavy",
+      "secondary": "missile",
+      "defense": "ram",
+      "utility": "tractor",
+      "scanner": "salvage"
+     },
+     "gridSize": 24
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 108.6,
+    "demand": 70,
+    "capacity": 62,
+    "rawPowerRatio": 0.885714286,
+    "powerFactor": 0.885714286,
+    "overloadAmount": 0.114285714,
+    "accelPowerFactor": 0.917714286,
+    "turnPowerFactor": 0.950857143,
+    "weaponPowerFactor": 0.917714286,
+    "modulePowerFactor": 0.885714286,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1,
+    "maxSpeed": 285,
+    "acceleration": 108.097616417,
+    "turnRate": 1.868267929,
+    "passiveLoss": 0.028,
+    "coastDrag": 0.999526787,
+    "maxHull": 179,
+    "maxFuel": 150,
+    "fuelBurn": 1.22,
+    "fuelSeconds": 122.950819672,
+    "damage": 42.656,
+    "fireInterval": 0.409931507,
+    "cooling": 21.658057143,
+    "heatPerShot": 21,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 0,
+    "cloak": 0,
+    "repair": 0,
+    "pickupRadius": 57.114285714,
+    "salvageMult": 1.194857143,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "heavy",
+     "secondary": "missile",
+     "defense": "ram",
+     "utility": "tractor",
+     "scanner": "salvage"
+    },
+    "stats": {
+     "acceleration": 6,
+     "maxSpeed": 5,
+     "inertia": 3,
+     "turn": 4,
+     "hull": 6,
+     "fuelCapacity": 4,
+     "fuelEfficiency": 3,
+     "weaponPower": 9,
+     "weaponCooling": 6,
+     "reactor": 4
+    }
+   }
+  },
+  {
+   "name": "builtin:mantis",
+   "input": {
+    "ship": {
+     "stats": {
+      "acceleration": 7,
+      "maxSpeed": 7,
+      "inertia": 2,
+      "turn": 8,
+      "hull": 3,
+      "fuelCapacity": 4,
+      "fuelEfficiency": 5,
+      "weaponPower": 6,
+      "weaponCooling": 4,
+      "reactor": 4
+     },
+     "modules": {
+      "primary": "rapid",
+      "secondary": "emp",
+      "defense": "cloak",
+      "utility": "fuelRecycler",
+      "scanner": "longRange"
+     },
+     "gridSize": 24
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 91.4,
+    "demand": 93,
+    "capacity": 62,
+    "rawPowerRatio": 0.666666667,
+    "powerFactor": 0.666666667,
+    "overloadAmount": 0.333333333,
+    "accelPowerFactor": 0.76,
+    "turnPowerFactor": 0.856666667,
+    "weaponPowerFactor": 0.76,
+    "modulePowerFactor": 0.666666667,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1,
+    "maxSpeed": 339,
+    "acceleration": 115.912472648,
+    "turnRate": 2.722400438,
+    "passiveLoss": 0.022,
+    "coastDrag": 0.999629309,
+    "maxHull": 110,
+    "maxFuel": 150,
+    "fuelBurn": 0.82,
+    "fuelSeconds": 182.926829268,
+    "damage": 13.104,
+    "fireInterval": 0.221894737,
+    "cooling": 13.984,
+    "heatPerShot": 15.12,
+    "missileBonus": 2,
+    "missileDamage": 1.3,
+    "shield": 0,
+    "cloak": 0.233333333,
+    "repair": 0,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1.233333333,
+    "mods": {
+     "primary": "rapid",
+     "secondary": "emp",
+     "defense": "cloak",
+     "utility": "fuelRecycler",
+     "scanner": "longRange"
+    },
+    "stats": {
+     "acceleration": 7,
+     "maxSpeed": 7,
+     "inertia": 2,
+     "turn": 8,
+     "hull": 3,
+     "fuelCapacity": 4,
+     "fuelEfficiency": 5,
+     "weaponPower": 6,
+     "weaponCooling": 4,
+     "reactor": 4
+    }
+   }
+  },
+  {
+   "name": "builtin:wedge",
+   "input": {
+    "ship": {
+     "stats": {
+      "acceleration": 5,
+      "maxSpeed": 5,
+      "inertia": 6,
+      "turn": 5,
+      "hull": 5,
+      "fuelCapacity": 6,
+      "fuelEfficiency": 7,
+      "weaponPower": 4,
+      "weaponCooling": 3,
+      "reactor": 4
+     },
+     "modules": {
+      "primary": "pulse",
+      "secondary": "missile",
+      "defense": "shield",
+      "utility": "tractor",
+      "scanner": "salvage"
+     },
+     "gridSize": 24
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 96.2,
+    "demand": 72,
+    "capacity": 62,
+    "rawPowerRatio": 0.861111111,
+    "powerFactor": 0.861111111,
+    "overloadAmount": 0.138888889,
+    "accelPowerFactor": 0.9,
+    "turnPowerFactor": 0.940277778,
+    "weaponPowerFactor": 0.9,
+    "modulePowerFactor": 0.861111111,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1,
+    "maxSpeed": 285,
+    "acceleration": 108.935550936,
+    "turnRate": 2.273966996,
+    "passiveLoss": 0.046,
+    "coastDrag": 0.999215448,
+    "maxHull": 140,
+    "maxFuel": 190,
+    "fuelBurn": 0.78,
+    "fuelSeconds": 243.58974359,
+    "damage": 13.8,
+    "fireInterval": 0.326666667,
+    "cooling": 14.22,
+    "heatPerShot": 14,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 42,
+    "cloak": 0,
+    "repair": 0,
+    "pickupRadius": 56.277777778,
+    "salvageMult": 1.189444444,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "pulse",
+     "secondary": "missile",
+     "defense": "shield",
+     "utility": "tractor",
+     "scanner": "salvage"
+    },
+    "stats": {
+     "acceleration": 5,
+     "maxSpeed": 5,
+     "inertia": 6,
+     "turn": 5,
+     "hull": 5,
+     "fuelCapacity": 6,
+     "fuelEfficiency": 7,
+     "weaponPower": 4,
+     "weaponCooling": 3,
+     "reactor": 4
+    }
+   }
+  },
+  {
+   "name": "builtin:fuzz",
+   "input": {
+    "ship": {
+     "stats": {
+      "acceleration": 3,
+      "maxSpeed": 3,
+      "inertia": 8,
+      "turn": 4,
+      "hull": 9,
+      "fuelCapacity": 7,
+      "fuelEfficiency": 7,
+      "weaponPower": 3,
+      "weaponCooling": 3,
+      "reactor": 3
+     },
+     "modules": {
+      "primary": "pulse",
+      "secondary": "missile",
+      "defense": "shield",
+      "utility": "repair",
+      "scanner": "standard"
+     },
+     "gridSize": 24
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 110.2,
+    "demand": 72,
+    "capacity": 52,
+    "rawPowerRatio": 0.722222222,
+    "powerFactor": 0.722222222,
+    "overloadAmount": 0.277777778,
+    "accelPowerFactor": 0.8,
+    "turnPowerFactor": 0.880555556,
+    "weaponPowerFactor": 0.8,
+    "modulePowerFactor": 0.722222222,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1,
+    "maxSpeed": 231,
+    "acceleration": 67.862068966,
+    "turnRate": 1.705017645,
+    "passiveLoss": 0.058,
+    "coastDrag": 0.999004662,
+    "maxHull": 200,
+    "maxFuel": 210,
+    "fuelBurn": 0.78,
+    "fuelSeconds": 269.230769231,
+    "damage": 11.6,
+    "fireInterval": 0.3675,
+    "cooling": 12.64,
+    "heatPerShot": 14,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 42,
+    "cloak": 0,
+    "repair": 0.577777778,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "pulse",
+     "secondary": "missile",
+     "defense": "shield",
+     "utility": "repair",
+     "scanner": "standard"
+    },
+    "stats": {
+     "acceleration": 3,
+     "maxSpeed": 3,
+     "inertia": 8,
+     "turn": 4,
+     "hull": 9,
+     "fuelCapacity": 7,
+     "fuelEfficiency": 7,
+     "weaponPower": 3,
+     "weaponCooling": 3,
+     "reactor": 3
+    }
+   }
+  },
+  {
+   "name": "builtin:lance",
+   "input": {
+    "ship": {
+     "stats": {
+      "acceleration": 4,
+      "maxSpeed": 4,
+      "inertia": 7,
+      "turn": 4,
+      "hull": 9,
+      "fuelCapacity": 5,
+      "fuelEfficiency": 5,
+      "weaponPower": 6,
+      "weaponCooling": 3,
+      "reactor": 3
+     },
+     "modules": {
+      "primary": "heavy",
+      "secondary": "missile",
+      "defense": "plating",
+      "utility": "repair",
+      "scanner": "standard"
+     },
+     "gridSize": 24
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 118,
+    "demand": 68,
+    "capacity": 52,
+    "rawPowerRatio": 0.764705882,
+    "powerFactor": 0.764705882,
+    "overloadAmount": 0.235294118,
+    "accelPowerFactor": 0.830588235,
+    "turnPowerFactor": 0.898823529,
+    "weaponPowerFactor": 0.830588235,
+    "modulePowerFactor": 0.764705882,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1,
+    "maxSpeed": 258,
+    "acceleration": 73.880119641,
+    "turnRate": 1.625347159,
+    "passiveLoss": 0.052,
+    "coastDrag": 0.999110383,
+    "maxHull": 236,
+    "maxFuel": 170,
+    "fuelBurn": 1,
+    "fuelSeconds": 170,
+    "damage": 31.304,
+    "fireInterval": 0.584043909,
+    "cooling": 13.123294118,
+    "heatPerShot": 21,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 0,
+    "cloak": 0,
+    "repair": 0.611764706,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "heavy",
+     "secondary": "missile",
+     "defense": "plating",
+     "utility": "repair",
+     "scanner": "standard"
+    },
+    "stats": {
+     "acceleration": 4,
+     "maxSpeed": 4,
+     "inertia": 7,
+     "turn": 4,
+     "hull": 9,
+     "fuelCapacity": 5,
+     "fuelEfficiency": 5,
+     "weaponPower": 6,
+     "weaponCooling": 3,
+     "reactor": 3
+    }
+   }
+  },
+  {
+   "name": "builtin:needle",
+   "input": {
+    "ship": {
+     "stats": {
+      "acceleration": 9,
+      "maxSpeed": 10,
+      "inertia": 2,
+      "turn": 9,
+      "hull": 2,
+      "fuelCapacity": 4,
+      "fuelEfficiency": 4,
+      "weaponPower": 3,
+      "weaponCooling": 3,
+      "reactor": 4
+     },
+     "modules": {
+      "primary": "rapid",
+      "secondary": "none",
+      "defense": "cloak",
+      "utility": "fuelRecycler",
+      "scanner": "longRange"
+     },
+     "gridSize": 24
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 78.6,
+    "demand": 82,
+    "capacity": 62,
+    "rawPowerRatio": 0.756097561,
+    "powerFactor": 0.756097561,
+    "overloadAmount": 0.243902439,
+    "accelPowerFactor": 0.824390244,
+    "turnPowerFactor": 0.895121951,
+    "weaponPowerFactor": 0.824390244,
+    "modulePowerFactor": 0.756097561,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1,
+    "maxSpeed": 420,
+    "acceleration": 170.290076336,
+    "turnRate": 3.332852317,
+    "passiveLoss": 0.022,
+    "coastDrag": 0.999629309,
+    "maxHull": 95,
+    "maxFuel": 150,
+    "fuelBurn": 0.9102,
+    "fuelSeconds": 164.798945287,
+    "damage": 8.352,
+    "fireInterval": 0.221108876,
+    "cooling": 13.025365854,
+    "heatPerShot": 15.12,
+    "missileBonus": 0,
+    "missileDamage": 1,
+    "shield": 0,
+    "cloak": 0.264634146,
+    "repair": 0,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1.264634146,
+    "mods": {
+     "primary": "rapid",
+     "secondary": "none",
+     "defense": "cloak",
+     "utility": "fuelRecycler",
+     "scanner": "longRange"
+    },
+    "stats": {
+     "acceleration": 9,
+     "maxSpeed": 10,
+     "inertia": 2,
+     "turn": 9,
+     "hull": 2,
+     "fuelCapacity": 4,
+     "fuelEfficiency": 4,
+     "weaponPower": 3,
+     "weaponCooling": 3,
+     "reactor": 4
+    }
+   }
+  },
+  {
+   "name": "archetype:balanced",
+   "input": {
+    "ship": {
+     "stats": {
+      "acceleration": 5,
+      "maxSpeed": 5,
+      "inertia": 5,
+      "turn": 5,
+      "hull": 5,
+      "fuelCapacity": 5,
+      "fuelEfficiency": 5,
+      "weaponPower": 5,
+      "weaponCooling": 5,
+      "reactor": 5
+     },
+     "modules": {
+      "primary": "pulse",
+      "secondary": "missile",
+      "defense": "shield",
+      "utility": "repair",
+      "scanner": "standard"
+     },
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 97,
+    "demand": 72,
+    "capacity": 72,
+    "rawPowerRatio": 1,
+    "powerFactor": 1,
+    "overloadAmount": 0,
+    "accelPowerFactor": 1,
+    "turnPowerFactor": 1,
+    "weaponPowerFactor": 1,
+    "modulePowerFactor": 1,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1,
+    "maxSpeed": 285,
+    "acceleration": 120.041237113,
+    "turnRate": 2.398453608,
+    "passiveLoss": 0.04,
+    "coastDrag": 0.999319865,
+    "maxHull": 140,
+    "maxFuel": 170,
+    "fuelBurn": 1,
+    "fuelSeconds": 170,
+    "damage": 16,
+    "fireInterval": 0.25,
+    "cooling": 21,
+    "heatPerShot": 14,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 42,
+    "cloak": 0,
+    "repair": 0.8,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "pulse",
+     "secondary": "missile",
+     "defense": "shield",
+     "utility": "repair",
+     "scanner": "standard"
+    },
+    "stats": {
+     "acceleration": 5,
+     "maxSpeed": 5,
+     "inertia": 5,
+     "turn": 5,
+     "hull": 5,
+     "fuelCapacity": 5,
+     "fuelEfficiency": 5,
+     "weaponPower": 5,
+     "weaponCooling": 5,
+     "reactor": 5
+    }
+   }
+  },
+  {
+   "name": "archetype:racer",
+   "input": {
+    "ship": {
+     "stats": {
+      "acceleration": 8,
+      "maxSpeed": 9,
+      "inertia": 3,
+      "turn": 8,
+      "hull": 3,
+      "fuelCapacity": 4,
+      "fuelEfficiency": 5,
+      "weaponPower": 4,
+      "weaponCooling": 3,
+      "reactor": 3
+     },
+     "modules": {
+      "primary": "rapid",
+      "secondary": "none",
+      "defense": "cloak",
+      "utility": "fuelRecycler",
+      "scanner": "longRange"
+     },
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 83,
+    "demand": 82,
+    "capacity": 52,
+    "rawPowerRatio": 0.634146341,
+    "powerFactor": 0.634146341,
+    "overloadAmount": 0.365853659,
+    "accelPowerFactor": 0.736585366,
+    "turnPowerFactor": 0.842682927,
+    "weaponPowerFactor": 0.736585366,
+    "modulePowerFactor": 0.634146341,
+    "criticalOverload": true,
+    "speedPowerFactor": 0.943714822,
+    "thrusterMult": 1,
+    "maxSpeed": 370.879924953,
+    "acceleration": 133.898795181,
+    "turnRate": 2.942395976,
+    "passiveLoss": 0.028,
+    "coastDrag": 0.999526787,
+    "maxHull": 110,
+    "maxFuel": 150,
+    "fuelBurn": 0.82,
+    "fuelSeconds": 182.926829268,
+    "damage": 9.936,
+    "fireInterval": 0.247466225,
+    "cooling": 11.63804878,
+    "heatPerShot": 15.12,
+    "missileBonus": 0,
+    "missileDamage": 1,
+    "shield": 0,
+    "cloak": 0.22195122,
+    "repair": 0,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1.22195122,
+    "mods": {
+     "primary": "rapid",
+     "secondary": "none",
+     "defense": "cloak",
+     "utility": "fuelRecycler",
+     "scanner": "longRange"
+    },
+    "stats": {
+     "acceleration": 8,
+     "maxSpeed": 9,
+     "inertia": 3,
+     "turn": 8,
+     "hull": 3,
+     "fuelCapacity": 4,
+     "fuelEfficiency": 5,
+     "weaponPower": 4,
+     "weaponCooling": 3,
+     "reactor": 3
+    }
+   }
+  },
+  {
+   "name": "archetype:gunship",
+   "input": {
+    "ship": {
+     "stats": {
+      "acceleration": 5,
+      "maxSpeed": 4,
+      "inertia": 4,
+      "turn": 4,
+      "hull": 7,
+      "fuelCapacity": 5,
+      "fuelEfficiency": 4,
+      "weaponPower": 9,
+      "weaponCooling": 6,
+      "reactor": 2
+     },
+     "modules": {
+      "primary": "heavy",
+      "secondary": "missile",
+      "defense": "plating",
+      "utility": "repair",
+      "scanner": "standard"
+     },
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 115.2,
+    "demand": 68,
+    "capacity": 42,
+    "rawPowerRatio": 0.617647059,
+    "powerFactor": 0.617647059,
+    "overloadAmount": 0.382352941,
+    "accelPowerFactor": 0.724705882,
+    "turnPowerFactor": 0.835588235,
+    "weaponPowerFactor": 0.724705882,
+    "modulePowerFactor": 0.617647059,
+    "criticalOverload": true,
+    "speedPowerFactor": 0.915158371,
+    "thrusterMult": 1,
+    "maxSpeed": 236.110859729,
+    "acceleration": 73.250653595,
+    "turnRate": 1.547724112,
+    "passiveLoss": 0.034,
+    "coastDrag": 0.999423642,
+    "maxHull": 206,
+    "maxFuel": 170,
+    "fuelBurn": 1.11,
+    "fuelSeconds": 153.153153153,
+    "damage": 42.656,
+    "fireInterval": 0.519107143,
+    "cooling": 17.103058824,
+    "heatPerShot": 21,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 0,
+    "cloak": 0,
+    "repair": 0.494117647,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "heavy",
+     "secondary": "missile",
+     "defense": "plating",
+     "utility": "repair",
+     "scanner": "standard"
+    },
+    "stats": {
+     "acceleration": 5,
+     "maxSpeed": 4,
+     "inertia": 4,
+     "turn": 4,
+     "hull": 7,
+     "fuelCapacity": 5,
+     "fuelEfficiency": 4,
+     "weaponPower": 9,
+     "weaponCooling": 6,
+     "reactor": 2
+    }
+   }
+  },
+  {
+   "name": "archetype:collector",
+   "input": {
+    "ship": {
+     "stats": {
+      "acceleration": 4,
+      "maxSpeed": 4,
+      "inertia": 6,
+      "turn": 5,
+      "hull": 7,
+      "fuelCapacity": 7,
+      "fuelEfficiency": 7,
+      "weaponPower": 3,
+      "weaponCooling": 3,
+      "reactor": 4
+     },
+     "modules": {
+      "primary": "pulse",
+      "secondary": "missile",
+      "defense": "shield",
+      "utility": "tractor",
+      "scanner": "salvage"
+     },
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 102.8,
+    "demand": 72,
+    "capacity": 62,
+    "rawPowerRatio": 0.861111111,
+    "powerFactor": 0.861111111,
+    "overloadAmount": 0.138888889,
+    "accelPowerFactor": 0.9,
+    "turnPowerFactor": 0.940277778,
+    "weaponPowerFactor": 0.9,
+    "modulePowerFactor": 0.861111111,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1,
+    "maxSpeed": 258,
+    "acceleration": 91.891050584,
+    "turnRate": 2.127973006,
+    "passiveLoss": 0.046,
+    "coastDrag": 0.999215448,
+    "maxHull": 170,
+    "maxFuel": 210,
+    "fuelBurn": 0.78,
+    "fuelSeconds": 269.230769231,
+    "damage": 11.6,
+    "fireInterval": 0.326666667,
+    "cooling": 14.22,
+    "heatPerShot": 14,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 42,
+    "cloak": 0,
+    "repair": 0,
+    "pickupRadius": 56.277777778,
+    "salvageMult": 1.189444444,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "pulse",
+     "secondary": "missile",
+     "defense": "shield",
+     "utility": "tractor",
+     "scanner": "salvage"
+    },
+    "stats": {
+     "acceleration": 4,
+     "maxSpeed": 4,
+     "inertia": 6,
+     "turn": 5,
+     "hull": 7,
+     "fuelCapacity": 7,
+     "fuelEfficiency": 7,
+     "weaponPower": 3,
+     "weaponCooling": 3,
+     "reactor": 4
+    }
+   }
+  },
+  {
+   "name": "archetype:explorer",
+   "input": {
+    "ship": {
+     "stats": {
+      "acceleration": 5,
+      "maxSpeed": 6,
+      "inertia": 5,
+      "turn": 6,
+      "hull": 4,
+      "fuelCapacity": 7,
+      "fuelEfficiency": 8,
+      "weaponPower": 3,
+      "weaponCooling": 3,
+      "reactor": 3
+     },
+     "modules": {
+      "primary": "pulse",
+      "secondary": "none",
+      "defense": "cloak",
+      "utility": "fuelRecycler",
+      "scanner": "longRange"
+     },
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 88.2,
+    "demand": 76,
+    "capacity": 52,
+    "rawPowerRatio": 0.684210526,
+    "powerFactor": 0.684210526,
+    "overloadAmount": 0.315789474,
+    "accelPowerFactor": 0.772631579,
+    "turnPowerFactor": 0.864210526,
+    "weaponPowerFactor": 0.772631579,
+    "modulePowerFactor": 0.684210526,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1,
+    "maxSpeed": 312,
+    "acceleration": 102.001384413,
+    "turnRate": 2.468389068,
+    "passiveLoss": 0.04,
+    "coastDrag": 0.999319865,
+    "maxHull": 125,
+    "maxFuel": 210,
+    "fuelBurn": 0.5494,
+    "fuelSeconds": 382.235165635,
+    "damage": 11.6,
+    "fireInterval": 0.380517711,
+    "cooling": 12.207578947,
+    "heatPerShot": 14,
+    "missileBonus": 0,
+    "missileDamage": 1,
+    "shield": 0,
+    "cloak": 0.239473684,
+    "repair": 0,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1.239473684,
+    "mods": {
+     "primary": "pulse",
+     "secondary": "none",
+     "defense": "cloak",
+     "utility": "fuelRecycler",
+     "scanner": "longRange"
+    },
+    "stats": {
+     "acceleration": 5,
+     "maxSpeed": 6,
+     "inertia": 5,
+     "turn": 6,
+     "hull": 4,
+     "fuelCapacity": 7,
+     "fuelEfficiency": 8,
+     "weaponPower": 3,
+     "weaponCooling": 3,
+     "reactor": 3
+    }
+   }
+  },
+  {
+   "name": "archetype:reactor",
+   "input": {
+    "ship": {
+     "stats": {
+      "acceleration": 4,
+      "maxSpeed": 4,
+      "inertia": 5,
+      "turn": 5,
+      "hull": 4,
+      "fuelCapacity": 4,
+      "fuelEfficiency": 5,
+      "weaponPower": 5,
+      "weaponCooling": 5,
+      "reactor": 9
+     },
+     "modules": {
+      "primary": "rapid",
+      "secondary": "emp",
+      "defense": "shield",
+      "utility": "repair",
+      "scanner": "salvage"
+     },
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 95.4,
+    "demand": 89,
+    "capacity": 112,
+    "rawPowerRatio": 1.258426966,
+    "powerFactor": 1,
+    "overloadAmount": 0,
+    "accelPowerFactor": 1,
+    "turnPowerFactor": 1,
+    "weaponPowerFactor": 1,
+    "modulePowerFactor": 1,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1,
+    "maxSpeed": 258,
+    "acceleration": 110.020964361,
+    "turnRate": 2.438679245,
+    "passiveLoss": 0.04,
+    "coastDrag": 0.999319865,
+    "maxHull": 125,
+    "maxFuel": 150,
+    "fuelBurn": 1,
+    "fuelSeconds": 150,
+    "damage": 11.52,
+    "fireInterval": 0.155,
+    "cooling": 21,
+    "heatPerShot": 15.12,
+    "missileBonus": 2,
+    "missileDamage": 1.3,
+    "shield": 42,
+    "cloak": 0,
+    "repair": 0.8,
+    "pickupRadius": 27,
+    "salvageMult": 1.22,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "rapid",
+     "secondary": "emp",
+     "defense": "shield",
+     "utility": "repair",
+     "scanner": "salvage"
+    },
+    "stats": {
+     "acceleration": 4,
+     "maxSpeed": 4,
+     "inertia": 5,
+     "turn": 5,
+     "hull": 4,
+     "fuelCapacity": 4,
+     "fuelEfficiency": 5,
+     "weaponPower": 5,
+     "weaponCooling": 5,
+     "reactor": 9
+    }
+   }
+  },
+  {
+   "name": "overload:reactor1",
+   "input": {
+    "ship": {
+     "stats": {
+      "reactor": 1,
+      "hull": 8,
+      "weaponPower": 8
+     },
+     "modules": {
+      "primary": "heavy",
+      "secondary": "emp",
+      "defense": "cloak",
+      "utility": "repair",
+      "scanner": "longRange"
+     },
+     "thrusters": [
+      {
+       "id": "left",
+       "enabled": true
+      },
+      {
+       "id": "right",
+       "enabled": true
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 123.2,
+    "demand": 99,
+    "capacity": 32,
+    "rawPowerRatio": 0.323232323,
+    "powerFactor": 0.58,
+    "overloadAmount": 0.42,
+    "accelPowerFactor": 0.6976,
+    "turnPowerFactor": 0.8194,
+    "weaponPowerFactor": 0.6976,
+    "modulePowerFactor": 0.58,
+    "criticalOverload": true,
+    "speedPowerFactor": 0.85,
+    "thrusterMult": 1.28,
+    "maxSpeed": 242.25,
+    "acceleration": 86.22112768,
+    "turnRate": 1.547349107,
+    "passiveLoss": 0.04,
+    "coastDrag": 0.999319865,
+    "maxHull": 185,
+    "maxFuel": 170,
+    "fuelBurn": 1.16,
+    "fuelSeconds": 146.551724138,
+    "damage": 38.872,
+    "fireInterval": 0.591313073,
+    "cooling": 14.6496,
+    "heatPerShot": 21,
+    "missileBonus": 2,
+    "missileDamage": 1.3,
+    "shield": 0,
+    "cloak": 0.203,
+    "repair": 0.464,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1.203,
+    "mods": {
+     "primary": "heavy",
+     "secondary": "emp",
+     "defense": "cloak",
+     "utility": "repair",
+     "scanner": "longRange"
+    },
+    "stats": {
+     "acceleration": 5,
+     "maxSpeed": 5,
+     "inertia": 5,
+     "turn": 5,
+     "hull": 8,
+     "fuelCapacity": 5,
+     "fuelEfficiency": 5,
+     "weaponPower": 8,
+     "weaponCooling": 5,
+     "reactor": 1
+    }
+   }
+  },
+  {
+   "name": "overload:reactor2",
+   "input": {
+    "ship": {
+     "stats": {
+      "reactor": 2,
+      "hull": 8,
+      "weaponPower": 8
+     },
+     "modules": {
+      "primary": "heavy",
+      "secondary": "emp",
+      "defense": "cloak",
+      "utility": "repair",
+      "scanner": "longRange"
+     },
+     "thrusters": [
+      {
+       "id": "left",
+       "enabled": true
+      },
+      {
+       "id": "right",
+       "enabled": true
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 123.2,
+    "demand": 99,
+    "capacity": 42,
+    "rawPowerRatio": 0.424242424,
+    "powerFactor": 0.58,
+    "overloadAmount": 0.42,
+    "accelPowerFactor": 0.6976,
+    "turnPowerFactor": 0.8194,
+    "weaponPowerFactor": 0.6976,
+    "modulePowerFactor": 0.58,
+    "criticalOverload": true,
+    "speedPowerFactor": 0.85,
+    "thrusterMult": 1.28,
+    "maxSpeed": 242.25,
+    "acceleration": 86.22112768,
+    "turnRate": 1.547349107,
+    "passiveLoss": 0.04,
+    "coastDrag": 0.999319865,
+    "maxHull": 185,
+    "maxFuel": 170,
+    "fuelBurn": 1.16,
+    "fuelSeconds": 146.551724138,
+    "damage": 38.872,
+    "fireInterval": 0.591313073,
+    "cooling": 14.6496,
+    "heatPerShot": 21,
+    "missileBonus": 2,
+    "missileDamage": 1.3,
+    "shield": 0,
+    "cloak": 0.203,
+    "repair": 0.464,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1.203,
+    "mods": {
+     "primary": "heavy",
+     "secondary": "emp",
+     "defense": "cloak",
+     "utility": "repair",
+     "scanner": "longRange"
+    },
+    "stats": {
+     "acceleration": 5,
+     "maxSpeed": 5,
+     "inertia": 5,
+     "turn": 5,
+     "hull": 8,
+     "fuelCapacity": 5,
+     "fuelEfficiency": 5,
+     "weaponPower": 8,
+     "weaponCooling": 5,
+     "reactor": 2
+    }
+   }
+  },
+  {
+   "name": "overload:reactor3",
+   "input": {
+    "ship": {
+     "stats": {
+      "reactor": 3,
+      "hull": 8,
+      "weaponPower": 8
+     },
+     "modules": {
+      "primary": "heavy",
+      "secondary": "emp",
+      "defense": "cloak",
+      "utility": "repair",
+      "scanner": "longRange"
+     },
+     "thrusters": [
+      {
+       "id": "left",
+       "enabled": true
+      },
+      {
+       "id": "right",
+       "enabled": true
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 123.2,
+    "demand": 99,
+    "capacity": 52,
+    "rawPowerRatio": 0.525252525,
+    "powerFactor": 0.58,
+    "overloadAmount": 0.42,
+    "accelPowerFactor": 0.6976,
+    "turnPowerFactor": 0.8194,
+    "weaponPowerFactor": 0.6976,
+    "modulePowerFactor": 0.58,
+    "criticalOverload": true,
+    "speedPowerFactor": 0.85,
+    "thrusterMult": 1.28,
+    "maxSpeed": 242.25,
+    "acceleration": 86.22112768,
+    "turnRate": 1.547349107,
+    "passiveLoss": 0.04,
+    "coastDrag": 0.999319865,
+    "maxHull": 185,
+    "maxFuel": 170,
+    "fuelBurn": 1.16,
+    "fuelSeconds": 146.551724138,
+    "damage": 38.872,
+    "fireInterval": 0.591313073,
+    "cooling": 14.6496,
+    "heatPerShot": 21,
+    "missileBonus": 2,
+    "missileDamage": 1.3,
+    "shield": 0,
+    "cloak": 0.203,
+    "repair": 0.464,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1.203,
+    "mods": {
+     "primary": "heavy",
+     "secondary": "emp",
+     "defense": "cloak",
+     "utility": "repair",
+     "scanner": "longRange"
+    },
+    "stats": {
+     "acceleration": 5,
+     "maxSpeed": 5,
+     "inertia": 5,
+     "turn": 5,
+     "hull": 8,
+     "fuelCapacity": 5,
+     "fuelEfficiency": 5,
+     "weaponPower": 8,
+     "weaponCooling": 5,
+     "reactor": 3
+    }
+   }
+  },
+  {
+   "name": "overload:reactor4",
+   "input": {
+    "ship": {
+     "stats": {
+      "reactor": 4,
+      "hull": 8,
+      "weaponPower": 8
+     },
+     "modules": {
+      "primary": "heavy",
+      "secondary": "emp",
+      "defense": "cloak",
+      "utility": "repair",
+      "scanner": "longRange"
+     },
+     "thrusters": [
+      {
+       "id": "left",
+       "enabled": true
+      },
+      {
+       "id": "right",
+       "enabled": true
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 123.2,
+    "demand": 99,
+    "capacity": 62,
+    "rawPowerRatio": 0.626262626,
+    "powerFactor": 0.626262626,
+    "overloadAmount": 0.373737374,
+    "accelPowerFactor": 0.730909091,
+    "turnPowerFactor": 0.839292929,
+    "weaponPowerFactor": 0.730909091,
+    "modulePowerFactor": 0.626262626,
+    "criticalOverload": true,
+    "speedPowerFactor": 0.93006993,
+    "thrusterMult": 1.28,
+    "maxSpeed": 265.06993007,
+    "acceleration": 90.338024727,
+    "turnRate": 1.584914773,
+    "passiveLoss": 0.04,
+    "coastDrag": 0.999319865,
+    "maxHull": 185,
+    "maxFuel": 170,
+    "fuelBurn": 1.16,
+    "fuelSeconds": 146.551724138,
+    "damage": 38.872,
+    "fireInterval": 0.564365672,
+    "cooling": 15.349090909,
+    "heatPerShot": 21,
+    "missileBonus": 2,
+    "missileDamage": 1.3,
+    "shield": 0,
+    "cloak": 0.219191919,
+    "repair": 0.501010101,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1.219191919,
+    "mods": {
+     "primary": "heavy",
+     "secondary": "emp",
+     "defense": "cloak",
+     "utility": "repair",
+     "scanner": "longRange"
+    },
+    "stats": {
+     "acceleration": 5,
+     "maxSpeed": 5,
+     "inertia": 5,
+     "turn": 5,
+     "hull": 8,
+     "fuelCapacity": 5,
+     "fuelEfficiency": 5,
+     "weaponPower": 8,
+     "weaponCooling": 5,
+     "reactor": 4
+    }
+   }
+  },
+  {
+   "name": "overload:reactor6",
+   "input": {
+    "ship": {
+     "stats": {
+      "reactor": 6,
+      "hull": 8,
+      "weaponPower": 8
+     },
+     "modules": {
+      "primary": "heavy",
+      "secondary": "emp",
+      "defense": "cloak",
+      "utility": "repair",
+      "scanner": "longRange"
+     },
+     "thrusters": [
+      {
+       "id": "left",
+       "enabled": true
+      },
+      {
+       "id": "right",
+       "enabled": true
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 123.2,
+    "demand": 99,
+    "capacity": 82,
+    "rawPowerRatio": 0.828282828,
+    "powerFactor": 0.828282828,
+    "overloadAmount": 0.171717172,
+    "accelPowerFactor": 0.876363636,
+    "turnPowerFactor": 0.926161616,
+    "weaponPowerFactor": 0.876363636,
+    "modulePowerFactor": 0.828282828,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1.28,
+    "maxSpeed": 285,
+    "acceleration": 108.315741091,
+    "turnRate": 1.748956981,
+    "passiveLoss": 0.04,
+    "coastDrag": 0.999319865,
+    "maxHull": 185,
+    "maxFuel": 170,
+    "fuelBurn": 1.16,
+    "fuelSeconds": 146.551724138,
+    "damage": 38.872,
+    "fireInterval": 0.470695021,
+    "cooling": 18.403636364,
+    "heatPerShot": 21,
+    "missileBonus": 2,
+    "missileDamage": 1.3,
+    "shield": 0,
+    "cloak": 0.28989899,
+    "repair": 0.662626263,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1.28989899,
+    "mods": {
+     "primary": "heavy",
+     "secondary": "emp",
+     "defense": "cloak",
+     "utility": "repair",
+     "scanner": "longRange"
+    },
+    "stats": {
+     "acceleration": 5,
+     "maxSpeed": 5,
+     "inertia": 5,
+     "turn": 5,
+     "hull": 8,
+     "fuelCapacity": 5,
+     "fuelEfficiency": 5,
+     "weaponPower": 8,
+     "weaponCooling": 5,
+     "reactor": 6
+    }
+   }
+  },
+  {
+   "name": "overload:reactor10",
+   "input": {
+    "ship": {
+     "stats": {
+      "reactor": 10,
+      "hull": 8,
+      "weaponPower": 8
+     },
+     "modules": {
+      "primary": "heavy",
+      "secondary": "emp",
+      "defense": "cloak",
+      "utility": "repair",
+      "scanner": "longRange"
+     },
+     "thrusters": [
+      {
+       "id": "left",
+       "enabled": true
+      },
+      {
+       "id": "right",
+       "enabled": true
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 123.2,
+    "demand": 99,
+    "capacity": 122,
+    "rawPowerRatio": 1.232323232,
+    "powerFactor": 1,
+    "overloadAmount": 0,
+    "accelPowerFactor": 1,
+    "turnPowerFactor": 1,
+    "weaponPowerFactor": 1,
+    "modulePowerFactor": 1,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1.28,
+    "maxSpeed": 285,
+    "acceleration": 123.5968,
+    "turnRate": 1.888392857,
+    "passiveLoss": 0.04,
+    "coastDrag": 0.999319865,
+    "maxHull": 185,
+    "maxFuel": 170,
+    "fuelBurn": 1.16,
+    "fuelSeconds": 146.551724138,
+    "damage": 38.872,
+    "fireInterval": 0.4125,
+    "cooling": 21,
+    "heatPerShot": 21,
+    "missileBonus": 2,
+    "missileDamage": 1.3,
+    "shield": 0,
+    "cloak": 0.35,
+    "repair": 0.8,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1.35,
+    "mods": {
+     "primary": "heavy",
+     "secondary": "emp",
+     "defense": "cloak",
+     "utility": "repair",
+     "scanner": "longRange"
+    },
+    "stats": {
+     "acceleration": 5,
+     "maxSpeed": 5,
+     "inertia": 5,
+     "turn": 5,
+     "hull": 8,
+     "fuelCapacity": 5,
+     "fuelEfficiency": 5,
+     "weaponPower": 8,
+     "weaponCooling": 5,
+     "reactor": 10
+    }
+   }
+  },
+  {
+   "name": "legacy-aliases",
+   "input": {
+    "ship": {
+     "stats": {
+      "acceleration": 4,
+      "maxSpeed": 7,
+      "brake": 4,
+      "turn": 5,
+      "armor": 5,
+      "fuel": 4,
+      "laser": 5,
+      "cargo": 6
+     },
+     "special": "tractor"
+    },
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 93.6,
+    "demand": 68,
+    "capacity": 72,
+    "rawPowerRatio": 1.058823529,
+    "powerFactor": 1,
+    "overloadAmount": 0,
+    "accelPowerFactor": 1,
+    "turnPowerFactor": 1,
+    "weaponPowerFactor": 1,
+    "modulePowerFactor": 1,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1,
+    "maxSpeed": 339,
+    "acceleration": 112.136752137,
+    "turnRate": 2.485576923,
+    "passiveLoss": 0.034,
+    "coastDrag": 0.999423642,
+    "maxHull": 140,
+    "maxFuel": 150,
+    "fuelBurn": 1,
+    "fuelSeconds": 150,
+    "damage": 16,
+    "fireInterval": 0.25,
+    "cooling": 21,
+    "heatPerShot": 14,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 42,
+    "cloak": 0,
+    "repair": 0,
+    "pickupRadius": 61,
+    "salvageMult": 1,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "pulse",
+     "secondary": "missile",
+     "defense": "shield",
+     "utility": "tractor",
+     "scanner": "standard"
+    },
+    "stats": {
+     "acceleration": 4,
+     "maxSpeed": 7,
+     "inertia": 4,
+     "turn": 5,
+     "hull": 5,
+     "fuelCapacity": 4,
+     "fuelEfficiency": 5,
+     "weaponPower": 5,
+     "weaponCooling": 5,
+     "reactor": 5
+    }
+   }
+  },
+  {
+   "name": "components+rare",
+   "input": {
+    "ship": {
+     "name": "Red Falcon",
+     "role": "Balanced",
+     "description": "Responsive hero fighter with enough reactor output to run its standard systems.",
+     "stats": {
+      "acceleration": 6,
+      "maxSpeed": 6,
+      "inertia": 6,
+      "turn": 7,
+      "hull": 4,
+      "fuelCapacity": 4,
+      "fuelEfficiency": 4,
+      "weaponPower": 4,
+      "weaponCooling": 4,
+      "reactor": 5
+     },
+     "modules": {
+      "primary": "pulse",
+      "secondary": "missile",
+      "defense": "shield",
+      "utility": "repair",
+      "scanner": "standard"
+     },
+     "thrusters": [
+      {
+       "id": "center",
+       "x": 24,
+       "y": 43,
+       "enabled": true,
+       "cost": 0,
+       "scale": 1.15
+      },
+      {
+       "id": "left",
+       "x": 17,
+       "y": 41,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.74
+      },
+      {
+       "id": "right",
+       "x": 31,
+       "y": 41,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.74
+      }
+     ],
+     "hardpoints": [
+      {
+       "id": "primary",
+       "x": 24,
+       "y": 12
+      },
+      {
+       "id": "secondary",
+       "x": 15,
+       "y": 27
+      },
+      {
+       "id": "defense",
+       "x": 33,
+       "y": 27
+      },
+      {
+       "id": "utility",
+       "x": 24,
+       "y": 31
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {
+     "lightweight": true,
+     "recycler": true
+    },
+    "rare": {
+     "nobleOverdrive": true,
+     "dragonShield": true,
+     "demonCooling": true
+    }
+   },
+   "expected": {
+    "mass": 91.264,
+    "demand": 72,
+    "capacity": 72,
+    "rawPowerRatio": 1,
+    "powerFactor": 1,
+    "overloadAmount": 0,
+    "accelPowerFactor": 1,
+    "turnPowerFactor": 1,
+    "weaponPowerFactor": 1,
+    "modulePowerFactor": 1,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1.28,
+    "maxSpeed": 343.2,
+    "acceleration": 179.410939691,
+    "turnRate": 2.971489306,
+    "passiveLoss": 0.046,
+    "coastDrag": 0.999215448,
+    "maxHull": 125,
+    "maxFuel": 150,
+    "fuelBurn": 1.133088,
+    "fuelSeconds": 132.381597899,
+    "damage": 13.8,
+    "fireInterval": 0.272,
+    "cooling": 23.92,
+    "heatPerShot": 14,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 77,
+    "cloak": 0,
+    "repair": 0.8,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "pulse",
+     "secondary": "missile",
+     "defense": "shield",
+     "utility": "repair",
+     "scanner": "standard"
+    },
+    "stats": {
+     "acceleration": 6,
+     "maxSpeed": 6,
+     "inertia": 6,
+     "turn": 7,
+     "hull": 4,
+     "fuelCapacity": 4,
+     "fuelEfficiency": 4,
+     "weaponPower": 4,
+     "weaponCooling": 4,
+     "reactor": 5
+    }
+   }
+  },
+  {
+   "name": "empty",
+   "input": {
+    "ship": {},
+    "components": {},
+    "rare": {}
+   },
+   "expected": {
+    "mass": 97,
+    "demand": 72,
+    "capacity": 72,
+    "rawPowerRatio": 1,
+    "powerFactor": 1,
+    "overloadAmount": 0,
+    "accelPowerFactor": 1,
+    "turnPowerFactor": 1,
+    "weaponPowerFactor": 1,
+    "modulePowerFactor": 1,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1,
+    "maxSpeed": 285,
+    "acceleration": 120.041237113,
+    "turnRate": 2.398453608,
+    "passiveLoss": 0.04,
+    "coastDrag": 0.999319865,
+    "maxHull": 140,
+    "maxFuel": 170,
+    "fuelBurn": 1,
+    "fuelSeconds": 170,
+    "damage": 16,
+    "fireInterval": 0.25,
+    "cooling": 21,
+    "heatPerShot": 14,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 42,
+    "cloak": 0,
+    "repair": 0.8,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "pulse",
+     "secondary": "missile",
+     "defense": "shield",
+     "utility": "repair",
+     "scanner": "standard"
+    },
+    "stats": {
+     "acceleration": 5,
+     "maxSpeed": 5,
+     "inertia": 5,
+     "turn": 5,
+     "hull": 5,
+     "fuelCapacity": 5,
+     "fuelEfficiency": 5,
+     "weaponPower": 5,
+     "weaponCooling": 5,
+     "reactor": 5
+    }
+   }
+  },
+  {
+   "name": "campaign-effective:redFalcon",
+   "input": {
+    "ship": {
+     "name": "Red Falcon",
+     "role": "Balanced",
+     "description": "Responsive hero fighter with enough reactor output to run its standard systems.",
+     "stats": {
+      "acceleration": 8.4,
+      "maxSpeed": 7.6,
+      "inertia": 6,
+      "turn": 9.4,
+      "hull": 4.8,
+      "fuelCapacity": 4,
+      "fuelEfficiency": 4,
+      "weaponPower": 4,
+      "weaponCooling": 5,
+      "reactor": 5
+     },
+     "modules": {
+      "primary": "pulse",
+      "secondary": "missile",
+      "defense": "shield",
+      "utility": "repair",
+      "scanner": "standard"
+     },
+     "thrusters": [
+      {
+       "id": "center",
+       "x": 24,
+       "y": 43,
+       "enabled": true,
+       "cost": 0,
+       "scale": 1.15
+      },
+      {
+       "id": "left",
+       "x": 17,
+       "y": 41,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.74
+      },
+      {
+       "id": "right",
+       "x": 31,
+       "y": 41,
+       "enabled": true,
+       "cost": 2,
+       "scale": 0.74
+      }
+     ],
+     "hardpoints": [
+      {
+       "id": "primary",
+       "x": 24,
+       "y": 12
+      },
+      {
+       "id": "secondary",
+       "x": 15,
+       "y": 27
+      },
+      {
+       "id": "defense",
+       "x": 33,
+       "y": 27
+      },
+      {
+       "id": "utility",
+       "x": 24,
+       "y": 31
+      }
+     ],
+     "gridSize": 48
+    },
+    "components": {
+     "engineCore": true,
+     "governor": true,
+     "coolingJacket": true
+    },
+    "rare": {},
+    "campaign": {
+     "ship": {
+      "name": "Red Falcon",
+      "role": "Balanced",
+      "description": "Responsive hero fighter with enough reactor output to run its standard systems.",
+      "stats": {
+       "acceleration": 6,
+       "maxSpeed": 6,
+       "inertia": 6,
+       "turn": 7,
+       "hull": 4,
+       "fuelCapacity": 4,
+       "fuelEfficiency": 4,
+       "weaponPower": 4,
+       "weaponCooling": 4,
+       "reactor": 5
+      },
+      "modules": {
+       "primary": "pulse",
+       "secondary": "missile",
+       "defense": "shield",
+       "utility": "repair",
+       "scanner": "standard"
+      },
+      "thrusters": [
+       {
+        "id": "center",
+        "x": 24,
+        "y": 43,
+        "enabled": true,
+        "cost": 0,
+        "scale": 1.15
+       },
+       {
+        "id": "left",
+        "x": 17,
+        "y": 41,
+        "enabled": true,
+        "cost": 2,
+        "scale": 0.74
+       },
+       {
+        "id": "right",
+        "x": 31,
+        "y": 41,
+        "enabled": true,
+        "cost": 2,
+        "scale": 0.74
+       }
+      ],
+      "hardpoints": [
+       {
+        "id": "primary",
+        "x": 24,
+        "y": 12
+       },
+       {
+        "id": "secondary",
+        "x": 15,
+        "y": 27
+       },
+       {
+        "id": "defense",
+        "x": 33,
+        "y": 27
+       },
+       {
+        "id": "utility",
+        "x": 24,
+        "y": 31
+       }
+      ],
+      "gridSize": 48
+     },
+     "upgrades": {
+      "acceleration": 2,
+      "maxSpeed": 1,
+      "turn": 3,
+      "hull": 1
+     },
+     "components": {
+      "engineCore": true,
+      "governor": true,
+      "coolingJacket": true
+     }
+    }
+   },
+   "expected": {
+    "mass": 102.4,
+    "demand": 72,
+    "capacity": 72,
+    "rawPowerRatio": 1,
+    "powerFactor": 1,
+    "overloadAmount": 0,
+    "accelPowerFactor": 1,
+    "turnPowerFactor": 1,
+    "weaponPowerFactor": 1,
+    "modulePowerFactor": 1,
+    "criticalOverload": false,
+    "speedPowerFactor": 1,
+    "thrusterMult": 1.28,
+    "maxSpeed": 366,
+    "acceleration": 188.6,
+    "turnRate": 3.024707031,
+    "passiveLoss": 0.046,
+    "coastDrag": 0.999215448,
+    "maxHull": 140,
+    "maxFuel": 150,
+    "fuelBurn": 1.2876,
+    "fuelSeconds": 116.495806151,
+    "damage": 13.8,
+    "fireInterval": 0.25,
+    "cooling": 21,
+    "heatPerShot": 14,
+    "missileBonus": 4,
+    "missileDamage": 1,
+    "shield": 42,
+    "cloak": 0,
+    "repair": 0.8,
+    "pickupRadius": 27,
+    "salvageMult": 1,
+    "scannerRange": 1,
+    "mods": {
+     "primary": "pulse",
+     "secondary": "missile",
+     "defense": "shield",
+     "utility": "repair",
+     "scanner": "standard"
+    },
+    "stats": {
+     "acceleration": 8,
+     "maxSpeed": 8,
+     "inertia": 6,
+     "turn": 9,
+     "hull": 5,
+     "fuelCapacity": 4,
+     "fuelEfficiency": 4,
+     "weaponPower": 4,
+     "weaponCooling": 5,
+     "reactor": 5
+    }
+   },
+   "effectiveStats": {
+    "acceleration": 8.4,
+    "maxSpeed": 7.6,
+    "inertia": 6,
+    "turn": 9.4,
+    "hull": 4.8,
+    "fuelCapacity": 4,
+    "fuelEfficiency": 4,
+    "weaponPower": 4,
+    "weaponCooling": 5,
+    "reactor": 5
+   }
+  }
+ ]
+}

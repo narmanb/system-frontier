@@ -1,0 +1,23 @@
+# Godot
+.godot/
+*.import.tmp
+/android/
+export_credentials.cfg
+*.keystore
+*.jks
+# Build output / analysis
+build/
+dist/
+*.apk
+*.aab
+*.exe
+*.pck
+*.x86_64
+*.arm64
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+node_modules/

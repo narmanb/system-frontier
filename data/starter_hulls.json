@@ -1,0 +1,381 @@
+{
+ "order": [
+  "redFalcon",
+  "novaSting",
+  "wispNeedle",
+  "blockadeRam",
+  "cargoWarden"
+ ],
+ "hulls": {
+  "redFalcon": {
+   "name": "Red Falcon",
+   "role": "Balanced",
+   "description": "Responsive hero fighter with enough reactor output to run its standard systems.",
+   "stats": {
+    "acceleration": 6,
+    "maxSpeed": 6,
+    "inertia": 6,
+    "turn": 7,
+    "hull": 4,
+    "fuelCapacity": 4,
+    "fuelEfficiency": 4,
+    "weaponPower": 4,
+    "weaponCooling": 4,
+    "reactor": 5
+   },
+   "modules": {
+    "primary": "pulse",
+    "secondary": "missile",
+    "defense": "shield",
+    "utility": "repair",
+    "scanner": "standard"
+   },
+   "thrusters": [
+    {
+     "id": "center",
+     "x": 24,
+     "y": 43,
+     "enabled": true,
+     "cost": 0,
+     "scale": 1.15
+    },
+    {
+     "id": "left",
+     "x": 17,
+     "y": 41,
+     "enabled": true,
+     "cost": 2,
+     "scale": 0.74
+    },
+    {
+     "id": "right",
+     "x": 31,
+     "y": 41,
+     "enabled": true,
+     "cost": 2,
+     "scale": 0.74
+    }
+   ],
+   "hardpoints": [
+    {
+     "id": "primary",
+     "x": 24,
+     "y": 12
+    },
+    {
+     "id": "secondary",
+     "x": 15,
+     "y": 27
+    },
+    {
+     "id": "defense",
+     "x": 33,
+     "y": 27
+    },
+    {
+     "id": "utility",
+     "x": 24,
+     "y": 31
+    }
+   ],
+   "gridSize": 48,
+   "art": "res://assets/ships/red_falcon.png"
+  },
+  "novaSting": {
+   "name": "Nova Sting",
+   "role": "Sport Fighter",
+   "description": "Lively swept-wing fighter tuned for speed, turning, and aggressive flight.",
+   "stats": {
+    "acceleration": 6,
+    "maxSpeed": 6,
+    "inertia": 5,
+    "turn": 7,
+    "hull": 4,
+    "fuelCapacity": 4,
+    "fuelEfficiency": 4,
+    "weaponPower": 5,
+    "weaponCooling": 4,
+    "reactor": 5
+   },
+   "modules": {
+    "primary": "rapid",
+    "secondary": "missile",
+    "defense": "shield",
+    "utility": "repair",
+    "scanner": "standard"
+   },
+   "thrusters": [
+    {
+     "id": "center",
+     "x": 24,
+     "y": 43,
+     "enabled": true,
+     "cost": 0,
+     "scale": 1.08
+    },
+    {
+     "id": "left",
+     "x": 19,
+     "y": 42,
+     "enabled": true,
+     "cost": 2,
+     "scale": 0.72
+    },
+    {
+     "id": "right",
+     "x": 29,
+     "y": 42,
+     "enabled": true,
+     "cost": 2,
+     "scale": 0.72
+    }
+   ],
+   "hardpoints": [
+    {
+     "id": "primary",
+     "x": 24,
+     "y": 12
+    },
+    {
+     "id": "secondary",
+     "x": 15,
+     "y": 27
+    },
+    {
+     "id": "defense",
+     "x": 33,
+     "y": 27
+    },
+    {
+     "id": "utility",
+     "x": 24,
+     "y": 31
+    }
+   ],
+   "gridSize": 48,
+   "art": "res://assets/ships/nova_sting.png"
+  },
+  "wispNeedle": {
+   "name": "Wisp Needle",
+   "role": "Scout",
+   "description": "Tiny precision scout with extreme turning and very little armor.",
+   "stats": {
+    "acceleration": 6,
+    "maxSpeed": 7,
+    "inertia": 5,
+    "turn": 8,
+    "hull": 3,
+    "fuelCapacity": 4,
+    "fuelEfficiency": 5,
+    "weaponPower": 4,
+    "weaponCooling": 4,
+    "reactor": 4
+   },
+   "modules": {
+    "primary": "pulse",
+    "secondary": "missile",
+    "defense": "cloak",
+    "utility": "repair",
+    "scanner": "advanced"
+   },
+   "thrusters": [
+    {
+     "id": "center",
+     "x": 24,
+     "y": 43,
+     "enabled": true,
+     "cost": 0,
+     "scale": 1
+    },
+    {
+     "id": "left",
+     "x": 21,
+     "y": 40,
+     "enabled": false,
+     "cost": 2,
+     "scale": 0.58
+    },
+    {
+     "id": "right",
+     "x": 27,
+     "y": 40,
+     "enabled": false,
+     "cost": 2,
+     "scale": 0.58
+    }
+   ],
+   "hardpoints": [
+    {
+     "id": "primary",
+     "x": 24,
+     "y": 12
+    },
+    {
+     "id": "secondary",
+     "x": 15,
+     "y": 27
+    },
+    {
+     "id": "defense",
+     "x": 33,
+     "y": 27
+    },
+    {
+     "id": "utility",
+     "x": 24,
+     "y": 31
+    }
+   ],
+   "gridSize": 48,
+   "art": "res://assets/ships/wisp_needle.png"
+  },
+  "blockadeRam": {
+   "name": "Blockade Ram",
+   "role": "Heavy",
+   "description": "Armored bruiser with strong hull and weapons but deliberate handling.",
+   "stats": {
+    "acceleration": 4,
+    "maxSpeed": 4,
+    "inertia": 7,
+    "turn": 4,
+    "hull": 7,
+    "fuelCapacity": 5,
+    "fuelEfficiency": 4,
+    "weaponPower": 6,
+    "weaponCooling": 4,
+    "reactor": 5
+   },
+   "modules": {
+    "primary": "heavy",
+    "secondary": "missile",
+    "defense": "shield",
+    "utility": "repair",
+    "scanner": "standard"
+   },
+   "thrusters": [
+    {
+     "id": "center",
+     "x": 24,
+     "y": 43,
+     "enabled": true,
+     "cost": 0,
+     "scale": 1.15
+    },
+    {
+     "id": "left",
+     "x": 14,
+     "y": 42,
+     "enabled": true,
+     "cost": 2,
+     "scale": 0.82
+    },
+    {
+     "id": "right",
+     "x": 34,
+     "y": 42,
+     "enabled": true,
+     "cost": 2,
+     "scale": 0.82
+    }
+   ],
+   "hardpoints": [
+    {
+     "id": "primary",
+     "x": 24,
+     "y": 12
+    },
+    {
+     "id": "secondary",
+     "x": 15,
+     "y": 27
+    },
+    {
+     "id": "defense",
+     "x": 33,
+     "y": 27
+    },
+    {
+     "id": "utility",
+     "x": 24,
+     "y": 31
+    }
+   ],
+   "gridSize": 48,
+   "art": "res://assets/ships/blockade_ram.png"
+  },
+  "cargoWarden": {
+   "name": "Cargo Warden",
+   "role": "Utility",
+   "description": "Stable industrial workship with strong endurance and practical systems.",
+   "stats": {
+    "acceleration": 4,
+    "maxSpeed": 4,
+    "inertia": 7,
+    "turn": 5,
+    "hull": 5,
+    "fuelCapacity": 6,
+    "fuelEfficiency": 6,
+    "weaponPower": 4,
+    "weaponCooling": 4,
+    "reactor": 5
+   },
+   "modules": {
+    "primary": "pulse",
+    "secondary": "missile",
+    "defense": "shield",
+    "utility": "tractor",
+    "scanner": "advanced"
+   },
+   "thrusters": [
+    {
+     "id": "center",
+     "x": 24,
+     "y": 43,
+     "enabled": true,
+     "cost": 0,
+     "scale": 1.05
+    },
+    {
+     "id": "left",
+     "x": 17,
+     "y": 42,
+     "enabled": true,
+     "cost": 2,
+     "scale": 0.75
+    },
+    {
+     "id": "right",
+     "x": 31,
+     "y": 42,
+     "enabled": true,
+     "cost": 2,
+     "scale": 0.75
+    }
+   ],
+   "hardpoints": [
+    {
+     "id": "primary",
+     "x": 24,
+     "y": 12
+    },
+    {
+     "id": "secondary",
+     "x": 15,
+     "y": 27
+    },
+    {
+     "id": "defense",
+     "x": 33,
+     "y": 27
+    },
+    {
+     "id": "utility",
+     "x": 24,
+     "y": 31
+    }
+   ],
+   "gridSize": 48,
+   "art": "res://assets/ships/cargo_warden.png"
+  }
+ }
+}

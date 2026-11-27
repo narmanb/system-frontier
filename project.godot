@@ -1,0 +1,51 @@
+; Engine configuration file.
+; Pinned engine: Godot 4.7.2-stable (see .godot-version). Compatibility renderer.
+
+config_version=5
+
+[application]
+
+config/name="System Frontier"
+config/description="Retro directory-space flight, salvage and faction warfare."
+config/version="0.1.0"
+run/main_scene="res://scenes/main_menu/main_menu.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+config/icon="res://assets/ui/icon.png"
+boot_splash/bg_color=Color(0.0078, 0.0196, 0.0392, 1)
+boot_splash/show_image=false
+config/quit_on_go_back=false
+
+[autoload]
+
+Sfx="*res://scripts/core/sfx.gd"
+AppState="*res://scripts/core/app_state.gd"
+
+[display]
+
+window/size/viewport_width=960
+window/size/viewport_height=540
+window/size/window_width_override=1280
+window/size/window_height_override=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=6
+window/energy_saving/keep_screen_on=true
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=false
+pointing/emulate_mouse_from_touch=true
+
+[physics]
+
+common/physics_ticks_per_second=60
+common/max_physics_steps_per_frame=4
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/canvas_textures/default_texture_filter=0
+2d/snap/snap_2d_transforms_to_pixel=false
+gl_compatibility/fallback_to_gles=true
+environment/defaults/default_clear_color=Color(0.0078, 0.0196, 0.0392, 1)
